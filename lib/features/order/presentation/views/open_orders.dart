@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:revival/features/order/presentation/views/new_orders.dart';
+import 'package:revival/features/order/presentation/views/single_order.dart';
 
 class OpenOrdersScreen extends StatelessWidget {
   const OpenOrdersScreen({super.key});
@@ -106,98 +107,39 @@ class OpenOrdersScreen extends StatelessWidget {
           return ListView(
             padding: EdgeInsets.all(padding),
             children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 1,
-                child: Column(
-                  children: [
-                    _buildCheckboxListItem(
-                      context,
-                      'Header A',
-                      isChecked: true,
-                    ),
-                    _buildDivider(),
-                    _buildCheckboxListItem(
-                      context,
-                      'Header B',
-                      isChecked: false,
-                    ),
-                    _buildDivider(),
-                    _buildCheckboxListItem(
-                      context,
-                      'Header C',
-                      isChecked: false,
-                    ),
-                    _buildDivider(),
-                    _buildCheckboxListItem(context, 'Cell 1', isChecked: true),
-                    _buildDivider(),
-                    _buildCheckboxListItem(context, 'Cell 2', isChecked: false),
-                    _buildDivider(),
-                    _buildCheckboxListItem(context, 'Cell 3', isChecked: false),
-                  ],
-                ),
+              OrderSummaryWidget(
+                invoice: "100000",
+                order: "500",
+                orderCode: "20211",
+                quote: "1000",
+                customerName: "Ahmed Khaled",
+              ),
+              OrderSummaryWidget(
+                invoice: "100000",
+                order: "500",
+                orderCode: "20211",
+                quote: "1000",
+                customerName: "Ahmed Khaled",
+              ),
+              OrderSummaryWidget(
+                invoice: "100000",
+                order: "500",
+                orderCode: "20211",
+                quote: "1000",
+                customerName: "Ahmed Khaled",
+              ),
+              OrderSummaryWidget(
+                invoice: "100000",
+                order: "500",
+                orderCode: "20211",
+                quote: "1000",
+                customerName: "Ahmed Khaled",
               ),
             ],
           );
         },
       ),
     );
-  }
-
-  Widget _buildCheckboxListItem(
-    BuildContext context,
-    String title, {
-    bool isChecked = false,
-  }) {
-    final textScale = MediaQuery.of(context).textScaleFactor;
-    return Container(
-      color: Colors.white,
-      height: MediaQuery.of(context).size.height * 0.07,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            _buildCheckbox(isChecked),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 14 * textScale,
-                  color: const Color(0xFF1F2937),
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCheckbox(bool isChecked) {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-        color: isChecked ? const Color(0xFF0075FF) : Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: isChecked ? const Color(0xFF0075FF) : const Color(0xFF767676),
-          width: 1,
-        ),
-      ),
-      child:
-          isChecked
-              ? const Icon(Icons.check, size: 16, color: Colors.white)
-              : null,
-    );
-  }
-
-  Widget _buildDivider() {
-    return const Divider(height: 1, thickness: 1, color: Color(0xFFF3F4F6));
   }
 
   Widget _buildFloatingActionButton(BuildContext context) {
