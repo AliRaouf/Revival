@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:revival/features/business_partners/presentation/view/business_partner_view.dart';
 import 'package:revival/features/order/presentation/views/open_orders.dart';
-
 
 class DashBoard extends StatelessWidget {
   const DashBoard({super.key});
@@ -15,6 +15,11 @@ class DashBoard extends StatelessWidget {
     final horizontalPadding = isTablet ? screenWidth * 0.05 : 0.0;
 
     final menuItems = [
+      {
+        'title': 'Add Business Partner',
+        'icon': Icons.list_alt_rounded,
+        'page': NewBusinessPartnerPage(),
+      },
       {
         'title': 'Orders',
         'icon': Icons.list_alt_rounded,
