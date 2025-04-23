@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart'; // Import the flutter_animate package
+import 'package:revival/core/custom/logo_image.dart';
 import 'package:revival/features/dashboard/presentation/views/dashboard_page.dart';
+import 'package:revival/features/login/presentation/views/components/labeled_field.dart';
+import 'package:revival/features/login/presentation/views/widgets/forgot_password.dart';
+import 'package:revival/features/login/presentation/views/widgets/login_button.dart';
+import 'package:revival/features/login/presentation/views/widgets/remember_me.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // For remembering login details
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -8,8 +15,75 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool _obscureText = true;
+  final _databaseNameController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _rememberMe = false;
+  late AnimationController _logoAnimationController;
+  late Animation<double> _logoAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+    _logoAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..forward(); // Start the animation on load
+
+    _logoAnimation = CurvedAnimation(
+      parent: _logoAnimationController,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _databaseNameController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _logoAnimationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _rememberMe = prefs.getBool('rememberMe') ?? false;
+      if (_rememberMe) {
+        _databaseNameController.text = prefs.getString('databaseName') ?? '';
+        _usernameController.text = prefs.getString('username') ?? '';
+        _passwordController.text = prefs.getString('password') ?? '';
+      }
+    });
+  }
+
+  Future<void> _saveCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', _rememberMe);
+    if (_rememberMe) {
+      await prefs.setString('databaseName', _databaseNameController.text);
+      await prefs.setString('username', _usernameController.text);
+      await prefs.setString('password', _passwordController.text);
+    } else {
+      await prefs.remove('databaseName');
+      await prefs.remove('username');
+      await prefs.remove('password');
+    }
+  }
+
+  void _login() {
+    // In a real application, you would authenticate with your backend here.
+    // For this example, we'll just navigate to the dashboard.
+    _saveCredentials(); // Save credentials on login
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const DashBoard()),
+    );
+    // You might want to add error handling and loading states here.
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +104,11 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
-              Image.network(
-                'https://revival-me.com/new2/wp-content/uploads/2020/05/Revival-transparent.png',
-                width: cardWidth * 0.45,
-                fit: BoxFit.contain,
-              ),
+              // Enhanced Logo with Animation
+             LogoImage(cardWidth: cardWidth, logoAnimation: _logoAnimation),
+              SizedBox(height: vSpace(2)),
 
-              // Login Card
+              // Login Card with Subtle Animation
               Container(
                 width: cardWidth,
                 constraints: const BoxConstraints(maxWidth: 500),
@@ -47,15 +118,15 @@ class _LoginPageState extends State<LoginPage> {
                   boxShadow: const [
                     BoxShadow(
                       color: Color(0x19000000),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: -1,
+                      blurRadius: 8, // Slightly more pronounced shadow
+                      offset: Offset(0, 6), // Deeper shadow
+                      spreadRadius: -2, // More subtle spread
                     ),
                     BoxShadow(
                       color: Color(0x19000000),
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                      spreadRadius: -2,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                      spreadRadius: -3,
                     ),
                   ],
                 ),
@@ -63,52 +134,56 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Title
+                    // Animated Title
                     Text(
                       'Login',
                       textAlign: TextAlign.center,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineSmall?.copyWith(
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: const Color(0xFF17405E),
-                        fontSize: 20.4 * textScale,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 22.0 * textScale, // Slightly larger title
+                        fontWeight: FontWeight.w700, // More prominent weight
                       ),
-                    ),
+                    ).animate().slideY(duration: 500.ms, curve: Curves.easeOut),
 
-                    SizedBox(height: vSpace(1.5)),
+                    SizedBox(height: vSpace(2)),
 
                     // -- Database Name --
-                    _buildLabeledField(
+                    buildLabeledField(
                       context,
                       label: 'Database Name',
                       textScale: textScale,
-                    ),
+                      controller: _databaseNameController,
+                      keyboardType: TextInputType.url, // Hint for database name
+                    ).animate().fadeIn(delay: 100.ms),
 
-                    SizedBox(height: vSpace(1.25)),
+                    SizedBox(height: vSpace(1.5)),
 
                     // -- Username --
-                    _buildLabeledField(
+                    buildLabeledField(
                       context,
-                      label: 'Username',
+                      label: 'Username (SAP Customer Code)',
                       textScale: textScale,
-                    ),
+                      controller: _usernameController,
+                      keyboardType: TextInputType.visiblePassword, // Could be alphanumeric
+                    ).animate().fadeIn(delay: 200.ms),
 
-                    SizedBox(height: vSpace(1.25)),
+                    SizedBox(height: vSpace(1.5)),
 
                     // -- Password --
-                    _buildLabeledField(
+                    buildLabeledField(
                       context,
                       label: 'Password',
                       textScale: textScale,
                       obscureText: _obscureText,
+                      controller: _passwordController,
+                      keyboardType: TextInputType.visiblePassword,
                       suffix: IconButton(
-                        iconSize: 24,
-                        splashRadius: 24,
+                        iconSize: 26, // Slightly larger icon
+                        splashRadius: 26,
                         icon: Icon(
                           _obscureText
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded, // More modern icons
                         ),
                         onPressed: () {
                           setState(() {
@@ -116,41 +191,22 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                       ),
-                    ),
+                    ).animate().fadeIn(delay: 300.ms),
 
-                    SizedBox(height: vSpace(1.25)),
+                    SizedBox(height: vSpace(1.75)),
 
-                    // -- Login Button --
-                    SizedBox(
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const DashBoard(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF17405E),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          minimumSize: const Size.fromHeight(48),
-                        ),
-                        child: Text(
-                          'Login',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 13.6 * textScale,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // -- Remember Me Checkbox --
+                    RememberMe(rememberMe: _rememberMe,textScale: textScale).animate().fadeIn(delay: 400.ms),
+
+                    SizedBox(height: vSpace(2)),
+
+                    // -- Animated Login Button with Feedback --
+                    LoginButton(textScale: textScale, onPressed: _login),
+
+                    SizedBox(height: vSpace(2)),
+
+                    // -- Forgot Password (Optional) --
+                    ForgotPassword(textScale: textScale).animate().fadeIn(delay: 600.ms),
                   ],
                 ),
               ),
@@ -160,51 +216,5 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  Widget _buildLabeledField(
-    BuildContext context, {
-    required String label,
-    required double textScale,
-    bool obscureText = false,
-    Widget? suffix,
-  }) {
-    final labelStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: const Color(0xFF374151),
-      fontSize: 11.9 * textScale,
-      fontWeight: FontWeight.w500,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: labelStyle),
-        const SizedBox(height: 4),
-        TextFormField(
-          obscureText: obscureText,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 17,
-              vertical: 13,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
-            ),
-            suffixIcon:
-                suffix != null
-                    ? SizedBox(
-                      width: 48,
-                      height: 48,
-                      child: Center(child: suffix),
-                    )
-                    : null,
-          ),
-        ),
-      ],
-    );
-  }
 }
+

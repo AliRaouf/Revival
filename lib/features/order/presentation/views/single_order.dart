@@ -1,113 +1,390 @@
+// --- lib/features/order/presentation/views/single_order.dart ---
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // For date formatting
 
-class OrderSummaryWidget extends StatelessWidget {
-  final String orderCode;
-  final String customerName;
-  final String quote;
-  final String order;
-  final String invoice;
+// --- "WOW" Style Constants (Magenta Theme Enhanced) ---
+const Color wowPrimaryMagenta = Color(0xFF173F5D); // Keep vibrant magenta
+const Color wowSecondaryMagenta = Color(0xFF173F5D); // Lighter magenta accent (can be used for hover/splash)
+const Color wowBackgroundColor = Color(0xFFFFFFFF); // Clean white background
+const Color wowLightBackground = Color(0xFFF9FAFB); // Very light grey for subtle contrast
+const Color wowDarkTextColor = Color(0xFF1A202C);  // Near black for primary text
+const Color wowMediumTextColor = Color(0xFF4A5568); // Dark grey for secondary text/labels
+const Color wowLightTextColor = Color(0xFF718096); // Lighter grey for less important info
+const Color wowSubtleBorderColor = Color(0xFFE2E8F0); // Very light grey for borders/dividers
+const Color wowShadowColor = Color(0xFFE2E8F0);    // Soft grey shadow
 
-  const OrderSummaryWidget({
+class SingleOrderScreen extends StatelessWidget {
+  final String orderId;
+
+  const SingleOrderScreen({
     super.key,
-    required this.orderCode,
-    required this.customerName,
-    required this.quote,
-    required this.order,
-    required this.invoice,
+    required this.orderId,
   });
 
   @override
   Widget build(BuildContext context) {
-    const mainColor = Color(0xFF607D8B); // blue-gray
+    print("Received Order ID: $orderId"); // For debugging
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: Colors.grey.withOpacity(0.15)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Top row with badge and customer name
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: mainColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  '#$orderCode',
-                  style: TextStyle(
-                    color: mainColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+    // --- TODO: Fetch actual order data using orderId ---
+    final String customerName = "2Demo (VAT Exempt)";
+    final orderData = _getPlaceholderOrderData(orderId);
+    final DateFormat dateFormat = DateFormat('EEEE, MMMM d, yyyy');
+
+    return Scaffold(
+      backgroundColor: wowBackgroundColor,
+      appBar: _buildWowAppBar(context, orderId, customerName),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // --- Section 1: Order Header Info ---
+            _buildSectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildWowInfoRow(
+                    label: 'Customer',
+                    value: orderData['customerType'] as String,
+                    valueFontSize: 16,
+                    isValueBold: true,
                   ),
-                ),
-              ),
-              Row(
-                children: const [
-                  Icon(Icons.table_chart, size: 16, color: Colors.black54),
-                  SizedBox(width: 4),
-                  Text('2Demo', style: TextStyle(color: Colors.black87)),
+                  const SizedBox(height: 18),
+                  _buildWowInfoRow(
+                    label: 'Document date',
+                    value: dateFormat.format(orderData['documentDate'] as DateTime),
+                  ),
+                  const SizedBox(height: 18),
+                  _buildWowInfoRow(
+                    label: 'Delivery date',
+                    value: dateFormat.format(orderData['deliveryDate'] as DateTime),
+                  ),
+                  const SizedBox(height: 18),
+                  _buildWowInfoRow(
+                    label: 'Reference number',
+                    value: orderData['referenceNumber'] as String? ?? '-',
+                  ),
+                  const SizedBox(height: 18),
+                  _buildWowInfoRow(
+                    label: 'Title',
+                    value: orderData['title'] as String? ?? '-',
+                  ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            orderCode,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 24),
 
-          /// Bottom row with Quote / Order / Invoice
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildAmountColumn('Quote', quote, mainColor),
-              _buildAmountColumn('Order', order, mainColor),
-              _buildAmountColumn('Invoice', invoice, mainColor),
-            ],
-          ),
-        ],
+            // --- Section 2: Sales & Contact Info ---
+            _buildSectionCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildWowInfoRow(
+                      label: 'Sales person',
+                      value: orderData['salesPerson'] as String,
+                      valueFontSize: 16,
+                      isValueBold: true,
+                    ),
+                    const SizedBox(height: 18),
+                    _buildWowInfoRow(
+                      label: 'Contact person',
+                      value: orderData['contactPerson'] as String? ?? '-',
+                    ),
+                    const SizedBox(height: 20),
+                    // --- Modified Contact Icons ---
+                    _buildWowContactActions(), // Use consistent button style
+                  ],
+                )
+            ),
+            const SizedBox(height: 24),
+
+            // --- Section 3: Custom Fields Button (Modified Style) ---
+            _buildWowTextButton( // Use a consistent button style
+              label: 'CUSTOM FIELDS',
+              onTap: () { print('Custom Fields button tapped'); },
+            ),
+            const SizedBox(height: 24),
+
+            // --- Section 4: Items ---
+            const Text(
+              'ITEMS',
+              style: TextStyle( color: wowMediumTextColor, fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 0.8),
+            ),
+            const SizedBox(height: 12),
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: (orderData['items'] as List).length,
+              itemBuilder: (context, index) {
+                final item = (orderData['items'] as List)[index];
+                return _buildWowItemRow(
+                  code: item['code'] as String,
+                  name: item['name'] as String,
+                  price: item['price'] as double,
+                  discount: item['discount'] as double,
+                  currency: item['currency'] as String,
+                  quantity: item['quantity'] as double,
+                );
+              },
+              separatorBuilder: (context, index) => const Divider( height: 24, thickness: 1, color: wowSubtleBorderColor),
+            ),
+            const SizedBox(height: 24),
+
+            // --- Section 5: Totals ---
+            _buildSectionCard(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  children: [
+                    _buildWowTotalRow(
+                        label: 'Discount:',
+                        value: "${(orderData['discountPercent'] as double).toStringAsFixed(2)}% (${(orderData['discountValue'] as double).toStringAsFixed(2)} ${orderData['currency']})"),
+                    const SizedBox(height: 12),
+                    _buildWowTotalRow(
+                        label: 'VAT:',
+                        value: "${(orderData['vatValue'] as double).toStringAsFixed(2)} ${orderData['currency']}"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: Divider(height: 1, thickness: 1, color: wowSubtleBorderColor.withOpacity(0.6)),
+                    ),
+                    _buildWowTotalRow(
+                        label: 'Total:',
+                        value: "${(orderData['totalValue'] as double).toStringAsFixed(2)} ${orderData['currency']}",
+                        isValueBold: true,
+                        valueFontSize: 20,
+                        valueColor: wowPrimaryMagenta),
+                  ],
+                )
+            ),
+            const SizedBox(height: 30), // Space before the new button
+
+            // --- Section 6: Copy to Invoice Button ---
+            _buildCopyToInvoiceButton(), // Add the new button here
+
+            const SizedBox(height: 30), // Padding at the very bottom
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildAmountColumn(String label, String value, Color color) {
+  // --- Placeholder Data Helper (Unchanged) ---
+  Map<String, dynamic> _getPlaceholderOrderData(String orderId) {
+    return {
+      'customerType': 'VAT Exempted Customer',
+      'documentDate': DateTime(2023, 10, 12),
+      'deliveryDate': DateTime(2023, 10, 12),
+      'referenceNumber': 'REF-${orderId.split('_').last}',
+      'title': 'Demo Order Title',
+      'salesPerson': 'Admin User',
+      'contactPerson': 'Contact Person Name',
+      'contactPhone': '',
+      'contactEmail': '',
+      'items': [
+        { 'code': 'B001', 'name': 'Dune', 'price': 10.00, 'discount': 0.00, 'currency': 'EUR', 'quantity': 1.00, },
+        { 'code': 'A015', 'name': 'Spice Blend', 'price': 25.50, 'discount': 2.50, 'currency': 'EUR', 'quantity': 2.00, },
+      ],
+      'discountValue': 2.50 * 2,
+      'discountPercent': 10.00,
+      'vatValue': ((10.00*1.00) + (23.00*2.00)) * 0.15,
+      'totalValue': (10.00*1.00) + (23.00*2.00) + (((10.00*1.00) + (23.00*2.00)) * 0.15),
+      'currency': 'EUR',
+    };
+  }
+
+  // --- "WOW" Helper Widgets ---
+
+  // AppBar (Unchanged from previous "Wow" version)
+  PreferredSizeWidget _buildWowAppBar(BuildContext context, String orderId, String customerName) {
+    return AppBar(
+      backgroundColor: wowPrimaryMagenta, elevation: 2.0, shadowColor: wowPrimaryMagenta.withOpacity(0.3),
+      leading: IconButton( icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 22), onPressed: () => Navigator.of(context).pop()),
+      title: Column( crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('Order $orderId', style: const TextStyle( color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+        const SizedBox(height: 3),
+        Text(customerName, style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500)),
+      ],
+      ),
+      centerTitle: false, titleSpacing: -5,
+      actions: [
+        IconButton( icon: const Icon(Icons.email_outlined, color: Colors.white, size: 24), tooltip: 'Email Order', onPressed: () { print('Email button tapped'); }),
+        IconButton( icon: const Icon(Icons.print_outlined, color: Colors.white, size: 24), tooltip: 'Print Order', onPressed: () { print('Print button tapped'); }),
+      ],
+    );
+  }
+
+  // Section Card Helper (Unchanged)
+  Widget _buildSectionCard({required Widget child, EdgeInsets? padding}) {
+    return Container(
+      width: double.infinity,
+      padding: padding ?? const EdgeInsets.all(18.0),
+      decoration: BoxDecoration(
+          color: wowLightBackground, borderRadius: BorderRadius.circular(12.0),
+          border: Border.all(color: wowSubtleBorderColor, width: 0.8)
+      ),
+      child: child,
+    );
+  }
+
+  // Info Row Helper (Unchanged)
+  Widget _buildWowInfoRow({ required String label, required String value, bool isValueBold = false, double valueFontSize = 15.0}) {
+    return Padding( padding: const EdgeInsets.only(bottom: 4.0),
+      child: Column( crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        Text( label.toUpperCase(), style: const TextStyle(color: wowLightTextColor, fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5)),
+        const SizedBox(height: 5),
+        Text( value.isEmpty ? '-' : value, style: TextStyle( color: wowDarkTextColor, fontSize: valueFontSize, fontWeight: isValueBold ? FontWeight.w600 : FontWeight.normal, height: 1.3)),
+      ],
+      ),
+    );
+  }
+
+  // --- MODIFIED: Contact Actions with consistent button style ---
+  Widget _buildWowContactActions() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: Colors.black54),
+        const Text(
+          'CONTACT ACTIONS',
+          style: TextStyle(color: wowLightTextColor, fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5),
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            // Use the general button builder for icons
+            _buildWowIconButton( // Changed helper name
+                icon: Icons.phone_outlined,
+                tooltip: 'Call Contact',
+                onTap: () { print('Phone button tapped'); }
+            ),
+            const SizedBox(width: 16),
+            _buildWowIconButton( // Changed helper name
+                icon: Icons.email_outlined,
+                tooltip: 'Email Contact',
+                onTap: () { print('Contact email button tapped'); }
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  // --- NEW: Helper for consistent Icon Button style ---
+  Widget _buildWowIconButton({required IconData icon, required String tooltip, required VoidCallback onTap}) {
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+          backgroundColor: wowPrimaryMagenta, // Consistent button color
+          foregroundColor: Colors.white,     // Consistent icon/text color
+          shape: const CircleBorder(),      // Make it circular
+          padding: const EdgeInsets.all(10), // Adjust padding as needed
+          minimumSize: const Size(40, 40), // Ensure a minimum size
+          elevation: 2.0,
+          shadowColor: wowPrimaryMagenta.withOpacity(0.4)
+      ),
+      child: Tooltip( // Tooltip for accessibility
+        message: tooltip,
+        child: Icon(icon, size: 20), // Adjust icon size
+      ),
+    );
+  }
+
+
+  // --- MODIFIED: Custom Fields Button using consistent style ---
+  Widget _buildWowTextButton({required String label, required VoidCallback onTap}) {
+    // Use ElevatedButton for consistent look and feel
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: wowPrimaryMagenta, // Consistent Magenta Background
+          foregroundColor: Colors.white,     // White Text
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          elevation: 3.0,
+          shadowColor: wowPrimaryMagenta.withOpacity(0.4),
+        ),
+        onPressed: onTap,
+        child: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 0.5),
+        ),
+      ),
+    );
+  }
+
+  // Item Row Helper (Unchanged)
+  Widget _buildWowItemRow({ required String code, required String name, required double price, required double discount, required String currency, required double quantity}) {
+    final double itemTotal = (price * quantity) - (discount * quantity);
+    return Padding( padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row( crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding( padding: const EdgeInsets.only(top: 3.0), child: Icon(Icons.inventory_2_outlined, color: wowBackgroundColor, size: 20)),
+        const SizedBox(width: 12),
+        Expanded( child: Column( crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text( name, style: const TextStyle( color: wowDarkTextColor, fontSize: 15, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 5),
+          Text( 'Code: $code', style: const TextStyle(color: wowLightTextColor, fontSize: 12)),
+          const SizedBox(height: 5),
+          Text( 'Price: ${price.toStringAsFixed(2)} ${discount > 0 ? " / Disc: ${discount.toStringAsFixed(2)} " : ""} $currency', style: const TextStyle(color: wowMediumTextColor, fontSize: 12)),
+        ],
+        ),
+        ),
+        const SizedBox(width: 12),
+        Column( crossAxisAlignment: CrossAxisAlignment.end, mainAxisAlignment: MainAxisAlignment.start, children: [
+          Text( 'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)}', style: const TextStyle(color: wowMediumTextColor, fontSize: 13, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 5),
+          Text( '${itemTotal.toStringAsFixed(2)} $currency', style: const TextStyle( color: wowDarkTextColor, fontSize: 15, fontWeight: FontWeight.w600)),
+        ],
+        ),
+      ],
+      ),
+    );
+  }
+
+  // Total Row Helper (Unchanged)
+  Widget _buildWowTotalRow({ required String label, required String value, bool isValueBold = false, double valueFontSize = 15.0, Color? valueColor}) {
+    return Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text( label, style: const TextStyle(color: wowMediumTextColor, fontSize: 14, fontWeight: FontWeight.w500)),
+      Text( value, style: TextStyle( color: valueColor ?? wowDarkTextColor, fontSize: valueFontSize, fontWeight: isValueBold ? FontWeight.bold : FontWeight.w600)),
+    ],
+    );
+  }
+
+  // --- NEW: Copy to Invoice Button ---
+  Widget _buildCopyToInvoiceButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: wowPrimaryMagenta, // Consistent Magenta Background
+          foregroundColor: Colors.white,     // White Text/Icon
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          elevation: 3.0,
+          shadowColor: wowPrimaryMagenta.withOpacity(0.4),
+        ),
+        onPressed: () {
+          // TODO: Implement Copy to Invoice logic
+          // This might involve:
+          // 1. Reading orderData
+          // 2. Preparing data for the invoice screen/state
+          // 3. Navigating to the New Invoice screen, passing the data
+          //    (Potentially using Provider or Riverpod to pass state)
+          print('Copy to Invoice button tapped');
+          // Example Navigation (replace NewInvoiceScreen with your actual screen)
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => NewInvoiceScreen(orderData: orderData)));
+        },
+        child: const Row( // Use Row to place icon after text
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min, // Row takes minimum space needed
+          children: [
+            Text(
+              'COPY TO INVOICE',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 0.5),
+            ),
+            SizedBox(width: 8), // Space between text and icon
+            Icon(Icons.arrow_forward, size: 18), // Right-pointing arrow
+          ],
+        ),
+      ),
     );
   }
 }

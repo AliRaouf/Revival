@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:revival/features/business_partners/presentation/view/business_partner_view.dart';
+import 'package:revival/features/Stock/presentation/views/show_stock.dart';
+import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
+import 'package:revival/features/dashboard/presentation/views/widgets/dashboard_header.dart';
+import 'package:revival/features/dashboard/presentation/views/widgets/layout_builder.dart';
 import 'package:revival/features/order/presentation/views/open_orders.dart';
+import 'package:revival/features/business_partners/presentation/view/all_businesspartenars.dart'; // Make sure path is correct
+
+const Color darkTextColor = Color(0xFF1F2937);
+final List<Color> menuItemColors = [
+  Color(0xFFE0F2F1), // Teal pale
+  Color(0xFFE1F5FE), // Light Blue pale
+  Color(0xFFE8F5E9), // Green pale
+  Color(0xFFF3E5F5), // Purple pale
+  Color(0xFFFFF3E0), // Orange pale
+  Color(0xFFE8EAF6), // Indigo pale
+];
 
 class DashBoard extends StatelessWidget {
   const DashBoard({super.key});
@@ -12,103 +26,89 @@ class DashBoard extends StatelessWidget {
     final textScale = mq.textScaleFactor;
     final isTablet = screenWidth > 600;
 
-    final horizontalPadding = isTablet ? screenWidth * 0.05 : 0.0;
-
     final menuItems = [
       {
-        'title': 'Add Business Partner',
-        'icon': Icons.list_alt_rounded,
-        'page': NewBusinessPartnerPage(),
+        'title': 'Business Partner',
+        'icon': Icons.people_alt_outlined,
+        'page':
+            const AllBusinessPartnerWowListPage(), // Ensure this class name matches your file
       },
       {
         'title': 'Orders',
-        'icon': Icons.list_alt_rounded,
+        'icon': Icons.receipt_long_outlined,
         'page': const OpenOrdersScreen(),
       },
       {
-        'title': 'AR',
-        'icon': Icons.archive_outlined,
-        'page': const OpenOrdersScreen(),
+        'title': 'AR Invoice',
+        'icon': Icons.request_quote_outlined,
+        'page': const OpenOrdersScreen(), // Replace
       },
       {
         'title': 'Stock',
         'icon': Icons.inventory_2_outlined,
-        'page': const OpenOrdersScreen(),
+        'page':
+            const WarehouseStockPage(), // Ensure this class name matches your file
       },
       {
         'title': 'Collect',
-        'icon': Icons.monetization_on_outlined,
-        'page': const OpenOrdersScreen(),
+        'icon': Icons.payments_outlined,
+        'page': const OpenOrdersScreen(), // Replace
+      },
+      {
+        'title': 'Reports',
+        'icon': Icons.bar_chart_rounded,
+        'page': const OpenOrdersScreen(), // Replace
       },
     ];
 
+    final crossAxisCount = isTablet ? 3 : 2;
+    final aspectRatio = isTablet ? 1.1 : 1.0;
+
     return Scaffold(
       body: SafeArea(
-        child: ResponsiveLayout(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: Container(
-              color: const Color(0xFFF9FAFB),
-              child: Column(
-                children: [
-                  _buildHeader(context, textScale, isTablet),
-                  _buildBrandBar(context, textScale, isTablet),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child:
-                        isTablet
-                            ? GridView.count(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                              childAspectRatio: 3.5,
-                              padding: const EdgeInsets.all(16),
-                              children:
-                                  menuItems.map((item) {
-                                    return _buildMenuCard(
-                                      context: context,
-                                      title: item['title'] as String,
-                                      icon: item['icon'] as IconData,
-                                      onTap:
-                                          () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (_) => item['page'] as Widget,
-                                            ),
-                                          ),
-                                      textScale: textScale,
-                                      isTablet: isTablet,
-                                    );
-                                  }).toList(),
-                            )
-                            : ListView.separated(
-                              padding: const EdgeInsets.all(16),
-                              itemCount: menuItems.length,
-                              separatorBuilder:
-                                  (_, __) => const SizedBox(height: 16),
-                              itemBuilder: (_, idx) {
-                                final item = menuItems[idx];
-                                return _buildMenuCard(
-                                  context: context,
-                                  title: item['title'] as String,
-                                  icon: item['icon'] as IconData,
-                                  onTap:
-                                      () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => item['page'] as Widget,
-                                        ),
-                                      ),
-                                  textScale: textScale,
-                                  isTablet: isTablet,
-                                );
-                              },
+        child: Container(
+          color: Color(0xFFF9FAFB),
+          child: ResponsiveLayout(
+            child: Column(
+              children: [
+                buildHeader(context, textScale, isTablet),
+                buildBrandBar(context, textScale, isTablet),
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(20.0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 18.0,
+                      mainAxisSpacing: 18.0,
+                      childAspectRatio: aspectRatio,
+                    ),
+                    itemCount: menuItems.length,
+                    itemBuilder: (context, index) {
+                      final item = menuItems[index];
+                      // --- Calculate Color Index ---
+                      final colorIndex = index % menuItemColors.length;
+                      final itemColor = menuItemColors[colorIndex];
+
+                      return _buildWowMenuItem(
+                        context: context,
+                        title: item['title'] as String,
+                        icon: item['icon'] as IconData,
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => item['page'] as Widget,
+                              ),
                             ),
+                        textScale: textScale,
+                        isTablet: isTablet,
+                        // --- Pass the selected color ---
+                        backgroundColor: itemColor,
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -116,122 +116,59 @@ class DashBoard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, double textScale, bool isTablet) {
-    final iconSize = isTablet ? 48.0 : 36.0;
-    return Container(
-      color: const Color(0xFF17405E),
-      padding: EdgeInsets.all(isTablet ? 24 : 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Username + code
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Username',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontSize: 17 * textScale,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Code of the sales person',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFFD1D5DB),
-                  fontSize: 10.2 * textScale,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
-          // Profile icon
-          Container(
-            width: iconSize,
-            height: iconSize,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.26),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.person,
-              color: Colors.white,
-              size: iconSize * 0.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBrandBar(BuildContext context, double textScale, bool isTablet) {
-    final barHeight = isTablet ? 72.0 : 56.0;
-    return Container(
-      width: double.infinity,
-      height: barHeight,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x0C000000),
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Image.network(
-          'https://revival-me.com/new2/wp-content/uploads/2020/05/Revival-transparent.png',
-          width: MediaQuery.of(context).size.width * 0.45,
-          fit: BoxFit.contain,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuCard({
+  // --- UPDATED "WOW" Menu Item Builder ---
+  Widget _buildWowMenuItem({
     required BuildContext context,
     required String title,
     required IconData icon,
     required VoidCallback onTap,
     required double textScale,
     required bool isTablet,
+    required Color backgroundColor, // Added background color parameter
   }) {
-    final iconContainerSize = isTablet ? 56.0 : 40.0;
-    final iconSize = iconContainerSize * 0.5;
+    final iconSize = isTablet ? 48.0 : 36.0;
+    final borderRadius = BorderRadius.circular(12.0);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Card(
-        color: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1, color: const Color(0xFFF3F4F6)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
+    // Generate splash/highlight colors based on the background
+    final splashColor = Colors.black.withOpacity(
+      0.08,
+    ); // Consistent subtle dark splash
+    final highlightColor = Colors.black.withOpacity(
+      0.04,
+    ); // Consistent subtle dark highlight
+
+    return Material(
+      // --- Apply the background color ---
+      color: backgroundColor,
+      borderRadius: borderRadius,
+      elevation: 5.0,
+      shadowColor: Color(0x1A000000),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: borderRadius,
+        splashColor: splashColor, // Use generated splash
+        highlightColor: highlightColor, // Use generated highlight
+        child: Container(
           padding: EdgeInsets.all(isTablet ? 20 : 16),
-          child: Row(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: iconContainerSize,
-                height: iconContainerSize,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF17405E),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: Colors.white, size: iconSize),
+              Icon(
+                icon,
+                // --- Keep icon color consistent for visibility ---
+                color: Color(0xFF17405E),
+                size: iconSize,
               ),
-              SizedBox(width: isTablet ? 24 : 16),
+              const SizedBox(height: 12),
               Text(
                 title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF1F2937),
-                  fontSize: 15.3 * textScale,
-                  fontWeight: FontWeight.w500,
+                textAlign: TextAlign.center,
+                // --- Keep text color consistent for visibility ---
+                style: TextStyle(
+                  color: darkTextColor,
+                  fontSize: (isTablet ? 16 : 14) * textScale,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -242,32 +179,4 @@ class DashBoard extends StatelessWidget {
   }
 }
 
-// Your existing ResponsiveLayout remains unchanged
-class ResponsiveLayout extends StatelessWidget {
-  final Widget child;
-  const ResponsiveLayout({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final w = constraints.maxWidth;
-        if (w > 1200) {
-          return Center(child: SizedBox(width: 1200, child: child));
-        } else if (w > 900) {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: w * 0.1),
-            child: child,
-          );
-        } else if (w > 600) {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: w * 0.05),
-            child: child,
-          );
-        } else {
-          return child;
-        }
-      },
-    );
-  }
-}
+// --- Responsive Layout (Unchanged) ---
