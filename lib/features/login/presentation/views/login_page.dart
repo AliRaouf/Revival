@@ -1,9 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/core/widgets/logo_image.dart';
-import 'package:revival/features/dashboard/presentation/views/dashboard_page.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
 import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
 import 'package:revival/features/login/presentation/views/widgets/labeled_field.dart';
@@ -68,7 +69,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _forgotPassword() {
-    print('Forgot Password tapped');
+    // print('Forgot Password tapped');
+    if (context.locale.languageCode == 'ar') {
+      context.setLocale(const Locale('en', 'US'));
+    } else {
+      context.setLocale(const Locale('ar', 'EG'));
+    }
   }
 
   @override
@@ -127,11 +133,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         backgroundColor: Colors.green,
                       ),
                     );
-
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => DashBoard()),
-                    );
+                    context.pushReplacement('/dashboard');
                   }
                 },
                 builder: (context, state) {
@@ -154,7 +156,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Login',
+                                'Login'.tr(),
                                 textAlign: TextAlign.center,
                                 style: textTheme.headlineSmall,
                               ).animate().slideY(
@@ -165,7 +167,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               SizedBox(height: vSpace(2)),
 
                               LabeledField(
-                                label: 'Database Name',
+                                label: 'DBName'.tr(),
                                 controller: _databaseNameController,
                                 keyboardType: TextInputType.url,
                                 validator:
@@ -178,7 +180,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               SizedBox(height: vSpace(1.5)),
 
                               LabeledField(
-                                label: 'Username (SAP Customer Code)',
+                                label: 'Username'.tr(),
                                 controller: _usernameController,
                                 keyboardType: TextInputType.visiblePassword,
                                 validator:
@@ -191,7 +193,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               SizedBox(height: vSpace(1.5)),
 
                               LabeledField(
-                                label: 'Password',
+                                label: 'Password'.tr(),
                                 obscureText: _obscureText,
                                 controller: _passwordController,
                                 keyboardType: TextInputType.visiblePassword,
@@ -250,7 +252,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         vertical: 8.0,
                                       ),
                                       child: Text(
-                                        'Remember Me',
+                                        'RememberMe'.tr(),
 
                                         style: textTheme.bodyMedium?.copyWith(
                                           color:
@@ -282,7 +284,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                   ? const CircularProgressIndicator(
                                                     color: Colors.white,
                                                   )
-                                                  : Text('Login'),
+                                                  : Text('Login'.tr()),
                                         )
                                         .animate(delay: 500.ms)
                                         .scale(
@@ -298,7 +300,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 child: TextButton(
                                   onPressed: isLoading ? null : _forgotPassword,
                                   child: Text(
-                                    'Forgot Password?',
+                                    'ForgotPassword'.tr(),
 
                                     style: textTheme.bodySmall?.copyWith(
                                       color:

@@ -1,0 +1,12 @@
+{
+    "DBName":"Database Name",
+    "Username":"UserName",
+    "Password":"Password",
+    "RememberMe":"Remember Me",
+    "Login":"Login",
+    "Logout":"Logout",
+    "LoginFailed":"Login failed. Please check your username and password.",
+    "LoginSuccess":"Login successful. Welcome back!",
+    "LogoutSuccess":"Logout successful. See you next time!",
+    "ForgotPassword":"Forgot Password?"
+}
