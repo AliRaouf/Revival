@@ -17,18 +17,19 @@ class RevivalApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final credentialsRepo = CredsRepoImp();
-  final loginRepo = LoginRepoImp();
-  final credentialsUseCase = CredentialsUseCase(credentialsRepo);
-  final loginUsecase = LoginUseCase(loginRepo, credentialsRepo);
+    final credentialsRepo = CredsRepoImp();
+    final loginRepo = LoginRepoImp();
+    final credentialsUseCase = CredentialsUseCase(credentialsRepo);
+    final loginUsecase = LoginUseCase(loginRepo, credentialsRepo);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => LoginCubit(loginUsecase: loginUsecase, credentialsUseCase: credentialsUseCase),
+          create:
+              (context) => LoginCubit(
+                loginUsecase: loginUsecase,
+                credentialsUseCase: credentialsUseCase,
+              ),
         ),
-        // BlocProvider(
-        //   create: (context) => SubjectBloc(),
-        // ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,4 +40,3 @@ class RevivalApp extends StatelessWidget {
     );
   }
 }
-

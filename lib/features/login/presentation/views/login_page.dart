@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // Import flutter_bloc
-import 'package:revival/core/failures/failures.dart'; // Assuming Failures class exists
-import 'package:revival/core/theme/theme.dart'; // Assuming this contains scaffoldBackgroundColor
-import 'package:revival/core/widgets/logo_image.dart'; // Assuming this exists and is styled appropriately
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/widgets/logo_image.dart';
 import 'package:revival/features/dashboard/presentation/views/dashboard_page.dart';
-import 'package:revival/features/login/domain/entities/user_creds.dart'; // Import UserCredentials
-import 'package:revival/features/login/presentation/cubit/login_cubit.dart'; // Import your LoginCubit
-import 'package:revival/features/login/presentation/views/widgets/labeled_field.dart'; // Keep using the refactored labeled_field
-// Remove SharedPreferences import as logic is moved to repo/usecase
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:revival/features/login/domain/entities/user_creds.dart';
+import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
+import 'package:revival/features/login/presentation/views/widgets/labeled_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,19 +20,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final _databaseNameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _rememberMe =
-      false; // This state is now primarily managed by the Cubit, but kept for the checkbox UI
+  bool _rememberMe = false;
   late AnimationController _logoAnimationController;
   late Animation<double> _logoAnimation;
 
-  // Form Key for potential validation
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    // Access the Cubit and load saved credentials when the page initializes
-    // This will trigger the listener when the CredentialsLoaded state is emitted.
+
     context.read<LoginCubit>().loadSavedCredentials();
 
     _logoAnimationController = AnimationController(
@@ -58,129 +52,94 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // --- Login Logic using Cubit ---
   void _login() async {
-    // Optional: Add form validation
     if (_formKey.currentState?.validate() ?? false) {
-      // Create UserCredentials object from text field values
       final userCredentials = UserCredentials(
-        // Corrected property names to match your provided UserCredentials structure
         dbName: _databaseNameController.text,
         username: _usernameController.text,
         password: _passwordController.text,
       );
 
-      // Call the login method on the Cubit.
-      // The Cubit will handle the login logic, emit states, and the listener
-      // will react to those states for side effects (snackbar, navigation).
-      // We no longer await the result here to avoid double handling.
       context.read<LoginCubit>().login(
         userCredentials: userCredentials,
-        rememberMe: _rememberMe, // Use the current state of the checkbox
+        rememberMe: _rememberMe,
       );
-
-      // Removed the result.fold block from here.
-      // The listener in the BlocConsumer will handle success/failure.
     }
   }
 
-  // Placeholder for forgot password logic
   void _forgotPassword() {
-    // Implement forgot password logic here, possibly using a Cubit method
     print('Forgot Password tapped');
-    // Example: context.read<LoginCubit>().forgotPassword(dbname, username);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Get theme data
-    final textTheme = theme.textTheme; // Get text theme
-    final colorScheme = theme.colorScheme; // Get color scheme
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
 
     final mq = MediaQuery.of(context);
     final screenSize = mq.size;
     final isTablet = screenSize.width > 600;
-    final cardWidth =
-        isTablet ? 500.0 : screenSize.width * 0.9; // Adjusted width
-    double vSpace(double factor) => 16 * factor; // Keep local spacing helper
+    final cardWidth = isTablet ? 500.0 : screenSize.width * 0.9;
+    double vSpace(double factor) => 16 * factor;
 
     return Scaffold(
       body: Container(
-        color:
-            scaffoldBackgroundColor, // Assuming this color exists in your theme.dart
+        color: scaffoldBackgroundColor,
         child: Center(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(
               horizontal: isTablet ? 24 : 16,
-              vertical: isTablet ? 32 : 20, // Adjusted vertical padding
+              vertical: isTablet ? 32 : 20,
             ),
             child: Form(
               key: _formKey,
-              // Use BlocConsumer to listen to state changes and rebuild UI
-              // The state type should be the base state class of your Cubit
+
               child: BlocConsumer<LoginCubit, LoginCubitState>(
-                // Use LoginState as the type
                 listener: (context, state) {
-                  // Listener is good for side effects like showing Snackbars or navigation
                   if (state is CredentialsSuccess) {
-                    // Use CredentialsLoaded state name
-                    // Populate fields if credentials were loaded
                     _rememberMe = state.rememberMe;
                     if (state.userCredentials != null) {
-                      // Use credentials property name
                       _databaseNameController.text =
-                          state
-                              .userCredentials!
-                              .dbName; // Use dbname property name
+                          state.userCredentials!.dbName;
                       _usernameController.text =
-                          state
-                              .userCredentials!
-                              .username; // Use username property name
+                          state.userCredentials!.username;
                       _passwordController.text =
-                          state
-                              .userCredentials!
-                              .password; // Use password property name
+                          state.userCredentials!.password;
                     }
-                    // Update the UI state for the checkbox
+
                     setState(() {});
                   }
-                  // Handle LoginError state
+
                   if (state is LoginError) {
-                    // Show error message
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          'Error: ${state.errorMessage}',
-                        ), // Use message property name
+                        content: Text('Error: ${state.errorMessage}'),
                         backgroundColor: Colors.redAccent,
                       ),
                     );
                   }
-                  // Handle LoginSuccess state
+
                   if (state is LoginSuccess) {
-                    // Navigate to dashboard or show success message
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Login Successful!'),
                         backgroundColor: Colors.green,
                       ),
                     );
-                    // Navigate after showing the snackbar
+
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => DashBoard()),
-                    ); // Use named route
+                    );
                   }
                 },
                 builder: (context, state) {
-                  // Builder is where you build the UI based on the current state
-                  // Check if the state is LoginLoading to show a progress indicator
                   final isLoading = state is LoginLoading;
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Assuming LogoImage uses theme or is self-contained
                       LogoImage(
                         cardWidth: cardWidth,
                         logoAnimation: _logoAnimation,
@@ -188,22 +147,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       SizedBox(height: vSpace(2)),
                       Card(
                         child: Container(
-                          // Use Container for padding inside the card
-                          width: cardWidth, // Constrain width here if needed
-                          constraints: const BoxConstraints(
-                            maxWidth: 500,
-                          ), // Max width constraint
+                          width: cardWidth,
+                          constraints: const BoxConstraints(maxWidth: 500),
                           padding: EdgeInsets.all(isTablet ? 32 : 24),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Animated Title using TextTheme
                               Text(
                                 'Login',
                                 textAlign: TextAlign.center,
-                                style:
-                                    textTheme
-                                        .headlineSmall, // Use theme style directly
+                                style: textTheme.headlineSmall,
                               ).animate().slideY(
                                 duration: 500.ms,
                                 curve: Curves.easeOut,
@@ -224,13 +177,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
                               SizedBox(height: vSpace(1.5)),
 
-                              // -- Username --
                               LabeledField(
                                 label: 'Username (SAP Customer Code)',
                                 controller: _usernameController,
-                                keyboardType:
-                                    TextInputType
-                                        .visiblePassword, // Assuming this is correct type
+                                keyboardType: TextInputType.visiblePassword,
                                 validator:
                                     (value) =>
                                         value == null || value.isEmpty
@@ -240,7 +190,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
                               SizedBox(height: vSpace(1.5)),
 
-                              // -- Password --
                               LabeledField(
                                 label: 'Password',
                                 obscureText: _obscureText,
@@ -252,15 +201,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                             ? 'Password is required'
                                             : null,
                                 suffix: IconButton(
-                                  iconSize: 24, // Slightly smaller icon
+                                  iconSize: 24,
                                   splashRadius: 24,
                                   color: theme.iconTheme.color?.withOpacity(
                                     0.7,
-                                  ), // Use theme icon color
+                                  ),
                                   icon: Icon(
                                     _obscureText
-                                        ? Icons
-                                            .visibility_off_outlined // Use outlined icons
+                                        ? Icons.visibility_off_outlined
                                         : Icons.visibility_outlined,
                                   ),
                                   onPressed: () {
@@ -271,9 +219,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 ),
                               ).animate().fadeIn(delay: 300.ms),
 
-                              SizedBox(
-                                height: vSpace(0.5),
-                              ), // Reduced space before checkbox
+                              SizedBox(height: vSpace(0.5)),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -283,22 +229,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         isLoading
                                             ? null
                                             : (bool? value) {
-                                              // Disable checkbox while loading
                                               setState(() {
                                                 _rememberMe = value ?? false;
                                               });
                                             },
 
-                                    visualDensity:
-                                        VisualDensity
-                                            .compact, // Make checkbox smaller
+                                    visualDensity: VisualDensity.compact,
                                   ),
                                   InkWell(
                                     onTap:
                                         isLoading
                                             ? null
                                             : () {
-                                              // Disable InkWell while loading
                                               setState(() {
                                                 _rememberMe = !_rememberMe;
                                               });
@@ -306,17 +248,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 8.0,
-                                      ), // Add padding for easier tap
+                                      ),
                                       child: Text(
                                         'Remember Me',
-                                        // Use theme text style
+
                                         style: textTheme.bodyMedium?.copyWith(
                                           color:
                                               isLoading
                                                   ? theme.disabledColor
-                                                  : textTheme
-                                                      .bodyMedium
-                                                      ?.color, // Grey out text when disabled
+                                                  : textTheme.bodyMedium?.color,
                                         ),
                                       ),
                                     ),
@@ -324,12 +264,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 ],
                               ).animate().fadeIn(delay: 400.ms),
 
-                              SizedBox(height: vSpace(1.5)), // Adjusted space
+                              SizedBox(height: vSpace(1.5)),
                               SizedBox(
                                 height: 52,
                                 child:
                                     ElevatedButton(
-                                          // Disable button while loading
                                           onPressed: isLoading ? null : _login,
                                           style: theme.elevatedButtonTheme.style
                                               ?.copyWith(
@@ -342,11 +281,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                               isLoading
                                                   ? const CircularProgressIndicator(
                                                     color: Colors.white,
-                                                  ) // Show loading indicator
-                                                  : Text(
-                                                    'Login',
-                                                    // Text style comes from ElevatedButtonThemeData
-                                                  ),
+                                                  )
+                                                  : Text('Login'),
                                         )
                                         .animate(delay: 500.ms)
                                         .scale(
@@ -356,23 +292,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         .fade(),
                               ),
 
-                              SizedBox(height: vSpace(1.5)), // Adjusted space
-                              // -- Forgot Password (Integrated from forgot_password.dart) --
+                              SizedBox(height: vSpace(1.5)),
+
                               Center(
                                 child: TextButton(
-                                  onPressed:
-                                      isLoading
-                                          ? null
-                                          : _forgotPassword, // Disable while loading
+                                  onPressed: isLoading ? null : _forgotPassword,
                                   child: Text(
                                     'Forgot Password?',
-                                    // Use theme text style, maybe bodySmall for less emphasis
+
                                     style: textTheme.bodySmall?.copyWith(
                                       color:
                                           isLoading
                                               ? theme.disabledColor
-                                              : colorScheme
-                                                  .primary, // Grey out text when disabled
+                                              : colorScheme.primary,
                                     ),
                                   ),
                                 ),

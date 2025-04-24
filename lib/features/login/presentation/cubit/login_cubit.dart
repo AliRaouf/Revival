@@ -34,7 +34,6 @@ class LoginCubit extends Cubit<LoginCubitState> {
   }
 
   Future<Either<Failures, AuthToken>> login({
-    // Changed return type to return the result
     required UserCredentials userCredentials,
     required bool rememberMe,
   }) async {

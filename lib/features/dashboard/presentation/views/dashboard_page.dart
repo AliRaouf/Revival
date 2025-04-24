@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:revival/features/Stock/presentation/views/show_stock.dart'; // Assuming path is correct
-import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart'; // Assuming uses theme
-import 'package:revival/features/dashboard/presentation/views/widgets/layout_builder.dart'; // Assuming uses theme
+import 'package:revival/features/Stock/presentation/views/show_stock.dart';
+import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
+import 'package:revival/features/dashboard/presentation/views/widgets/layout_builder.dart';
 import 'package:revival/features/order/presentation/views/open_orders.dart';
-import 'package:revival/features/business_partners/presentation/view/all_businesspartenars.dart'; // Assuming path is correct
-// Import theme constants if needed (e.g., specific radii)
+import 'package:revival/features/business_partners/presentation/view/all_businesspartenars.dart';
+
 import 'package:revival/core/theme/theme.dart';
 
-// Keep menu item specific colors here or in a separate constants file
-// These are visual choices for the grid, not core theme elements
 final List<Color> _menuItemColors = [
-  const Color(0xFFE0F2F1), // Teal pale
-  const Color(0xFFE1F5FE), // Light Blue pale
-  const Color(0xFFE8F5E9), // Green pale
-  const Color(0xFFF3E5F5), // Purple pale
-  const Color(0xFFFFF3E0), // Orange pale
-  const Color(0xFFE8EAF6), // Indigo pale
+  const Color(0xFFE0F2F1),
+  const Color(0xFFE1F5FE),
+  const Color(0xFFE8F5E9),
+  const Color(0xFFF3E5F5),
+  const Color(0xFFFFF3E0),
+  const Color(0xFFE8EAF6),
 ];
 
 class DashBoard extends StatelessWidget {
@@ -27,11 +25,9 @@ class DashBoard extends StatelessWidget {
 
     final mq = MediaQuery.of(context);
     final screenWidth = mq.size.width;
-    // textScaleFactor is automatically applied by Flutter's Text widgets
-    // final textScale = mq.textScaleFactor;
+
     final isTablet = screenWidth > 600;
 
-    // --- Menu Item Data (Structure remains the same) ---
     final menuItems = [
       {
         'title': 'Business Partner',
@@ -46,7 +42,7 @@ class DashBoard extends StatelessWidget {
       {
         'title': 'AR Invoice',
         'icon': Icons.request_quote_outlined,
-        'page': const OpenOrdersScreen(), // Replace with actual page
+        'page': const OpenOrdersScreen(),
       },
       {
         'title': 'Stock',
@@ -56,46 +52,37 @@ class DashBoard extends StatelessWidget {
       {
         'title': 'Collect',
         'icon': Icons.payments_outlined,
-        'page': const OpenOrdersScreen(), // Replace with actual page
+        'page': const OpenOrdersScreen(),
       },
       {
         'title': 'Reports',
         'icon': Icons.bar_chart_rounded,
-        'page': const OpenOrdersScreen(), // Replace with actual page
+        'page': const OpenOrdersScreen(),
       },
     ];
 
     final crossAxisCount = isTablet ? 3 : 2;
-    // Adjust aspect ratio for better spacing/sizing if needed
+
     final aspectRatio = isTablet ? 1.1 : 1.0;
 
     return Scaffold(
-      // Use theme background color
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        // Use ResponsiveLayout if it handles theme/styling correctly
         child: Container(
           color: scaffoldBackgroundColor,
           child: ResponsiveLayout(
             child: Column(
               children: [
-                // Assuming buildHeader and buildBrandBar use Theme.of(context)
-                buildHeader(context, isTablet), // Pass isTablet if needed
-                buildBrandBar(
-                  context,
-                  1.0,
-                  isTablet,
-                ), // Pass isTablet if needed
+                buildHeader(context, isTablet),
+                buildBrandBar(context, 1.0, isTablet),
 
                 Expanded(
                   child: GridView.builder(
-                    padding: const EdgeInsets.all(
-                      20.0,
-                    ), // Keep specific padding for grid
+                    padding: const EdgeInsets.all(20.0),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 18.0, // Keep specific spacing
-                      mainAxisSpacing: 18.0, // Keep specific spacing
+                      crossAxisSpacing: 18.0,
+                      mainAxisSpacing: 18.0,
                       childAspectRatio: aspectRatio,
                     ),
                     itemCount: menuItems.length,
@@ -116,7 +103,7 @@ class DashBoard extends StatelessWidget {
                               ),
                             ),
                         isTablet: isTablet,
-                        backgroundColor: itemColor, // Pass the specific color
+                        backgroundColor: itemColor,
                       );
                     },
                   ),
@@ -129,66 +116,51 @@ class DashBoard extends StatelessWidget {
     );
   }
 
-  // --- Menu Item Builder ---
   Widget _buildWowMenuItem({
     required BuildContext context,
     required String title,
     required IconData icon,
     required VoidCallback onTap,
     required bool isTablet,
-    required Color backgroundColor, // Specific background color for this item
+    required Color backgroundColor,
   }) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
 
-    // Use theme's card properties for consistency, but allow background override
     final cardTheme = theme.cardTheme;
-    // Use theme radius
 
-    final iconSize = isTablet ? 48.0 : 36.0; // Keep specific icon size logic
+    final iconSize = isTablet ? 48.0 : 36.0;
 
-    // Use theme splash/highlight or generate based on background
-    final splashColor = theme.splashColor; // Default splash
-    final highlightColor = theme.highlightColor; // Default highlight
+    final splashColor = theme.splashColor;
+    final highlightColor = theme.highlightColor;
 
     return Card(
-      // Apply the specific background color passed in
       color: backgroundColor,
-      // Use other properties from CardTheme
+
       elevation: cardTheme.elevation,
       shadowColor: cardTheme.shadowColor,
-      shape: cardTheme.shape, // Use theme shape (includes border radius)
-      // margin: cardTheme.margin, // Use theme margin
+      shape: cardTheme.shape,
+
       child: InkWell(
-        onTap: onTap, // Ensure InkWell matches card shape
+        onTap: onTap,
         splashColor: splashColor,
         highlightColor: highlightColor,
         child: Container(
-          // Padding inside the card
           padding: EdgeInsets.all(isTablet ? 20 : 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                // Use a consistent icon color, perhaps primary or onSurface
-                color: colorScheme.primary,
-                size: iconSize,
-              ),
-              const SizedBox(height: 12), // Keep specific spacing
+              Icon(icon, color: colorScheme.primary, size: iconSize),
+              const SizedBox(height: 12),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                // Use theme text style, adjust size based on tablet/phone
+
                 style: (isTablet ? textTheme.titleMedium : textTheme.titleSmall)
-                    ?.copyWith(
-                      // Ensure text color is readable on the varied backgrounds
-                      color:
-                          darkTextColor, // Use darkest text color for contrast
-                    ),
-                maxLines: 2, // Allow wrapping
+                    ?.copyWith(color: darkTextColor),
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -199,11 +171,7 @@ class DashBoard extends StatelessWidget {
   }
 }
 
-// --- Placeholder Widgets (Replace with your actual implementations) ---
-// Ensure these widgets also use Theme.of(context) for styling
-
 Widget buildHeader(BuildContext context, bool isTablet) {
-  // Example: Access theme properties
   final theme = Theme.of(context);
   return Container(
     height: 56,
@@ -217,6 +185,3 @@ Widget buildHeader(BuildContext context, bool isTablet) {
     ),
   );
 }
-
-// Assuming brand_bar.dart, dashboard_header.dart, layout_builder.dart
-// are refactored to use Theme.of(context) internally.

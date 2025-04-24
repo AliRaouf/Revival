@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({
-    super.key,
-    required this.textScale,
-  });
+  const ForgotPassword({super.key, required this.textScale});
 
   final double textScale;
 
@@ -13,9 +10,12 @@ class ForgotPassword extends StatelessWidget {
     return Center(
       child: TextButton(
         onPressed: () {
-          // Implement forgot password logic
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Forgot Password functionality not implemented yet.')),
+            const SnackBar(
+              content: Text(
+                'Forgot Password functionality not implemented yet.',
+              ),
+            ),
           );
         },
         child: Text(

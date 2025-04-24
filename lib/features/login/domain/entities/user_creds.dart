@@ -8,7 +8,6 @@ class UserCredentials {
     required this.username,
     required this.password,
   }) {
-    // --- Validation Logic ---
     if (dbName.trim().isEmpty) {
       throw ArgumentError('Database name cannot be empty.');
     }
@@ -16,7 +15,6 @@ class UserCredentials {
       throw ArgumentError('Username cannot be empty.');
     }
     if (password.isEmpty) {
-      // Don't trim password for emptiness check, whitespace might be intentional
       throw ArgumentError('Password cannot be empty.');
     }
     if (password.length < 4) {

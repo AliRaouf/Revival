@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart'; // Assuming refactored
-// Import your actual screen files
-import 'package:revival/features/order/presentation/views/new_orders.dart'; // Refactored
-import 'package:revival/features/order/presentation/views/single_order.dart'; // Needs refactoring or exists
-// Import theme constants if needed
+import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
 
-// --- Data Model (Simple Example - Unchanged) ---
+import 'package:revival/features/order/presentation/views/new_orders.dart';
+import 'package:revival/features/order/presentation/views/single_order.dart';
+
 class OrderInfo {
   final String id;
   final String invoice;
@@ -25,7 +23,6 @@ class OrderInfo {
   });
 }
 
-// --- Main Screen Widget ---
 class OpenOrdersScreen extends StatefulWidget {
   const OpenOrdersScreen({super.key});
 
@@ -34,12 +31,10 @@ class OpenOrdersScreen extends StatefulWidget {
 }
 
 class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
-  // --- State Variables ---
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   List<OrderInfo> _filteredOrders = [];
 
-  // --- Sample Data (Replace with actual data fetching) ---
   final List<OrderInfo> _allOrders = List.generate(
     20,
     (index) => OrderInfo(
@@ -57,7 +52,6 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     ),
   );
 
-  // --- Lifecycle Methods ---
   @override
   void initState() {
     super.initState();
@@ -72,12 +66,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     super.dispose();
   }
 
-  // --- Search Logic ---
   void _onSearchChanged() {
-    // Basic debounce mechanism (optional, consider using packages like flutter_hooks or rxdart for more robust debouncing)
-    // Timer? debounce;
-    // if (debounce?.isActive ?? false) debounce?.cancel();
-    // debounce = Timer(const Duration(milliseconds: 300), () {
     final query = _searchController.text.trim().toLowerCase();
     if (query == _searchQuery) return;
 
@@ -94,61 +83,48 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
             }).toList();
       }
     });
-    // });
   }
 
-  // --- Build Method ---
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor, // Use theme background
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Container(
           color: scaffoldBackgroundColor,
           child: Column(
             children: [
-              _buildHeader(context), // Uses AppBarTheme
-              // Assuming BrandBar uses theme
+              _buildHeader(context),
+
               buildBrandBar(
                 context,
                 MediaQuery.textScalerOf(context).textScaleFactor,
                 MediaQuery.of(context).size.width > 600,
               ),
-              _buildSearchBar(context), // Uses InputDecorationTheme
-              Expanded(
-                child: _buildContent(context),
-              ), // Uses TextTheme, CardTheme etc.
+              _buildSearchBar(context),
+              Expanded(child: _buildContent(context)),
             ],
           ),
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(
-        context,
-      ), // Uses FABTheme
+      floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 
-  // --- Header Builder (Uses AppBarTheme implicitly) ---
   Widget _buildHeader(BuildContext context) {
-    // Use AppBar for standard styling and back button handling
     return AppBar(
-      // Properties like backgroundColor, foregroundColor, elevation from theme
-      automaticallyImplyLeading:
-          false, // Remove default back button if adding custom one
+      automaticallyImplyLeading: false,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back), // Icon color from theme
+        icon: const Icon(Icons.arrow_back),
         tooltip: 'Back',
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text(
-        'Open Orders',
-        // titleTextStyle from theme
-      ),
+      title: Text('Open Orders'),
       actions: [
         IconButton(
-          icon: const Icon(Icons.person_outline), // Icon color from theme
+          icon: const Icon(Icons.person_outline),
           tooltip: 'Profile',
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -163,18 +139,12 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     );
   }
 
-  // --- Search Bar Builder ---
   Widget _buildSearchBar(BuildContext context) {
     final theme = Theme.of(context);
     final iconColor = theme.iconTheme.color?.withOpacity(0.6);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        16.0,
-        12.0,
-        16.0,
-        8.0,
-      ), // Adjusted padding
+      padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
@@ -186,8 +156,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
                     icon: Icon(Icons.clear, color: iconColor),
                     tooltip: 'Clear Search',
                     onPressed: () {
-                      _searchController
-                          .clear(); // Listener will handle state update
+                      _searchController.clear();
                     },
                   )
                   : null,
@@ -196,12 +165,11 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
             horizontal: 16.0,
           ),
         ).applyDefaults(theme.inputDecorationTheme),
-        style: theme.textTheme.bodyLarge, // Use theme text style
+        style: theme.textTheme.bodyLarge,
       ),
     );
   }
 
-  // --- Content Builder (List or Empty State) ---
   Widget _buildContent(BuildContext context) {
     if (_allOrders.isEmpty) {
       return _buildEmptyState(
@@ -221,23 +189,16 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
       );
     }
 
-    // Display the list using the refactored _OrderSummaryCard
     return ListView.builder(
-      padding: const EdgeInsets.only(
-        left: 12, // Adjust list padding to align with card margins
-        right: 12,
-        bottom: 80, // Space for FAB
-        top: 8,
-      ),
+      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 80, top: 8),
       itemCount: _filteredOrders.length,
       itemBuilder: (context, index) {
         final order = _filteredOrders[index];
-        return _OrderSummaryCard(order: order); // Use the Card Widget
+        return _OrderSummaryCard(order: order);
       },
     );
   }
 
-  // --- Empty State Builder ---
   Widget _buildEmptyState({
     required BuildContext context,
     required IconData icon,
@@ -275,11 +236,8 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     );
   }
 
-  // --- Floating Action Button Builder (Uses FABTheme) ---
   Widget _buildFloatingActionButton(BuildContext context) {
-    // Uses FloatingActionButtonThemeData from app_theme.dart
     return FloatingActionButton(
-      // backgroundColor, foregroundColor, elevation, shape from theme
       tooltip: 'Create New Order',
       onPressed: () {
         Navigator.push(
@@ -287,12 +245,11 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
           MaterialPageRoute(builder: (context) => const NewOrderScreen()),
         );
       },
-      child: const Icon(Icons.add, size: 32), // Icon color from theme
+      child: const Icon(Icons.add, size: 32),
     );
   }
-} // End of _OpenOrdersScreenState class
+}
 
-// --- Order Summary Card Widget (Refactored) ---
 class _OrderSummaryCard extends StatelessWidget {
   final OrderInfo order;
 
@@ -306,39 +263,33 @@ class _OrderSummaryCard extends StatelessWidget {
     final listTileTheme = theme.listTileTheme;
 
     return Card(
-      // Uses CardTheme properties (color, elevation, shadow, shape, margin)
       child: InkWell(
-        // Use theme splash/highlight
         splashColor: theme.splashColor,
         highlightColor: theme.highlightColor,
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              // Ensure SingleOrderScreen exists and accepts orderId
               builder: (context) => SingleOrderScreen(orderId: order.id),
             ),
           );
         },
         child: ListTile(
-          // Use ListTileTheme properties (dense, contentPadding, iconColor)
           leading: CircleAvatar(
-            backgroundColor: colorScheme.primary.withOpacity(
-              0.1,
-            ), // Subtle primary background
+            backgroundColor: colorScheme.primary.withOpacity(0.1),
             child: Icon(
               Icons.receipt_long,
-              color: colorScheme.primary, // Use primary color for icon
+              color: colorScheme.primary,
               size: 24,
             ),
           ),
           title: Text(
             order.customerName,
-            // Use theme title style, override color if needed
+
             style:
                 listTileTheme.titleTextStyle?.copyWith(
-                  fontWeight: FontWeight.w600, // Make title bold
-                  color: colorScheme.primary, // Use primary color for title
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.primary,
                 ) ??
                 textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
@@ -351,7 +302,7 @@ class _OrderSummaryCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
               'Code: ${order.orderCode} / Order: ${order.order}',
-              // Use theme subtitle style
+
               style: listTileTheme.subtitleTextStyle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -359,12 +310,9 @@ class _OrderSummaryCard extends StatelessWidget {
           ),
           trailing: Icon(
             Icons.chevron_right,
-            color: listTileTheme.iconColor?.withOpacity(
-              0.8,
-            ), // Use theme icon color
+            color: listTileTheme.iconColor?.withOpacity(0.8),
             size: 28,
           ),
-          // contentPadding: listTileTheme.contentPadding, // Use theme padding
         ),
       ),
     );

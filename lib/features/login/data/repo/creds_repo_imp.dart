@@ -2,15 +2,11 @@ import 'package:revival/features/login/domain/entities/user_creds.dart';
 import 'package:revival/features/login/domain/repo/creds_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Implementation of the CredentialsRepo using SharedPreferences.
 class CredsRepoImp implements CredentialsRepo {
-  // Keys for SharedPreferences
   static const String _rememberMeKey = 'rememberMe';
   static const String _databaseNameKey = 'databaseName';
   static const String _usernameKey = 'username';
-  // NOTE: Storing passwords directly in SharedPreferences is generally discouraged
-  // due to security risks. Consider using a more secure storage mechanism
-  // like flutter_secure_storage for sensitive information.
+
   static const String _passwordKey = 'password';
 
   @override
@@ -35,7 +31,7 @@ class CredsRepoImp implements CredentialsRepo {
         password: password,
       );
     }
-    return null; // Return null if any credential is not found
+    return null;
   }
 
   @override
@@ -55,6 +51,6 @@ class CredsRepoImp implements CredentialsRepo {
   @override
   Future<bool> getRememberMePreference() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_rememberMeKey) ?? false; // Default to false if not set
+    return prefs.getBool(_rememberMeKey) ?? false;
   }
 }

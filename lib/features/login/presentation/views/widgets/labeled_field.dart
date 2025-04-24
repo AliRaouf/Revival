@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
-// Import theme constants for specific styles if needed
 
-// Changed to a StatefulWidget to manage focus state for label color if needed
 class LabeledField extends StatefulWidget {
   final String label;
   final bool obscureText;
   final Widget? suffix;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
-  final String? Function(String?)? validator; // Added validator parameter
-  final bool useUnderlineBorder; // Flag to switch between underline and outline
+  final String? Function(String?)? validator;
+  final bool useUnderlineBorder;
 
   const LabeledField({
     super.key,
@@ -20,7 +18,7 @@ class LabeledField extends StatefulWidget {
     this.controller,
     this.keyboardType,
     this.validator,
-    this.useUnderlineBorder = true, // Default to underline for login page
+    this.useUnderlineBorder = true,
   });
 
   @override
@@ -56,33 +54,31 @@ class _LabeledFieldState extends State<LabeledField> {
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
 
-    // Determine label style based on focus
     final labelStyle = textTheme.bodySmall?.copyWith(
-      fontWeight: FontWeight.w600, // Keep specific weight for label
+      fontWeight: FontWeight.w600,
       color:
           _hasFocus
               ? colorScheme.primary
               : colorScheme.onBackground.withOpacity(0.7),
     );
 
-    // Choose decoration based on the flag
     final InputDecoration inputDecoration =
         widget.useUnderlineBorder
-            ? koutlineInputDecoration // Use the specific underline style from theme
-            : const InputDecoration(); // Use a default InputDecoration instance
+            ? koutlineInputDecoration
+            : const InputDecoration();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(widget.label, style: labelStyle),
-        const SizedBox(height: 6), // Keep specific spacing for label
+        const SizedBox(height: 6),
         TextFormField(
           focusNode: _focusNode,
           controller: widget.controller,
           obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
-          validator: widget.validator, // Pass validator
-          // Use theme's InputDecorationTheme and apply overrides
+          validator: widget.validator,
+
           decoration: inputDecoration.copyWith(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -94,21 +90,15 @@ class _LabeledFieldState extends State<LabeledField> {
                 width: 2,
               ),
             ),
-            // Apply suffix icon if provided
+
             suffixIcon: SizedBox(
               width: 24,
               height: 24,
               child: Center(child: widget.suffix ?? const SizedBox()),
             ),
+          ),
 
-            // Override hint/label text if needed, but usually handled by TextFormField
-            // hintText: 'Optional hint',
-            // labelText: widget.label, // Usually not needed with external label
-          ),
-          // Apply text style from theme for the input itself
-          style: textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurface, // Ensure input text color is correct
-          ),
+          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
         ),
       ],
     );

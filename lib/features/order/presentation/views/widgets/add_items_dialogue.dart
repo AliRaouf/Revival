@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-// Import theme constants
+
 import 'package:revival/core/theme/theme.dart';
 
-// Function to show the dialog
 void showAddItemDialog(BuildContext context, String customerName) {
-  // Use StatefulWidget inside the dialog builder for local state management
   showDialog(
     context: context,
-    barrierDismissible: false, // Prevent closing by tapping outside
+    barrierDismissible: false,
     builder: (_) => _AddItemDialogContent(customerName: customerName),
   );
 }
 
-// --- Dialog Content Widget ---
 class _AddItemDialogContent extends StatefulWidget {
   final String customerName;
 
@@ -23,29 +20,26 @@ class _AddItemDialogContent extends StatefulWidget {
 }
 
 class _AddItemDialogContentState extends State<_AddItemDialogContent> {
-  // Controllers for text fields
   final _itemCodeController = TextEditingController();
   final _descController = TextEditingController();
-  final _qtyController = TextEditingController(text: '1'); // Default quantity
+  final _qtyController = TextEditingController(text: '1');
   final _unitPriceController = TextEditingController(text: '0.00');
   final _discountController = TextEditingController(text: '0.00');
 
-  // State for calculated values
   String _total = '0.00';
   String _discountedTotal = '0.00';
-  String _selectedWarehouse = 'WH-001'; // Example warehouse code
+  String _selectedWarehouse = 'WH-001';
 
-  // Dummy warehouse list (replace with actual data)
   final List<String> _warehouseItems = ['WH-001', 'WH-002', 'WH-MAIN'];
 
   @override
   void initState() {
     super.initState();
-    // Add listeners to calculate totals automatically
+
     _qtyController.addListener(_calculateTotals);
     _unitPriceController.addListener(_calculateTotals);
     _discountController.addListener(_calculateTotals);
-    _calculateTotals(); // Initial calculation
+    _calculateTotals();
   }
 
   @override
@@ -58,17 +52,15 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
     super.dispose();
   }
 
-  // Calculation logic
   void _calculateTotals() {
     final qty = int.tryParse(_qtyController.text) ?? 0;
     final unitPrice = double.tryParse(_unitPriceController.text) ?? 0.0;
-    // Assuming discount is a fixed amount, not percentage
+
     final discountAmount = double.tryParse(_discountController.text) ?? 0.0;
 
     final currentTotal = (qty * unitPrice);
     final currentDiscountedTotal = currentTotal - discountAmount;
 
-    // Update state only if values changed to avoid unnecessary rebuilds
     if (mounted &&
         (_total != currentTotal.toStringAsFixed(2) ||
             _discountedTotal != currentDiscountedTotal.toStringAsFixed(2))) {
@@ -79,17 +71,12 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
     }
   }
 
-  // Function to handle adding the item
   void _addItem() {
-    // TODO: Add validation logic here
-    // if (_formKey.currentState?.validate() ?? false) { ... }
-
-    // TODO: Pass item data back to the NewOrderScreen
     print(
       'Item Added: Code=${_itemCodeController.text}, Qty=${_qtyController.text}, ...',
     );
 
-    Navigator.pop(context); // Close the dialog
+    Navigator.pop(context);
   }
 
   @override
@@ -98,28 +85,24 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
 
-    // Determine dialog width based on screen size
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
-    final dialogWidthFactor =
-        isSmallScreen ? 0.9 : 0.5; // Adjust factor as needed
+    final dialogWidthFactor = isSmallScreen ? 0.9 : 0.5;
 
     return Dialog(
-      // Uses DialogTheme for background, shape, elevation
       insetPadding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 16 : 40, // Adjust padding based on size
+        horizontal: isSmallScreen ? 16 : 40,
         vertical: isSmallScreen ? 40 : 80,
       ),
       child: FractionallySizedBox(
         widthFactor: dialogWidthFactor,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24.0), // Consistent padding
+            padding: const EdgeInsets.all(24.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Take minimum height
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // --- Title ---
                 Text(
                   widget.customerName,
                   textAlign: TextAlign.center,
@@ -129,7 +112,6 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 const SizedBox(height: 24),
 
-                // --- Input Fields ---
                 _buildRow(
                   context,
                   'Item Code',
@@ -137,8 +119,6 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                     context,
                     controller: _itemCodeController,
                     hintText: 'Enter item code',
-                    // icon: Icons.search, // Optional search icon
-                    // onIconTap: () { /* TODO: Implement item search */ }
                   ),
                 ),
                 _buildRow(
@@ -172,7 +152,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Discount', // Assuming fixed amount discount
+                  'Discount',
                   _styledField(
                     context,
                     controller: _discountController,
@@ -182,7 +162,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                     hintText: 'Amount (e.g., 5.00)',
                   ),
                 ),
-                // --- Warehouse Dropdown ---
+
                 _buildRow(
                   context,
                   'Warehouse',
@@ -202,9 +182,8 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                         setState(() => _selectedWarehouse = value);
                       }
                     },
-                    // Use the styled field decoration
+
                     decoration: kAddItemDialogInputDecoration.copyWith(
-                      // Remove floating label behavior if not desired for dropdown
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                     ),
                     dropdownColor: theme.cardColor,
@@ -216,28 +195,25 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                   ),
                 ),
 
-                const Divider(height: 32), // Use theme divider
-                // --- Totals Display ---
+                const Divider(height: 32),
+
                 _buildDisplayRow(context, 'Total:', _total),
                 _buildDisplayRow(context, 'After Discount:', _discountedTotal),
 
                 const SizedBox(height: 24),
 
-                // --- Action Buttons ---
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.end, // Align buttons to end
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      style:
-                          kTextButtonErrorStyle, // Use specific error style for Cancel
+                      style: kTextButtonErrorStyle,
                       child: const Text('Cancel'),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
                       onPressed: _addItem,
-                      // Uses ElevatedButtonTheme style
+
                       child: const Text('Add Item'),
                     ),
                   ],
@@ -250,92 +226,77 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
     );
   }
 
-  // --- Helper Widgets for Rows ---
-
-  // Row for Label + Input Field
   Widget _buildRow(BuildContext context, String label, Widget field) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 6.0,
-      ), // Consistent vertical padding
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // Align items vertically
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 100, // Fixed width for labels
+            width: 100,
             child: Text(
               label,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color:
-                    theme.colorScheme.primary, // Use primary color for labels
+                color: theme.colorScheme.primary,
               ),
             ),
           ),
-          const SizedBox(width: 12), // Space between label and field
+          const SizedBox(width: 12),
           Expanded(child: field),
         ],
       ),
     );
   }
 
-  // Row for Label + Display Value
   Widget _buildDisplayRow(BuildContext context, String label, String value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, // Align label and value
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: mediumTextColor,
-            ), // Use medium color for label
+            style: theme.textTheme.bodyMedium?.copyWith(color: mediumTextColor),
           ),
           Text(
             value,
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w500,
-            ), // Slightly bolder value
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Helper for the styled input field used in this dialog
   Widget _styledField(
     BuildContext context, {
     required TextEditingController controller,
     TextInputType? keyboardType,
     String? hintText,
-    IconData? icon, // Optional icon
-    VoidCallback? onIconTap, // Action for icon tap
+    IconData? icon,
+    VoidCallback? onIconTap,
     bool readOnly = false,
     void Function(String)? onChanged,
   }) {
     final theme = Theme.of(context);
 
-    // Use Material for elevation effect
     return Material(
-      elevation: 2.0, // Add subtle elevation
+      elevation: 2.0,
       shadowColor: theme.shadowColor,
-      borderRadius: BorderRadius.circular(
-        kDefaultBorderRadius,
-      ), // Match input border radius
+      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         readOnly: readOnly,
         onChanged: onChanged,
-        style: theme.textTheme.bodyMedium, // Use theme style for input text
+        style: theme.textTheme.bodyMedium,
         decoration: kAddItemDialogInputDecoration.copyWith(
-          // Use specific dialog input style
           hintText: hintText,
-          // Add icon if provided
+
           suffixIcon:
               icon != null
                   ? IconButton(
