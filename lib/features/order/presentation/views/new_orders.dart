@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:revival/features/order/presentation/views/widgets/add_items_dialogue.dart';
-// No url_launcher needed for UI-only demo
-
-// Define the colors from the blue/grey "Open Orders" screen & Green for Success
-const Color primaryDarkBlue = Color(0xFF17405E); // Main dark blue
-const Color successGreen = Color(0xFF28a745); // Standard success green color
-const Color whatsappGreen = Color(0xFF25D366); // WhatsApp brand green
-const Color lightGreyBackground = Color(0xFFF9FAFB);
-const Color mediumGreyText = Color(0xFF6B7280);
-const Color darkGreyText = Color(0xFF374151);
-const Color lightBorderGrey = Color(0xFFD1D5DB);
+import 'package:revival/features/order/presentation/views/widgets/add_items_dialogue.dart'; // Assuming refactored
+// Import theme constants for specific styles/colors
+import 'package:revival/core/theme/theme.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({super.key});
@@ -20,47 +12,32 @@ class NewOrderScreen extends StatefulWidget {
 }
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
-  // Controllers for text fields
+  // --- Controllers ---
   final TextEditingController _referenceController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
-
-  // Controllers and initial values for dates
   late TextEditingController _dateController;
   late TextEditingController _validUntilController;
-  DateTime _selectedDate = DateTime.now();
-  DateTime _selectedValidUntilDate = DateTime.now().add(
-    const Duration(days: 30),
-  );
 
-  // Variables to hold dropdown selections
+  // --- State Variables ---
+  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedValidUntilDate = DateTime.now().add(const Duration(days: 30));
   String? _selectedCustomer;
   String? _selectedShippingAddress;
   String? _selectedSalesPerson;
   String? _selectedContactPerson;
 
-  // Dummy items for dropdowns
-  final List<String> _customerItems = [
-    'Customer A',
-    'Customer B',
-    'Customer C',
-  ];
+  // --- Dummy Data (Replace with actual data fetching) ---
+  final List<String> _customerItems = ['Customer A', 'Customer B', 'Customer C'];
   final List<String> _addressItems = ['Address 1', 'Address 2', 'Main Office'];
   final List<String> _salesPersonItems = ['Sales Rep 1', 'Sales Rep 2'];
-  final List<String> _contactPersonItems = [
-    'Contact X',
-    'Contact Y',
-    'Contact Z',
-  ];
+  final List<String> _contactPersonItems = ['Contact X', 'Contact Y', 'Contact Z'];
 
+  // --- Lifecycle Methods ---
   @override
   void initState() {
     super.initState();
-    _dateController = TextEditingController(
-      text: DateFormat('MMM d, yyyy').format(_selectedDate),
-    );
-    _validUntilController = TextEditingController(
-      text: DateFormat('MMM d, yyyy').format(_selectedValidUntilDate),
-    );
+    _dateController = TextEditingController(text: _formatDate(_selectedDate));
+    _validUntilController = TextEditingController(text: _formatDate(_selectedValidUntilDate));
   }
 
   @override
@@ -72,51 +49,55 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     super.dispose();
   }
 
-  // Function to show date picker
+  // --- Helper Methods ---
+  String _formatDate(DateTime date) => DateFormat('MMM d, yyyy').format(date);
+
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final theme = Theme.of(context); // Get theme for DatePicker styling
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isStartDate ? _selectedDate : _selectedValidUntilDate,
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)), // Allow past dates?
       lastDate: DateTime(2101),
+      // Apply theme overrides for DatePicker
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: primaryDarkBlue,
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: primaryColor, // Use theme primary
               onPrimary: Colors.white,
-              onSurface: darkGreyText,
+              onSurface: darkTextColor, // Text color in picker
             ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor: primaryDarkBlue),
+              style: TextButton.styleFrom(foregroundColor: primaryColor), // OK/Cancel buttons
             ),
+            // Optional: Customize dialog background, etc.
+            // datePickerTheme: theme.datePickerTheme.copyWith(...)
           ),
           child: child!,
         );
       },
     );
+
     if (picked != null) {
-      // (Date update logic remains the same as before)
       setState(() {
-        final formattedDate = DateFormat('MMM d, yyyy').format(picked);
+        final formattedDate = _formatDate(picked);
         if (isStartDate) {
           _selectedDate = picked;
           _dateController.text = formattedDate;
+          // Ensure valid until is after start date
           if (_selectedValidUntilDate.isBefore(_selectedDate)) {
-            _selectedValidUntilDate = _selectedDate.add(
-              const Duration(days: 1),
-            );
-            _validUntilController.text = DateFormat(
-              'MMM d, yyyy',
-            ).format(_selectedValidUntilDate);
+            _selectedValidUntilDate = _selectedDate.add(const Duration(days: 1));
+            _validUntilController.text = _formatDate(_selectedValidUntilDate);
           }
         } else {
+          // Ensure valid until is not before start date
           if (picked.isBefore(_selectedDate)) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                  'Valid until date cannot be before the order date.',
-                ),
+                content: Text('Valid until date cannot be before the order date.'),
+                behavior: SnackBarBehavior.floating,
               ),
             );
           } else {
@@ -128,12 +109,46 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     }
   }
 
+  void _addItem() {
+    // Ensure customer is selected before adding items
+    if (_selectedCustomer == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a customer first.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    // Show the refactored Add Item Dialog
+    showAddItemDialog(context, _selectedCustomer!);
+  }
+
+  void _saveDraft() {
+    // Implement save draft logic
+    print("Save Draft tapped");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Save Draft functionality not implemented.'), behavior: SnackBarBehavior.floating),
+    );
+  }
+
+  void _submitOrder() {
+    // Implement submit logic (validation, API call, etc.)
+    print("Submit tapped");
+    // --- Call the Success Dialog ---
+    _showSuccessDialog(context);
+  }
+
+
+  // --- Build Method ---
   @override
   Widget build(BuildContext context) {
-    // (Build method structure remains the same - only change is in _buildBottomBar's submit action)
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: _buildAppBar(context),
+      // Use theme background color (or surface if preferred for content area)
+      backgroundColor: theme.colorScheme.background,
+      appBar: _buildAppBar(context), // Uses AppBarTheme
       body: Column(
         children: [
           Expanded(
@@ -142,20 +157,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- All Form Fields remain the same ---
+                  // --- Form Fields ---
                   _buildDropdownField(
+                    context: context,
                     label: "Customer",
                     value: _selectedCustomer,
                     items: _customerItems,
-                    onChanged: (v) {
-                      setState(() => _selectedCustomer = v);
-                    },
+                    onChanged: (v) => setState(() => _selectedCustomer = v),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         child: _buildDateField(
+                          context: context,
                           label: "Date",
                           controller: _dateController,
                           onTap: () => _selectDate(context, true),
@@ -164,6 +179,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: _buildDateField(
+                          context: context,
                           label: "Valid until",
                           controller: _validUntilController,
                           onTap: () => _selectDate(context, false),
@@ -173,126 +189,148 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   ),
                   const SizedBox(height: 16),
                   _buildTextField(
+                    context: context,
                     label: "Reference number",
                     controller: _referenceController,
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField(label: "Title", controller: _titleController),
+                  _buildTextField(
+                    context: context,
+                    label: "Title",
+                    controller: _titleController,
+                    maxLength: 50, // Example maxLength
+                  ),
                   const SizedBox(height: 16),
                   _buildDropdownField(
+                    context: context,
                     label: "Shipping Address",
                     value: _selectedShippingAddress,
                     items: _addressItems,
-                    onChanged: (v) {
-                      setState(() => _selectedShippingAddress = v);
-                    },
+                    onChanged: (v) => setState(() => _selectedShippingAddress = v),
                   ),
                   const SizedBox(height: 16),
                   _buildDropdownField(
+                    context: context,
                     label: "Sales person",
                     value: _selectedSalesPerson,
                     items: _salesPersonItems,
-                    onChanged: (v) {
-                      setState(() => _selectedSalesPerson = v);
-                    },
+                    onChanged: (v) => setState(() => _selectedSalesPerson = v),
                   ),
                   const SizedBox(height: 16),
                   _buildDropdownField(
+                    context: context,
                     label: "Contact Person",
                     value: _selectedContactPerson,
                     items: _contactPersonItems,
-                    onChanged: (v) {
-                      setState(() => _selectedContactPerson = v);
-                    },
+                    onChanged: (v) => setState(() => _selectedContactPerson = v),
                   ),
                   // --- End Form Fields ---
+
                   const SizedBox(height: 32),
                   Text(
                     "Added items",
-                    style: TextStyle(color: mediumGreyText, fontSize: 14),
+                    style: theme.textTheme.titleSmall, // Use theme style
                   ),
                   const SizedBox(height: 16),
+                  // --- Item List Area (Placeholder) ---
                   Container(
                     width: double.infinity,
                     constraints: const BoxConstraints(minHeight: 100),
                     alignment: Alignment.center,
-                    child: const Text(
-                      "List is empty.",
-                      style: TextStyle(color: mediumGreyText, fontSize: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: theme.dividerColor),
+                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                      color: theme.colorScheme.surface.withOpacity(0.5),
+                    ),
+                    child: Text(
+                      "List is empty.", // TODO: Replace with actual item list
+                      style: theme.textTheme.bodyLarge?.copyWith(color: mediumTextColor),
                     ),
                   ),
+                  // --- End Item List Area ---
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "ADD TEXT LINE",
-                          style: TextStyle(
-                            color: primaryDarkBlue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        onPressed: () {
+                           ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Add Text Line not implemented.'), behavior: SnackBarBehavior.floating),
+                          );
+                        },
+                        // Use theme style, override text if needed
+                        child: const Text("ADD TEXT LINE"),
                       ),
                       TextButton(
-                        onPressed: () {
-                          showAddItemDialog(context, "Customer A");
-                        },
-                        child: const Text(
-                          "ADD ITEMS",
-                          style: TextStyle(
-                            color: primaryDarkBlue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        onPressed: _addItem,
+                        // Use theme style, override text if needed
+                        child: const Text("ADD ITEMS"),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 80), // Space for bottom bar overlap
                 ],
               ),
             ),
           ),
-          _buildBottomBar(context), // Submit button here calls the new dialog
+          _buildBottomBar(context), // Submit/Save buttons
         ],
       ),
     );
   }
 
-  // --- Helper Widgets (_buildTextField, _buildDateField, _buildDropdownField) remain exactly the same as the previous "color only" version ---
+  // --- AppBar Builder ---
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    // Uses AppBarTheme defined in app_theme.dart
+    return AppBar(
+      // backgroundColor, foregroundColor, elevation, titleTextStyle from theme
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back), // Icon color from theme
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: const Column( // Keep Column for multi-line title
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('New order'), // Title style from theme
+          Text(
+            'revival', // Subtitle - consider using subtitle property of AppBar
+            style: TextStyle( // Explicit style for subtitle
+              color: Colors.white70,
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+      centerTitle: false, // From theme
+      titleSpacing: 0, // Keep specific title spacing
+    );
+  }
+
+  // --- Field Builders (Using Theme) ---
+
   Widget _buildTextField({
+    required BuildContext context,
     required String label,
     required TextEditingController controller,
     int? maxLength,
   }) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: mediumGreyText, fontSize: 12)),
+        Text(label, style: theme.textTheme.bodySmall), // Use theme label style
         const SizedBox(height: 4),
-        TextField(
+        TextFormField(
           controller: controller,
           maxLength: maxLength,
-          style: TextStyle(color: darkGreyText),
-          decoration: InputDecoration(
-            hintText: label == "Title" ? null : label,
-            hintStyle: TextStyle(color: lightBorderGrey),
-            contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-            isDense: true,
-            counterText:
-                maxLength != null
-                    ? '${controller.text.length}/$maxLength'
-                    : null,
-            border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: lightBorderGrey),
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: lightBorderGrey),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: primaryDarkBlue, width: 2),
-            ),
+          style: theme.textTheme.bodyMedium, // Use theme input text style
+          decoration: kUnderlinedInputDecoration.copyWith( // Use specific underline style
+             // hintText: label == "Title" ? null : label, // Hint can be set here
+             counterText: maxLength != null ? null : '', // Hide default counter if needed
+             counterStyle: theme.textTheme.bodySmall?.copyWith(fontSize: 10), // Style counter
+             // No labelText needed as we have external label
           ),
         ),
       ],
@@ -300,35 +338,26 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   }
 
   Widget _buildDateField({
+    required BuildContext context,
     required String label,
     required TextEditingController controller,
     required VoidCallback onTap,
   }) {
+     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: mediumGreyText, fontSize: 12)),
+        Text(label, style: theme.textTheme.bodySmall),
         const SizedBox(height: 4),
-        TextField(
+        TextFormField(
           controller: controller,
           readOnly: true,
           onTap: onTap,
-          style: TextStyle(color: darkGreyText),
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-            isDense: true,
-            suffixIcon: const Icon(
+          style: theme.textTheme.bodyMedium,
+          decoration: kUnderlinedInputDecoration.copyWith( // Use specific underline style
+            suffixIcon: Icon(
               Icons.arrow_drop_down,
-              color: mediumGreyText,
-            ),
-            border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: lightBorderGrey),
-            ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: lightBorderGrey),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: primaryDarkBlue, width: 2),
+              color: theme.iconTheme.color?.withOpacity(0.6), // Theme icon color
             ),
           ),
         ),
@@ -337,94 +366,100 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   }
 
   Widget _buildDropdownField({
+    required BuildContext context,
     required String label,
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
+     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: mediumGreyText, fontSize: 12)),
+        Text(label, style: theme.textTheme.bodySmall),
+        // No SizedBox needed, DropdownButtonFormField has internal padding
         DropdownButtonFormField<String>(
-          dropdownColor: Colors.grey[50],
-          isDense: true,
           value: value,
-          hint: const Text("Select", style: TextStyle(color: darkGreyText)),
-          isExpanded: true,
-          style: TextStyle(color: darkGreyText),
-          icon: const Icon(Icons.arrow_drop_down, color: mediumGreyText),
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 8.0),
-            isDense: true,
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(color: lightBorderGrey),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: lightBorderGrey),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: primaryDarkBlue, width: 2),
-            ),
-          ),
-          items:
-              items.map<DropdownMenuItem<String>>((String itemValue) {
-                return DropdownMenuItem<String>(
-                  value: itemValue,
-                  child: Text(itemValue),
-                );
-              }).toList(),
+          items: items.map<DropdownMenuItem<String>>((String itemValue) {
+            return DropdownMenuItem<String>(
+              value: itemValue,
+              child: Text(itemValue, style: theme.textTheme.bodyMedium), // Style dropdown items
+            );
+          }).toList(),
           onChanged: onChanged,
+          // Use specific underline style
+          decoration: kUnderlinedInputDecoration.copyWith(
+             hintText: "Select", // Add hint text here if needed
+             // Dropdown icon is handled by the widget itself, but can be styled:
+             // icon: Icon(Icons.arrow_drop_down, color: theme.iconTheme.color?.withOpacity(0.6)),
+          ),
+          dropdownColor: theme.cardColor, // Background color of the dropdown menu
+          isExpanded: true,
+          style: theme.textTheme.bodyMedium, // Style for the selected item display
+          icon: Icon(Icons.arrow_drop_down, color: theme.iconTheme.color?.withOpacity(0.6)),
         ),
       ],
     );
   }
-  // --- End Helper Widgets ---
+  // --- End Field Builders ---
 
-  // Builds the bottom bar - Submit button now calls _showSuccessDialog
+
+  // --- Bottom Bar Builder ---
   Widget _buildBottomBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    // Placeholder total - replace with actual calculation
+    const String estimatedTotal = "0.00 GBP";
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor, // Use card color for background
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, -2),
+            color: theme.shadowColor.withOpacity(0.1), // Use theme shadow
+            spreadRadius: 0,
+            blurRadius: 6,
+            offset: const Offset(0, -2), // Shadow pointing upwards
           ),
         ],
+        // Optional: Add top border
+        // border: Border(top: BorderSide(color: theme.dividerColor)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Total Row remains the same
+          // --- Total Row ---
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Estimated net total:",
-                style: TextStyle(fontSize: 16, color: mediumGreyText),
+                style: textTheme.bodyLarge?.copyWith(color: mediumTextColor), // Use theme style
               ),
               Row(
                 children: [
                   Text(
-                    "0.00 GBP",
-                    style: TextStyle(
-                      fontSize: 16,
+                    estimatedTotal, // Use calculated total
+                    style: textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: darkGreyText,
+                      color: colorScheme.onSurface, // Use theme text color
                     ),
-                  ), // Placeholder Total
+                  ),
                   const SizedBox(width: 8),
                   InkWell(
                     onTap: () {
                       print("Refresh total tapped");
+                      // Add logic to recalculate total
+                       ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Recalculate total not implemented.'), behavior: SnackBarBehavior.floating),
+                      );
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.refresh,
-                      color: primaryDarkBlue,
+                      color: colorScheme.primary, // Use theme primary color
                       size: 24,
                     ),
                   ),
@@ -433,51 +468,24 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          // Buttons Row
+          // --- Buttons Row ---
           Row(
             children: [
               Expanded(
-                // Save Draft Button
+                // Save Draft Button using OutlinedButtonTheme
                 child: OutlinedButton(
-                  onPressed: () {
-                    print("Save Draft tapped");
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: primaryDarkBlue,
-                    side: const BorderSide(color: primaryDarkBlue),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text(
-                    "SAVE DRAFT",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  onPressed: _saveDraft,
+                  // Style comes from theme
+                  child: const Text("SAVE DRAFT"),
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                // Submit Button
+                // Submit Button using ElevatedButtonTheme
                 child: ElevatedButton(
-                  onPressed: () {
-                    // --- Call the new Success Dialog ---
-                    _showSuccessDialog(context);
-                    // --- End Call ---
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryDarkBlue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    elevation: 2,
-                  ),
-                  child: const Text(
-                    "SUBMIT",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  onPressed: _submitOrder,
+                   // Style comes from theme
+                  child: const Text("SUBMIT"),
                 ),
               ),
             ],
@@ -486,10 +494,15 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
       ),
     );
   }
+  // --- End Bottom Bar ---
 
-  // --- NEW SUCCESS DIALOG METHOD ---
+
+  // --- Success Dialog Builder ---
   Future<void> _showSuccessDialog(BuildContext buildContext) async {
-    // --- Placeholder Data for Totals (Replace with actual calculations) ---
+    final theme = Theme.of(buildContext);
+    final textTheme = theme.textTheme;
+
+    // --- Placeholder Data (Replace with actual calculations) ---
     const String subtotal = "100.00 GBP";
     const String discount = "-10.00 GBP (10%)";
     const String vat = "+15.00 GBP (15%)";
@@ -501,139 +514,91 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
       barrierDismissible: false, // User must tap button
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor: Colors.white, // White background for the dialog
-          shape: RoundedRectangleBorder(
-            // Rounded corners like the image
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          // Use Padding for content to control spacing
-          contentPadding: const EdgeInsets.fromLTRB(
-            24.0,
-            20.0,
-            24.0,
-            0,
-          ), // Less padding at bottom before actions
+          // Uses DialogTheme for background, shape, elevation
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 16.0), // Adjust padding
+          titlePadding: const EdgeInsets.only(top: 24.0), // Padding for potential title
+          // Optional Title:
+          // title: Center(
+          //   child: Text("Order Submitted", style: theme.dialogTheme.titleTextStyle)
+          // ),
           content: Column(
-            mainAxisSize: MainAxisSize.min, // Take only needed height
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // 1. Success Icon
-              const Icon(
+              Icon(
                 Icons.check_circle,
-                color: successGreen, // Use defined green color
-                size: 50.0, // Adjust size as needed
+                color: successColor, // Use theme constant
+                size: 50.0,
               ),
               const SizedBox(height: 16.0),
 
               // 2. SUCCESS Title
-              const Text(
+              Text(
                 "SUCCESS",
-                style: TextStyle(
-                  color: successGreen, // Use defined green color
+                style: textTheme.titleMedium?.copyWith( // Use appropriate text style
+                  color: successColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
                 ),
               ),
               const SizedBox(height: 8.0),
 
-              // 3. Main Message (from image, adapted)
-              const Text(
-                "Thank you for your request.\nOrder submitted.", // Simplified message
+              // 3. Main Message
+              Text(
+                "Thank you for your request.\nOrder submitted.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: darkGreyText, // Use darker grey text
-                  fontSize: 14.0,
-                ),
+                style: textTheme.bodyMedium, // Use theme style
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
 
               // 4. Invoice Summary Section
-              const Text(
-                "Invoice Summary:", // Section Title
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: mediumGreyText,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.0,
-                ),
+              Text(
+                "Invoice Summary:",
+                style: textTheme.titleSmall?.copyWith(color: mediumTextColor), // Use theme style
               ),
               const SizedBox(height: 8.0),
-              // Use const Text for static placeholder text
-              const Text(
-                'Subtotal:      $subtotal',
-                style: TextStyle(fontSize: 13, color: darkGreyText),
-              ),
-              const Text(
-                'Discount:     $discount',
-                style: TextStyle(fontSize: 13, color: darkGreyText),
-              ),
-              const Text(
-                'VAT:             $vat',
-                style: TextStyle(fontSize: 13, color: darkGreyText),
-              ),
-              const Divider(height: 20, thickness: 1, color: lightBorderGrey),
-              const Text(
-                'Grand Total:  $grandTotal',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: darkGreyText,
-                ),
-              ),
+              // Use helper for consistent summary row styling
+              _buildSummaryRow(context, 'Subtotal:', subtotal),
+              _buildSummaryRow(context, 'Discount:', discount),
+              _buildSummaryRow(context, 'VAT:', vat),
+              const Divider(height: 20), // Uses DividerTheme
+              _buildSummaryRow(context, 'Grand Total:', grandTotal, isBold: true),
               const SizedBox(height: 24.0), // Space before buttons
             ],
           ),
           // Actions section for the buttons
-          actionsPadding: const EdgeInsets.fromLTRB(
-            16.0,
-            0,
-            16.0,
-            16.0,
-          ), // Padding around buttons
-          actionsAlignment:
-              MainAxisAlignment
-                  .center, // Center buttons if row doesn't fill width
+          actionsPadding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+          actionsAlignment: MainAxisAlignment.center,
           actions: <Widget>[
             Row(
-              // Use Row for 50/50 split
               children: [
-                // WhatsApp Button (50% width)
+                // WhatsApp Button
                 Expanded(
                   child: ElevatedButton.icon(
-                    icon: const Icon(
-                      Icons.chat_bubble_outline,
-                      size: 18,
-                    ), // Generic chat icon
+                    icon: const Icon(Icons.chat_bubble_outline, size: 18),
                     label: const Text("WhatsApp"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: whatsappGreen, // Specific WhatsApp green
-                      foregroundColor: Colors.white, // White text
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    // Use specific success style, override background
+                    style: kElevatedButtonSuccessStyle.copyWith(
+                       backgroundColor: MaterialStateProperty.all(whatsappColor), // Use WhatsApp color
                     ),
                     onPressed: () {
-                      // UI Only - No action
                       print('WhatsApp UI Button Tapped');
+                       ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        const SnackBar(content: Text('WhatsApp integration not implemented.'), behavior: SnackBarBehavior.floating),
+                      );
                     },
                   ),
                 ),
-                const SizedBox(width: 10), // Space between buttons
-                // OK Button (50% width)
+                const SizedBox(width: 10),
+                // OK Button
                 Expanded(
                   child: ElevatedButton(
-                    child: const Text("OK"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryDarkBlue, // Company scheme blue
-                      foregroundColor: Colors.white, // White text
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                    ),
+                    // Use default ElevatedButton style from theme
                     onPressed: () {
                       Navigator.of(dialogContext).pop(); // Close the dialog
+                      // Optionally navigate back further or refresh previous screen
+                      // Navigator.of(buildContext).pop();
                     },
+                     child: const Text("OK"),
                   ),
                 ),
               ],
@@ -644,39 +609,23 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    // AppBar remains the same as the previous version
-    return AppBar(
-      backgroundColor: primaryDarkBlue,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      title: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+  // Helper for Dialog Summary Rows
+  Widget _buildSummaryRow(BuildContext context, String label, String value, {bool isBold = false}) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Text(label, style: textTheme.bodySmall),
           Text(
-            'New order',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            'revival',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-            ),
+            value,
+            style: (isBold ? textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold) : textTheme.bodyMedium)
+                ?.copyWith(color: darkTextColor), // Ensure color contrast
           ),
         ],
       ),
-      centerTitle: false,
-      titleSpacing: 0,
     );
   }
+  // --- End Success Dialog ---
 }

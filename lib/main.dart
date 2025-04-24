@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/login/data/repo/creds_repo_imp.dart';
+import 'package:revival/features/login/data/repo/login_repo_imp.dart';
+import 'package:revival/features/login/domain/usecase/creds_usecase.dart';
+import 'package:revival/features/login/domain/usecase/login_usecase.dart';
+import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
 import 'features/login/presentation/views/login_page.dart';
 
 void main() {
@@ -10,12 +17,25 @@ class RevivalApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 32, 47),
+  final credentialsRepo = CredsRepoImp();
+  final loginRepo = LoginRepoImp();
+  final credentialsUseCase = CredentialsUseCase(credentialsRepo);
+  final loginUsecase = LoginUseCase(loginRepo, credentialsRepo);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => LoginCubit(loginUsecase: loginUsecase, credentialsUseCase: credentialsUseCase),
+        ),
+        // BlocProvider(
+        //   create: (context) => SubjectBloc(),
+        // ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: appTheme,
+        title: 'Revival',
+        home: const Scaffold(body: LoginPage()),
       ),
-      home: const Scaffold(body: LoginPage()),
     );
   }
 }

@@ -1,14 +1,12 @@
-// --- open_orders_screen.dart ---
-
 import 'package:flutter/material.dart';
-import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
-import 'dart:async'; // For potential future debouncing
+import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart'; // Assuming refactored
+// Import your actual screen files
+import 'package:revival/features/order/presentation/views/new_orders.dart'; // Refactored
+import 'package:revival/features/order/presentation/views/single_order.dart'; // Needs refactoring or exists
+// Import theme constants if needed
 
-// --- !!! IMPORT YOUR ACTUAL SCREEN FILES !!! ---
-import 'package:revival/features/order/presentation/views/new_orders.dart'; // For the FAB (+) button
-import 'package:revival/features/order/presentation/views/single_order.dart'; // <--- IMPORT YOUR SINGLE ORDER SCREEN FILE
-
-// --- Data Model (Simple Example) ---
+// --- Data Model (Simple Example - Unchanged) ---
 class OrderInfo {
   final String id;
   final String invoice;
@@ -36,27 +34,20 @@ class OpenOrdersScreen extends StatefulWidget {
 }
 
 class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
-  // --- Style Constants ---
-  static const Color _primaryColor = Color(0xFF17405E);
-  static const Color _backgroundColor = Color(0xFFF9FAFB);
-  static const Color _cardColor = Colors.white;
-  static const double _horizontalPadding = 16.0;
-  static const double _verticalPadding = 12.0;
-
-  // --- State Variables for Search ---
+  // --- State Variables ---
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   List<OrderInfo> _filteredOrders = [];
 
-  // --- Sample Data (Source of Truth) ---
+  // --- Sample Data (Replace with actual data fetching) ---
   final List<OrderInfo> _allOrders = List.generate(
     20,
     (index) => OrderInfo(
-      id: 'ORDER_${100 + index}', // Use a more descriptive ID for clarity
-      invoice: "10000${index}",
+      id: 'ORDER_${100 + index}',
+      invoice: "10000$index",
       order: "${500 + index}",
       orderCode: "RC${20210 + index}",
-      quote: "100${index}",
+      quote: "100$index",
       customerName:
           index % 3 == 0
               ? "Ahmed Khaled Co."
@@ -66,6 +57,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     ),
   );
 
+  // --- Lifecycle Methods ---
   @override
   void initState() {
     super.initState();
@@ -82,6 +74,10 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
 
   // --- Search Logic ---
   void _onSearchChanged() {
+    // Basic debounce mechanism (optional, consider using packages like flutter_hooks or rxdart for more robust debouncing)
+    // Timer? debounce;
+    // if (debounce?.isActive ?? false) debounce?.cancel();
+    // debounce = Timer(const Duration(milliseconds: 300), () {
     final query = _searchController.text.trim().toLowerCase();
     if (query == _searchQuery) return;
 
@@ -92,138 +88,124 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
       } else {
         _filteredOrders =
             _allOrders.where((order) {
-              final nameMatches = order.customerName.toLowerCase().contains(
-                _searchQuery,
-              );
-              final codeMatches = order.orderCode.toLowerCase().contains(
-                _searchQuery,
-              );
-              // You might want to search other fields like order number too
-              final orderNumMatches = order.order.toLowerCase().contains(
-                _searchQuery,
-              );
-              return nameMatches || codeMatches || orderNumMatches;
+              return order.customerName.toLowerCase().contains(_searchQuery) ||
+                  order.orderCode.toLowerCase().contains(_searchQuery) ||
+                  order.order.toLowerCase().contains(_searchQuery);
             }).toList();
       }
     });
+    // });
   }
 
   // --- Build Method ---
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor, // Use theme background
       body: SafeArea(
         child: Container(
-          color: _backgroundColor,
+          color: scaffoldBackgroundColor,
           child: Column(
             children: [
-              _buildHeader(context),
-              buildBrandBar(context, 1.0, false),
-              _buildSearchBar(),
-              Expanded(child: _buildContent(context)),
+              _buildHeader(context), // Uses AppBarTheme
+              // Assuming BrandBar uses theme
+              buildBrandBar(
+                context,
+                MediaQuery.textScalerOf(context).textScaleFactor,
+                MediaQuery.of(context).size.width > 600,
+              ),
+              _buildSearchBar(context), // Uses InputDecorationTheme
+              Expanded(
+                child: _buildContent(context),
+              ), // Uses TextTheme, CardTheme etc.
             ],
           ),
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(context),
+      floatingActionButton: _buildFloatingActionButton(
+        context,
+      ), // Uses FABTheme
     );
   }
 
-  // --- Helper Widgets (Header, Branding, SearchBar, Content, EmptyState - unchanged) ---
+  // --- Header Builder (Uses AppBarTheme implicitly) ---
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      color: _primaryColor,
-      padding: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding / 2,
-        vertical: _verticalPadding / 2,
+    // Use AppBar for standard styling and back button handling
+    return AppBar(
+      // Properties like backgroundColor, foregroundColor, elevation from theme
+      automaticallyImplyLeading:
+          false, // Remove default back button if adding custom one
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back), // Icon color from theme
+        tooltip: 'Back',
+        onPressed: () => Navigator.pop(context),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                tooltip: 'Back',
-                onPressed: () => Navigator.pop(context),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  'Open Orders',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_outline, color: Colors.white),
-            tooltip: 'Profile',
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profile button tapped!')),
-              );
-            },
-          ),
-        ],
+      title: Text(
+        'Open Orders',
+        // titleTextStyle from theme
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.person_outline), // Icon color from theme
+          tooltip: 'Profile',
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profile button tapped!'),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
-  Widget _buildSearchBar() {
+  // --- Search Bar Builder ---
+  Widget _buildSearchBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final iconColor = theme.iconTheme.color?.withOpacity(0.6);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        _horizontalPadding,
-        _verticalPadding,
-        _horizontalPadding,
-        _verticalPadding / 2,
-      ),
+        16.0,
+        12.0,
+        16.0,
+        8.0,
+      ), // Adjusted padding
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
           hintText: 'Search by Name or Order Code...',
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+          prefixIcon: Icon(Icons.search, color: iconColor),
           suffixIcon:
               _searchQuery.isNotEmpty
                   ? IconButton(
-                    icon: const Icon(Icons.clear, color: Colors.grey),
+                    icon: Icon(Icons.clear, color: iconColor),
                     tooltip: 'Clear Search',
                     onPressed: () {
-                      _searchController.clear(); // This triggers the listener
+                      _searchController
+                          .clear(); // Listener will handle state update
                     },
                   )
                   : null,
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 12.0,
+            horizontal: 16.0,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(
-              color: _primaryColor.withOpacity(0.8),
-              width: 1.5,
-            ),
-          ),
-        ),
-        style: Theme.of(context).textTheme.bodyLarge,
+        ).applyDefaults(theme.inputDecorationTheme),
+        style: theme.textTheme.bodyLarge, // Use theme text style
       ),
     );
   }
 
+  // --- Content Builder (List or Empty State) ---
   Widget _buildContent(BuildContext context) {
     if (_allOrders.isEmpty) {
-      // Check original list first
       return _buildEmptyState(
+        context: context,
         icon: Icons.list_alt_outlined,
         title: "No Orders Yet",
         message: "When orders are created, they will appear here.",
@@ -232,58 +214,60 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
 
     if (_filteredOrders.isEmpty && _searchQuery.isNotEmpty) {
       return _buildEmptyState(
+        context: context,
         icon: Icons.search_off_outlined,
         title: "No Orders Found",
         message: "Try adjusting your search query.",
       );
     }
 
-    // Display the list using the _OrderSummaryCard
-    return Container(
-      color: _backgroundColor, // Use the screen background color
-      child: ListView.builder(
-        padding: const EdgeInsets.only(
-          left: _horizontalPadding,
-          right: _horizontalPadding,
-          bottom: 80, // Space for FAB
-          top: _horizontalPadding / 2,
-        ),
-        itemCount: _filteredOrders.length,
-        itemBuilder: (context, index) {
-          final order = _filteredOrders[index];
-          // Pass the actual order data to the card
-          return _OrderSummaryCard(order: order); // <--- Use the Card Widget
-        },
+    // Display the list using the refactored _OrderSummaryCard
+    return ListView.builder(
+      padding: const EdgeInsets.only(
+        left: 12, // Adjust list padding to align with card margins
+        right: 12,
+        bottom: 80, // Space for FAB
+        top: 8,
       ),
+      itemCount: _filteredOrders.length,
+      itemBuilder: (context, index) {
+        final order = _filteredOrders[index];
+        return _OrderSummaryCard(order: order); // Use the Card Widget
+      },
     );
   }
 
+  // --- Empty State Builder ---
   Widget _buildEmptyState({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String message,
   }) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final iconColor = theme.iconTheme.color?.withOpacity(0.4);
+    final titleColor = theme.colorScheme.onSurface.withOpacity(0.6);
+    final messageColor = theme.colorScheme.onSurface.withOpacity(0.5);
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(_horizontalPadding * 2),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 60, color: Colors.grey[400]),
+            Icon(icon, size: 60, color: iconColor),
             const SizedBox(height: 16),
             Text(
               title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+              style: textTheme.titleMedium?.copyWith(color: titleColor),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
+              style: textTheme.bodyMedium?.copyWith(color: messageColor),
             ),
           ],
         ),
@@ -291,29 +275,24 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     );
   }
 
-  // --- Floating Action Button (Navigates to NewOrderScreen) ---
+  // --- Floating Action Button Builder (Uses FABTheme) ---
   Widget _buildFloatingActionButton(BuildContext context) {
+    // Uses FloatingActionButtonThemeData from app_theme.dart
     return FloatingActionButton(
-      shape: const CircleBorder(),
-      backgroundColor: _primaryColor,
-      elevation: 4,
+      // backgroundColor, foregroundColor, elevation, shape from theme
       tooltip: 'Create New Order',
       onPressed: () {
-        // Navigate using the IMPORTED NewOrderScreen class
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder:
-                (context) => const NewOrderScreen(), // From new_orders.dart
-          ),
+          MaterialPageRoute(builder: (context) => const NewOrderScreen()),
         );
       },
-      child: const Icon(Icons.add, color: Colors.white, size: 32),
+      child: const Icon(Icons.add, size: 32), // Icon color from theme
     );
   }
 } // End of _OpenOrdersScreenState class
 
-// --- Enhanced Order Summary Card Widget ---
+// --- Order Summary Card Widget (Refactored) ---
 class _OrderSummaryCard extends StatelessWidget {
   final OrderInfo order;
 
@@ -321,69 +300,71 @@ class _OrderSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+    final listTileTheme = theme.listTileTheme;
 
     return Card(
-      elevation: 2.0,
-      margin: const EdgeInsets.only(bottom: 12.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      color: _OpenOrdersScreenState._cardColor,
+      // Uses CardTheme properties (color, elevation, shadow, shape, margin)
       child: InkWell(
-        borderRadius: BorderRadius.circular(8.0),
-        // --- onTap ACTION MODIFIED ---
+        // Use theme splash/highlight
+        splashColor: theme.splashColor,
+        highlightColor: theme.highlightColor,
         onTap: () {
-          print("Tapped on order: ${order.id}"); // Keep for debugging
           Navigator.push(
             context,
             MaterialPageRoute(
-              // Use the IMPORTED SingleOrderScreen from single_order.dart
-              // Assuming your real SingleOrderScreen constructor takes 'orderId'
-              builder:
-                  (context) => SingleOrderScreen(
-                    orderId: order.id,
-                  ), // <--- NAVIGATE TO IMPORTED SCREEN
+              // Ensure SingleOrderScreen exists and accepts orderId
+              builder: (context) => SingleOrderScreen(orderId: order.id),
             ),
           );
         },
-        // --- END onTap MODIFICATION ---
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: _OpenOrdersScreenState._primaryColor.withOpacity(
-                0.1,
-              ),
-              child: Icon(
-                Icons.receipt_long, // Consistent icon
-                color: _OpenOrdersScreenState._primaryColor,
-                size: 24,
-              ),
+        child: ListTile(
+          // Use ListTileTheme properties (dense, contentPadding, iconColor)
+          leading: CircleAvatar(
+            backgroundColor: colorScheme.primary.withOpacity(
+              0.1,
+            ), // Subtle primary background
+            child: Icon(
+              Icons.receipt_long,
+              color: colorScheme.primary, // Use primary color for icon
+              size: 24,
             ),
-            title: Text(
-              order.customerName,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: _OpenOrdersScreenState._primaryColor,
-              ),
+          ),
+          title: Text(
+            order.customerName,
+            // Use theme title style, override color if needed
+            style:
+                listTileTheme.titleTextStyle?.copyWith(
+                  fontWeight: FontWeight.w600, // Make title bold
+                  color: colorScheme.primary, // Use primary color for title
+                ) ??
+                textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.primary,
+                ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              'Code: ${order.orderCode} / Order: ${order.order}',
+              // Use theme subtitle style
+              style: listTileTheme.subtitleTextStyle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Text(
-                'Code: ${order.orderCode} / Order: ${order.order}',
-                style: textTheme.bodyMedium?.copyWith(color: Colors.black54),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            trailing: const Icon(
-              Icons.chevron_right,
-              color: Colors.grey,
-              size: 28,
-            ),
-            contentPadding: EdgeInsets.zero, // Let Padding handle spacing
           ),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: listTileTheme.iconColor?.withOpacity(
+              0.8,
+            ), // Use theme icon color
+            size: 28,
+          ),
+          // contentPadding: listTileTheme.contentPadding, // Use theme padding
         ),
       ),
     );
