@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/features/Stock/presentation/views/show_stock.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
@@ -30,32 +31,32 @@ class DashBoard extends StatelessWidget {
 
     final menuItems = [
       {
-        'title': 'Business Partner',
+        'title': 'Business Partner'.tr(),
         'icon': Icons.people_alt_outlined,
         'page': const AllBusinessPartnerWowListPage(),
       },
       {
-        'title': 'Orders',
+        'title': 'Orders'.tr(),
         'icon': Icons.receipt_long_outlined,
         'page': const OpenOrdersScreen(),
       },
       {
-        'title': 'AR Invoice',
+        'title': 'AR Invoice'.tr(),
         'icon': Icons.request_quote_outlined,
         'page': const OpenOrdersScreen(),
       },
       {
-        'title': 'Stock',
+        'title': 'Stock'.tr(),
         'icon': Icons.inventory_2_outlined,
         'page': const WarehouseStockPage(),
       },
       {
-        'title': 'Collect',
+        'title': 'Collect'.tr(),
         'icon': Icons.payments_outlined,
         'page': const OpenOrdersScreen(),
       },
       {
-        'title': 'Reports',
+        'title': 'Reports'.tr(),
         'icon': Icons.bar_chart_rounded,
         'page': const OpenOrdersScreen(),
       },

@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/order/domain/use_case/calculate_item_totals.dart';
 
 void showAddItemDialog(BuildContext context, String customerName) {
   showDialog(
@@ -35,40 +37,31 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
   @override
   void initState() {
     super.initState();
-
     _qtyController.addListener(_calculateTotals);
     _unitPriceController.addListener(_calculateTotals);
     _discountController.addListener(_calculateTotals);
     _calculateTotals();
   }
 
-  @override
-  void dispose() {
-    _itemCodeController.dispose();
-    _descController.dispose();
-    _qtyController.dispose();
-    _unitPriceController.dispose();
-    _discountController.dispose();
-    super.dispose();
-  }
+ 
 
   void _calculateTotals() {
     final qty = int.tryParse(_qtyController.text) ?? 0;
     final unitPrice = double.tryParse(_unitPriceController.text) ?? 0.0;
 
     final discountAmount = double.tryParse(_discountController.text) ?? 0.0;
+    CalculateItemTotals calculateItemTotals = CalculateItemTotals(
+      quantity: qty,
+      price: unitPrice,
+      discount: discountAmount,
+    );
+    final total = calculateItemTotals.calculateCurrentTotal();
+    final discountedTotal = calculateItemTotals.calculateCurrentDiscountedTotal();
 
-    final currentTotal = (qty * unitPrice);
-    final currentDiscountedTotal = currentTotal - discountAmount;
-
-    if (mounted &&
-        (_total != currentTotal.toStringAsFixed(2) ||
-            _discountedTotal != currentDiscountedTotal.toStringAsFixed(2))) {
-      setState(() {
-        _total = currentTotal.toStringAsFixed(2);
-        _discountedTotal = currentDiscountedTotal.toStringAsFixed(2);
-      });
-    }
+    setState(() {
+      _total = total.toStringAsFixed(2);
+      _discountedTotal = discountedTotal.toStringAsFixed(2);
+    });
   }
 
   void _addItem() {
@@ -114,7 +107,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
 
                 _buildRow(
                   context,
-                  'Item Code',
+                  'Item Code'.tr(),
                   _styledField(
                     context,
                     controller: _itemCodeController,
@@ -123,7 +116,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Description',
+                  'Description'.tr(),
                   _styledField(
                     context,
                     controller: _descController,
@@ -132,7 +125,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Quantity',
+                  'Quantity'.tr(),
                   _styledField(
                     context,
                     controller: _qtyController,
@@ -141,7 +134,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Unit Price',
+                  'Unit Price'.tr(),
                   _styledField(
                     context,
                     controller: _unitPriceController,
@@ -152,7 +145,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Discount',
+                  'Discount'.tr(),
                   _styledField(
                     context,
                     controller: _discountController,
@@ -165,7 +158,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
 
                 _buildRow(
                   context,
-                  'Warehouse',
+                  'Warehouse'.tr(),
                   DropdownButtonFormField<String>(
                     value: _selectedWarehouse,
                     items:
@@ -197,8 +190,12 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
 
                 const Divider(height: 32),
 
-                _buildDisplayRow(context, 'Total:', _total),
-                _buildDisplayRow(context, 'After Discount:', _discountedTotal),
+                _buildDisplayRow(context, 'Total'.tr(), _total),
+                _buildDisplayRow(
+                  context,
+                  'After Discount'.tr(),
+                  _discountedTotal,
+                ),
 
                 const SizedBox(height: 24),
 
@@ -208,13 +205,13 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       style: kTextButtonErrorStyle,
-                      child: const Text('Cancel'),
+                      child: Text('Cancel'.tr()),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
                       onPressed: _addItem,
 
-                      child: const Text('Add Item'),
+                      child: Text('Add Item'.tr()),
                     ),
                   ],
                 ),
@@ -311,5 +308,14 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
         ),
       ),
     );
+  }
+   @override
+  void dispose() {
+    _itemCodeController.dispose();
+    _descController.dispose();
+    _qtyController.dispose();
+    _unitPriceController.dispose();
+    _discountController.dispose();
+    super.dispose();
   }
 }

@@ -75,6 +75,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     } else {
       context.setLocale(const Locale('ar', 'EG'));
     }
+    setState(() {});
   }
 
   @override
@@ -173,7 +174,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 validator:
                                     (value) =>
                                         value == null || value.isEmpty
-                                            ? 'Database Name is required'
+                                            ? 'Databasenamerequired'.tr()
                                             : null,
                               ).animate().fadeIn(delay: 100.ms),
 
@@ -186,7 +187,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 validator:
                                     (value) =>
                                         value == null || value.isEmpty
-                                            ? 'Username is required'
+                                            ? 'UserNameisRequired'.tr()
                                             : null,
                               ).animate().fadeIn(delay: 200.ms),
 
@@ -200,7 +201,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 validator:
                                     (value) =>
                                         value == null || value.isEmpty
-                                            ? 'Password is required'
+                                            ? 'PasswordisRequired'.tr()
                                             : null,
                                 suffix: IconButton(
                                   iconSize: 24,

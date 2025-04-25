@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
@@ -121,7 +122,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
         tooltip: 'Back',
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text('Open Orders'),
+      title: Text('Open Orders').tr(),
       actions: [
         IconButton(
           icon: const Icon(Icons.person_outline),
@@ -148,7 +149,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: 'Search by Name or Order Code...',
+          hintText: 'Search by Name or Order Code'.tr(),
           prefixIcon: Icon(Icons.search, color: iconColor),
           suffixIcon:
               _searchQuery.isNotEmpty

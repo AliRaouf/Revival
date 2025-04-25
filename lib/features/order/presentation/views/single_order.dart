@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -37,33 +38,33 @@ class SingleOrderScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildWowInfoRow(
-                    label: 'Customer',
+                    label: 'Customer'.tr(),
                     value: orderData['customerType'] as String,
                     valueFontSize: 16,
                     isValueBold: true,
                   ),
                   const SizedBox(height: 18),
                   _buildWowInfoRow(
-                    label: 'Document date',
+                    label: 'Document Date'.tr(),
                     value: dateFormat.format(
                       orderData['documentDate'] as DateTime,
                     ),
                   ),
                   const SizedBox(height: 18),
                   _buildWowInfoRow(
-                    label: 'Delivery date',
+                    label: 'Delivery Date'.tr(),
                     value: dateFormat.format(
                       orderData['deliveryDate'] as DateTime,
                     ),
                   ),
                   const SizedBox(height: 18),
                   _buildWowInfoRow(
-                    label: 'Reference number',
+                    label: 'Reference Number'.tr(),
                     value: orderData['referenceNumber'] as String? ?? '-',
                   ),
                   const SizedBox(height: 18),
                   _buildWowInfoRow(
-                    label: 'Title',
+                    label: 'Title'.tr(),
                     value: orderData['title'] as String? ?? '-',
                   ),
                 ],
@@ -76,14 +77,14 @@ class SingleOrderScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildWowInfoRow(
-                    label: 'Sales person',
+                    label: 'Sales Person'.tr(),
                     value: orderData['salesPerson'] as String,
                     valueFontSize: 16,
                     isValueBold: true,
                   ),
                   const SizedBox(height: 18),
                   _buildWowInfoRow(
-                    label: 'Contact person',
+                    label: 'Contact Person'.tr(),
                     value: orderData['contactPerson'] as String? ?? '-',
                   ),
                   const SizedBox(height: 20),
@@ -95,15 +96,15 @@ class SingleOrderScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             _buildWowTextButton(
-              label: 'CUSTOM FIELDS',
+              label: 'Custom Fields'.tr(),
               onTap: () {
                 print('Custom Fields button tapped');
               },
             ),
             const SizedBox(height: 24),
 
-            const Text(
-              'ITEMS',
+             Text(
+              'Items'.tr(),
               style: TextStyle(
                 color: wowMediumTextColor,
                 fontSize: 13,
@@ -141,13 +142,13 @@ class SingleOrderScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _buildWowTotalRow(
-                    label: 'Discount:',
+                    label: 'Discount'.tr(),
                     value:
                         "${(orderData['discountPercent'] as double).toStringAsFixed(2)}% (${(orderData['discountValue'] as double).toStringAsFixed(2)} ${orderData['currency']})",
                   ),
                   const SizedBox(height: 12),
                   _buildWowTotalRow(
-                    label: 'VAT:',
+                    label: 'VAT'.tr(),
                     value:
                         "${(orderData['vatValue'] as double).toStringAsFixed(2)} ${orderData['currency']}",
                   ),
@@ -160,7 +161,7 @@ class SingleOrderScreen extends StatelessWidget {
                     ),
                   ),
                   _buildWowTotalRow(
-                    label: 'Total:',
+                    label: 'Total'.tr(),
                     value:
                         "${(orderData['totalValue'] as double).toStringAsFixed(2)} ${orderData['currency']}",
                     isValueBold: true,
@@ -336,8 +337,8 @@ class SingleOrderScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'CONTACT ACTIONS',
+         Text(
+          'Contact Actions'.tr(),
           style: TextStyle(
             color: wowLightTextColor,
             fontSize: 11,
@@ -549,12 +550,12 @@ class SingleOrderScreen extends StatelessWidget {
         onPressed: () {
           print('Copy to Invoice button tapped');
         },
-        child: const Row(
+        child:  Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'COPY TO INVOICE',
+              'Copy to Invoice'.tr(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,

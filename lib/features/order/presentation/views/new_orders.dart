@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:revival/features/order/presentation/views/widgets/add_items_dialogue.dart';
@@ -164,7 +165,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 children: [
                   _buildDropdownField(
                     context: context,
-                    label: "Customer",
+                    label: "Customer".tr(),
                     value: _selectedCustomer,
                     items: _customerItems,
                     onChanged: (v) => setState(() => _selectedCustomer = v),
@@ -175,7 +176,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       Expanded(
                         child: _buildDateField(
                           context: context,
-                          label: "Date",
+                          label: "Date".tr(),
                           controller: _dateController,
                           onTap: () => _selectDate(context, true),
                         ),
@@ -184,7 +185,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       Expanded(
                         child: _buildDateField(
                           context: context,
-                          label: "Valid until",
+                          label: "Valid until".tr(),
                           controller: _validUntilController,
                           onTap: () => _selectDate(context, false),
                         ),
@@ -194,20 +195,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   const SizedBox(height: 16),
                   _buildTextField(
                     context: context,
-                    label: "Reference number",
+                    label: "Reference Number".tr(),
                     controller: _referenceController,
                   ),
                   const SizedBox(height: 16),
                   _buildTextField(
                     context: context,
-                    label: "Title",
+                    label: "Title".tr(),
                     controller: _titleController,
                     maxLength: 50,
                   ),
                   const SizedBox(height: 16),
                   _buildDropdownField(
                     context: context,
-                    label: "Shipping Address",
+                    label: "Shipping Address".tr(),
                     value: _selectedShippingAddress,
                     items: _addressItems,
                     onChanged:
@@ -216,7 +217,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   const SizedBox(height: 16),
                   _buildDropdownField(
                     context: context,
-                    label: "Sales person",
+                    label: "Sales Person".tr(),
                     value: _selectedSalesPerson,
                     items: _salesPersonItems,
                     onChanged: (v) => setState(() => _selectedSalesPerson = v),
@@ -224,7 +225,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   const SizedBox(height: 16),
                   _buildDropdownField(
                     context: context,
-                    label: "Contact Person",
+                    label: "Contact Person".tr(),
                     value: _selectedContactPerson,
                     items: _contactPersonItems,
                     onChanged:
@@ -232,7 +233,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   ),
 
                   const SizedBox(height: 32),
-                  Text("Added items", style: theme.textTheme.titleSmall),
+                  Text("Added Items".tr(), style: theme.textTheme.titleSmall),
                   const SizedBox(height: 16),
 
                   Container(
@@ -245,7 +246,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       color: theme.colorScheme.surface.withOpacity(0.5),
                     ),
                     child: Text(
-                      "List is empty.",
+                      "List is empty.".tr(),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: mediumTextColor,
                       ),
@@ -266,12 +267,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           );
                         },
 
-                        child: const Text("ADD TEXT LINE"),
+                        child:  Text("Add Text Line".tr()),
                       ),
                       TextButton(
                         onPressed: _addItem,
 
-                        child: const Text("ADD ITEMS"),
+                        child:  Text("Add Items".tr()),
                       ),
                     ],
                   ),
@@ -292,13 +293,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Column(
+      title:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('New order'),
+          Text('New Order'.tr()),
           Text(
-            'revival',
+            'Revival',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 14,
@@ -429,7 +430,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Estimated net total:",
+                "Estimated net total".tr(),
                 style: textTheme.bodyLarge?.copyWith(color: mediumTextColor),
               ),
               Row(
@@ -471,7 +472,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 child: OutlinedButton(
                   onPressed: _saveDraft,
 
-                  child: const Text("SAVE DRAFT"),
+                  child:  Text("Save Draft".tr()),
                 ),
               ),
               const SizedBox(width: 16),
@@ -479,7 +480,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 child: ElevatedButton(
                   onPressed: _submitOrder,
 
-                  child: const Text("SUBMIT"),
+                  child:  Text("Submit".tr()),
                 ),
               ),
             ],
@@ -513,7 +514,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               const SizedBox(height: 16.0),
 
               Text(
-                "SUCCESS",
+                "Success".tr(),
                 style: textTheme.titleMedium?.copyWith(
                   color: successColor,
                   fontWeight: FontWeight.bold,
