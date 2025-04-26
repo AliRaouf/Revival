@@ -4,10 +4,15 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/core/widgets/logo_image.dart';
+import 'package:revival/features/login/presentation/views/widgets/forgot_password.dart';
+import 'package:revival/features/login/presentation/views/widgets/input_column.dart';
+import 'package:revival/features/login/presentation/views/widgets/login_button.dart';
+import 'package:revival/features/login/presentation/views/widgets/remember_me.dart';
+import 'package:revival/shared/utils.dart';
+import 'package:revival/shared/logo_image.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
 import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
-import 'package:revival/features/login/presentation/views/widgets/labeled_field.dart';
+import 'package:revival/features/login/presentation/views/widgets/language_switcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,7 +22,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
-  bool _obscureText = true;
+  final bool _obscureText = true;
   final _databaseNameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -44,15 +49,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  @override
-  void dispose() {
-    _databaseNameController.dispose();
-    _usernameController.dispose();
-    _passwordController.dispose();
-    _logoAnimationController.dispose();
-    super.dispose();
-  }
-
   void _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       final userCredentials = UserCredentials(
@@ -69,26 +65,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _forgotPassword() {
-    // print('Forgot Password tapped');
-    if (context.locale.languageCode == 'ar') {
-      context.setLocale(const Locale('en', 'US'));
-    } else {
-      context.setLocale(const Locale('ar', 'EG'));
-    }
-    setState(() {});
+    print('Forgot Password tapped');
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
+    final utilities = Utilities(context);
 
-    final mq = MediaQuery.of(context);
-    final screenSize = mq.size;
-    final isTablet = screenSize.width > 600;
-    final cardWidth = isTablet ? 500.0 : screenSize.width * 0.9;
-    double vSpace(double factor) => 16 * factor;
+    final cardWidth =
+        utilities.isTablet ? 500.0 : utilities.screenSize.width * 0.9;
 
     return Scaffold(
       body: Container(
@@ -96,8 +81,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         child: Center(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 24 : 16,
-              vertical: isTablet ? 32 : 20,
+              horizontal: utilities.isTablet ? 24 : 16,
+              vertical: utilities.isTablet ? 32 : 20,
             ),
             child: Form(
               key: _formKey,
@@ -147,171 +132,47 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         cardWidth: cardWidth,
                         logoAnimation: _logoAnimation,
                       ),
-                      SizedBox(height: vSpace(2)),
+                      SizedBox(height: utilities.vSpace(2)),
                       Card(
                         child: Container(
                           width: cardWidth,
                           constraints: const BoxConstraints(maxWidth: 500),
-                          padding: EdgeInsets.all(isTablet ? 32 : 24),
+                          padding: EdgeInsets.all(utilities.isTablet ? 32 : 24),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Login'.tr(),
+                                'Login',
                                 textAlign: TextAlign.center,
-                                style: textTheme.headlineSmall,
+                                style: utilities.textTheme.headlineSmall,
                               ).animate().slideY(
                                 duration: 500.ms,
                                 curve: Curves.easeOut,
                               ),
 
-                              SizedBox(height: vSpace(2)),
-
-                              LabeledField(
-                                label: 'DBName'.tr(),
-                                controller: _databaseNameController,
-                                keyboardType: TextInputType.url,
-                                validator:
-                                    (value) =>
-                                        value == null || value.isEmpty
-                                            ? 'Databasenamerequired'.tr()
-                                            : null,
-                              ).animate().fadeIn(delay: 100.ms),
-
-                              SizedBox(height: vSpace(1.5)),
-
-                              LabeledField(
-                                label: 'Username'.tr(),
-                                controller: _usernameController,
-                                keyboardType: TextInputType.visiblePassword,
-                                validator:
-                                    (value) =>
-                                        value == null || value.isEmpty
-                                            ? 'UserNameisRequired'.tr()
-                                            : null,
-                              ).animate().fadeIn(delay: 200.ms),
-
-                              SizedBox(height: vSpace(1.5)),
-
-                              LabeledField(
-                                label: 'Password'.tr(),
+                              InputColumn(
+                                databaseNameController: _databaseNameController,
+                                usernameController: _usernameController,
+                                passwordController: _passwordController,
                                 obscureText: _obscureText,
-                                controller: _passwordController,
-                                keyboardType: TextInputType.visiblePassword,
-                                validator:
-                                    (value) =>
-                                        value == null || value.isEmpty
-                                            ? 'PasswordisRequired'.tr()
-                                            : null,
-                                suffix: IconButton(
-                                  iconSize: 24,
-                                  splashRadius: 24,
-                                  color: theme.iconTheme.color?.withOpacity(
-                                    0.7,
-                                  ),
-                                  icon: Icon(
-                                    _obscureText
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureText = !_obscureText;
-                                    });
-                                  },
-                                ),
-                              ).animate().fadeIn(delay: 300.ms),
-
-                              SizedBox(height: vSpace(0.5)),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Checkbox(
-                                    value: _rememberMe,
-                                    onChanged:
-                                        isLoading
-                                            ? null
-                                            : (bool? value) {
-                                              setState(() {
-                                                _rememberMe = value ?? false;
-                                              });
-                                            },
-
-                                    visualDensity: VisualDensity.compact,
-                                  ),
-                                  InkWell(
-                                    onTap:
-                                        isLoading
-                                            ? null
-                                            : () {
-                                              setState(() {
-                                                _rememberMe = !_rememberMe;
-                                              });
-                                            },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0,
-                                      ),
-                                      child: Text(
-                                        'RememberMe'.tr(),
-
-                                        style: textTheme.bodyMedium?.copyWith(
-                                          color:
-                                              isLoading
-                                                  ? theme.disabledColor
-                                                  : textTheme.bodyMedium?.color,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ).animate().fadeIn(delay: 400.ms),
-
-                              SizedBox(height: vSpace(1.5)),
-                              SizedBox(
-                                height: 52,
-                                child:
-                                    ElevatedButton(
-                                          onPressed: isLoading ? null : _login,
-                                          style: theme.elevatedButtonTheme.style
-                                              ?.copyWith(
-                                                minimumSize:
-                                                    WidgetStateProperty.all(
-                                                      const Size.fromHeight(52),
-                                                    ),
-                                              ),
-                                          child:
-                                              isLoading
-                                                  ? const CircularProgressIndicator(
-                                                    color: Colors.white,
-                                                  )
-                                                  : Text('Login'.tr()),
-                                        )
-                                        .animate(delay: 500.ms)
-                                        .scale(
-                                          duration: 200.ms,
-                                          curve: Curves.easeInOut,
-                                        )
-                                        .fade(),
                               ),
-
-                              SizedBox(height: vSpace(1.5)),
-
-                              Center(
-                                child: TextButton(
-                                  onPressed: isLoading ? null : _forgotPassword,
-                                  child: Text(
-                                    'ForgotPassword'.tr(),
-
-                                    style: textTheme.bodySmall?.copyWith(
-                                      color:
-                                          isLoading
-                                              ? theme.disabledColor
-                                              : colorScheme.primary,
-                                    ),
-                                  ),
-                                ),
-                              ).animate().fadeIn(delay: 600.ms),
+                              RememberMe(
+                                rememberMe: _rememberMe,
+                                utilities: utilities,
+                                isLoading: isLoading,
+                              ),
+                              SizedBox(height: utilities.vSpace(1.5)),
+                              LoginButton(
+                                isLoading: isLoading,
+                                login: _login,
+                              ).animate().fadeIn(delay: 500.ms),
+                              SizedBox(height: utilities.vSpace(1.5)),
+                              ForgotPassword(
+                                isLoading: isLoading,
+                                forgotPassword: _forgotPassword,
+                              ),
+                              SizedBox(height: utilities.vSpace(0.5)),
+                              Center(child: LanguageSwitcher()),
                             ],
                           ),
                         ),
@@ -325,5 +186,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _databaseNameController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _logoAnimationController.dispose();
+    super.dispose();
   }
 }

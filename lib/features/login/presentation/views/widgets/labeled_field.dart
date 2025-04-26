@@ -80,6 +80,7 @@ class _LabeledFieldState extends State<LabeledField> {
           validator: widget.validator,
 
           decoration: inputDecoration.copyWith(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(kDefaultBorderRadius),
               borderSide: BorderSide(

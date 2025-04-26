@@ -3,31 +3,30 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/ar_invoice/domain/entity/invoice.dart';
+import 'package:revival/features/ar_invoice/presentation/utils/invoice_utils.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
-import 'package:revival/features/order/domain/entity/order.dart';
-import 'package:revival/features/order/presentation/utils/order_utils.dart';
 import 'package:revival/shared/open_orders_invoices_header.dart';
 import 'package:revival/features/order/presentation/views/widgets/open_orders_search.dart';
 import 'package:revival/shared/order_summary_card.dart';
 import 'package:revival/shared/utils.dart';
 
-class OpenOrdersScreen extends StatefulWidget {
-  const OpenOrdersScreen({super.key});
+class OpenInvoicesScreen extends StatefulWidget {
+  const OpenInvoicesScreen({super.key});
 
   @override
-  State<OpenOrdersScreen> createState() => _OpenOrdersScreenState();
+  State<OpenInvoicesScreen> createState() => _OpenInvoicesScreenState();
 }
 
-class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
+class _OpenInvoicesScreenState extends State<OpenInvoicesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  List<OrderInfo> _filteredOrders = [];
-  final OrderUtils orderUtils = OrderUtils();
-
+  List<Invoice> _filteredInvoices = [];
+  final InvoiceUtils invoiceUtils = InvoiceUtils();
   @override
   void initState() {
     super.initState();
-    _filteredOrders = List.from(orderUtils.allOrders);
+    _filteredInvoices = List.from(invoiceUtils.allInvoices);
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -38,10 +37,10 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     setState(() {
       _searchQuery = query;
       if (_searchQuery.isEmpty) {
-        _filteredOrders = List.from(orderUtils.allOrders);
+        _filteredInvoices = List.from(invoiceUtils.allInvoices);
       } else {
-        _filteredOrders =
-            orderUtils.allOrders.where((order) {
+        _filteredInvoices =
+            invoiceUtils.allInvoices.where((order) {
               return order.customerName.toLowerCase().contains(_searchQuery) ||
                   order.orderCode.toLowerCase().contains(_searchQuery) ||
                   order.order.toLowerCase().contains(_searchQuery);
@@ -60,7 +59,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
           color: scaffoldBackgroundColor,
           child: Column(
             children: [
-              openOrdersInvoicesHeader(context, 'Open Orders'),
+              openOrdersInvoicesHeader(context, 'Open Invoices'),
               buildBrandBar(
                 context,
                 MediaQuery.textScalerOf(context).textScaleFactor,
@@ -77,30 +76,30 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   }
 
   Widget _buildContent(BuildContext context) {
-    if (orderUtils.allOrders.isEmpty) {
+    if (invoiceUtils.allInvoices.isEmpty) {
       return _buildEmptyState(
         context: context,
         icon: Icons.list_alt_outlined,
-        title: 'No Orders Yet',
+        title: 'No Invoices Yet',
         message: 'When orders are created, they will appear here.',
       );
     }
 
-    if (_filteredOrders.isEmpty && _searchQuery.isNotEmpty) {
+    if (_filteredInvoices.isEmpty && _searchQuery.isNotEmpty) {
       return _buildEmptyState(
         context: context,
         icon: Icons.search_off_outlined,
-        title: 'No Orders Found',
+        title: 'No Invoices Found',
         message: 'Try adjusting your search query.',
       );
     }
 
     return ListView.builder(
       padding: const EdgeInsets.only(left: 12, right: 12, bottom: 80, top: 8),
-      itemCount: _filteredOrders.length,
+      itemCount: _filteredInvoices.length,
       itemBuilder: (context, index) {
-        final order = _filteredOrders[index];
-        return OrderInvoiceSummaryCard(order: order,);
+        final invoice = _filteredInvoices[index];
+        return OrderInvoiceSummaryCard(invoice: invoice);
       },
     );
   }
@@ -144,9 +143,9 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
 
   Widget _buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      tooltip: 'Create New Order',
+      tooltip: 'Create New Invoice',
       onPressed: () {
-        context.push('/order/new_order');
+        context.push('/invoice/new_invoice');
       },
       child: const Icon(Icons.add, size: 32),
     );

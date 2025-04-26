@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 class UserCredentials {
   final String dbName;
   final String username;

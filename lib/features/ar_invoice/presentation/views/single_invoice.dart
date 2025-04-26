@@ -2,68 +2,66 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/features/order/presentation/views/widgets/copy_to_invoice_button.dart';
 
-const Color wowPrimaryMagenta = Color(0xFF173F5D);
-const Color wowSecondaryMagenta = Color(0xFF173F5D);
-const Color wowBackgroundColor = Color(0xFFFFFFFF);
-const Color wowLightBackground = Color(0xFFF9FAFB);
-const Color wowDarkTextColor = Color(0xFF1A202C);
-const Color wowMediumTextColor = Color(0xFF4A5568);
-const Color wowLightTextColor = Color(0xFF718096);
-const Color wowSubtleBorderColor = Color(0xFFE2E8F0);
-const Color wowShadowColor = Color(0xFFE2E8F0);
+const Color primaryMagenta = Color(0xFF173F5D);
+const Color secondaryMagenta = Color(0xFF173F5D);
+const Color backgroundColor = Color(0xFFFFFFFF);
+const Color lightBackground = Color(0xFFF9FAFB);
+const Color darkTextColor = Color(0xFF1A202C);
+const Color mediumTextColor = Color(0xFF4A5568);
+const Color lightTextColor = Color(0xFF718096);
+const Color subtleBorderColor = Color(0xFFE2E8F0);
+const Color shadowColor = Color(0xFFE2E8F0);
 
-class SingleOrderScreen extends StatelessWidget {
-  final String orderId;
+class SingleInvoiceScreen extends StatelessWidget {
+  final String invoiceId;
 
-  const SingleOrderScreen({super.key, required this.orderId});
+  const SingleInvoiceScreen({super.key, required this.invoiceId});
 
   @override
   Widget build(BuildContext context) {
-    print("Received Order ID: $orderId");
-
     final String customerName = '2Demo (VAT Exempt)';
-    final orderData = _getPlaceholderOrderData(orderId);
+    final orderData = _getPlaceholderInvoiceData(invoiceId);
     final DateFormat dateFormat = DateFormat('EEEE, MMMM d, yyyy');
 
     return Scaffold(
-      backgroundColor: wowBackgroundColor,
-      appBar: _buildWowAppBar(context, orderId, customerName),
+      backgroundColor: backgroundColor,
+      appBar: singleInvoiceAppBar(context, invoiceId, customerName),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionCard(
+            sectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Customer',
                     value: orderData['customerType'] as String,
                     valueFontSize: 16,
                     isValueBold: true,
                   ),
                   const SizedBox(height: 18),
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Document Date',
                     value: dateFormat.format(
                       orderData['documentDate'] as DateTime,
                     ),
                   ),
                   const SizedBox(height: 18),
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Delivery Date',
                     value: dateFormat.format(
                       orderData['deliveryDate'] as DateTime,
                     ),
                   ),
                   const SizedBox(height: 18),
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Reference Number',
                     value: orderData['referenceNumber'] as String? ?? '-',
                   ),
                   const SizedBox(height: 18),
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Title',
                     value: orderData['title'] as String? ?? '-',
                   ),
@@ -72,30 +70,30 @@ class SingleOrderScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            _buildSectionCard(
+            sectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Sales Person',
                     value: orderData['salesPerson'] as String,
                     valueFontSize: 16,
                     isValueBold: true,
                   ),
                   const SizedBox(height: 18),
-                  _buildWowInfoRow(
+                  infoRow(
                     label: 'Contact Person',
                     value: orderData['contactPerson'] as String? ?? '-',
                   ),
                   const SizedBox(height: 20),
 
-                  _buildWowContactActions(),
+                  contactActions(),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
-            _buildWowTextButton(
+            invoiceButton(
               label: 'Custom Fields',
               onTap: () {
                 print('Custom Fields button tapped');
@@ -106,7 +104,7 @@ class SingleOrderScreen extends StatelessWidget {
             Text(
               'Items',
               style: TextStyle(
-                color: wowMediumTextColor,
+                color: mediumTextColor,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.8,
@@ -119,7 +117,7 @@ class SingleOrderScreen extends StatelessWidget {
               itemCount: (orderData['items'] as List).length,
               itemBuilder: (context, index) {
                 final item = (orderData['items'] as List)[index];
-                return _buildWowItemRow(
+                return itemRow(
                   code: item['code'] as String,
                   name: item['name'] as String,
                   price: item['price'] as double,
@@ -132,22 +130,22 @@ class SingleOrderScreen extends StatelessWidget {
                   (context, index) => const Divider(
                     height: 24,
                     thickness: 1,
-                    color: wowSubtleBorderColor,
+                    color: subtleBorderColor,
                   ),
             ),
             const SizedBox(height: 24),
 
-            _buildSectionCard(
+            sectionCard(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
                 children: [
-                  _buildWowTotalRow(
+                  totalRow(
                     label: 'Discount',
                     value:
                         '${(orderData['discountPercent'] as double).toStringAsFixed(2)}% (${(orderData['discountValue'] as double).toStringAsFixed(2)} ${orderData['currency']})',
                   ),
                   const SizedBox(height: 12),
-                  _buildWowTotalRow(
+                  totalRow(
                     label: 'VAT',
                     value:
                         '${(orderData['vatValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
@@ -157,23 +155,23 @@ class SingleOrderScreen extends StatelessWidget {
                     child: Divider(
                       height: 1,
                       thickness: 1,
-                      color: wowSubtleBorderColor.withOpacity(0.6),
+                      color: subtleBorderColor.withOpacity(0.6),
                     ),
                   ),
-                  _buildWowTotalRow(
+                  totalRow(
                     label: 'Total',
                     value:
                         '${(orderData['totalValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
                     isValueBold: true,
                     valueFontSize: 20,
-                    valueColor: wowPrimaryMagenta,
+                    valueColor: primaryMagenta,
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
 
-            CopyToInvoiceCollectButton(type: "Invoice"),
+            CopyToInvoiceCollectButton(type: "Collect"),
 
             const SizedBox(height: 30),
           ],
@@ -182,7 +180,7 @@ class SingleOrderScreen extends StatelessWidget {
     );
   }
 
-  Map<String, dynamic> _getPlaceholderOrderData(String orderId) {
+  Map<String, dynamic> _getPlaceholderInvoiceData(String orderId) {
     return {
       'customerType': 'VAT Exempted Customer',
       'documentDate': DateTime(2023, 10, 12),
@@ -222,15 +220,15 @@ class SingleOrderScreen extends StatelessWidget {
     };
   }
 
-  PreferredSizeWidget _buildWowAppBar(
+  PreferredSizeWidget singleInvoiceAppBar(
     BuildContext context,
     String orderId,
     String customerName,
   ) {
     return AppBar(
-      backgroundColor: wowPrimaryMagenta,
+      backgroundColor: primaryMagenta,
       elevation: 2.0,
-      shadowColor: wowPrimaryMagenta.withOpacity(0.3),
+      shadowColor: primaryMagenta.withOpacity(0.3),
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back_ios_new,
@@ -244,7 +242,7 @@ class SingleOrderScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Order $orderId',
+            'Invoice $orderId',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 19,
@@ -284,20 +282,20 @@ class SingleOrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionCard({required Widget child, EdgeInsets? padding}) {
+  Widget sectionCard({required Widget child, EdgeInsets? padding}) {
     return Container(
       width: double.infinity,
       padding: padding ?? const EdgeInsets.all(18.0),
       decoration: BoxDecoration(
-        color: wowLightBackground,
+        color: lightBackground,
         borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: wowSubtleBorderColor, width: 0.8),
+        border: Border.all(color: subtleBorderColor, width: 0.8),
       ),
       child: child,
     );
   }
 
-  Widget _buildWowInfoRow({
+  Widget infoRow({
     required String label,
     required String value,
     bool isValueBold = false,
@@ -312,7 +310,7 @@ class SingleOrderScreen extends StatelessWidget {
           Text(
             label.toUpperCase(),
             style: const TextStyle(
-              color: wowLightTextColor,
+              color: lightTextColor,
               fontSize: 11,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
@@ -322,7 +320,7 @@ class SingleOrderScreen extends StatelessWidget {
           Text(
             value.isEmpty ? '-' : value,
             style: TextStyle(
-              color: wowDarkTextColor,
+              color: darkTextColor,
               fontSize: valueFontSize,
               fontWeight: isValueBold ? FontWeight.w600 : FontWeight.normal,
               height: 1.3,
@@ -333,14 +331,14 @@ class SingleOrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWowContactActions() {
+  Widget contactActions() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Contact Actions',
           style: TextStyle(
-            color: wowLightTextColor,
+            color: lightTextColor,
             fontSize: 11,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
@@ -349,7 +347,7 @@ class SingleOrderScreen extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            _buildWowIconButton(
+            contactIconButton(
               icon: Icons.phone_outlined,
               tooltip: 'Call Contact',
               onTap: () {
@@ -357,7 +355,7 @@ class SingleOrderScreen extends StatelessWidget {
               },
             ),
             const SizedBox(width: 16),
-            _buildWowIconButton(
+            contactIconButton(
               icon: Icons.email_outlined,
               tooltip: 'Email Contact',
               onTap: () {
@@ -370,7 +368,7 @@ class SingleOrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWowIconButton({
+  Widget contactIconButton({
     required IconData icon,
     required String tooltip,
     required VoidCallback onTap,
@@ -378,34 +376,31 @@ class SingleOrderScreen extends StatelessWidget {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: wowPrimaryMagenta,
+        backgroundColor: primaryMagenta,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(10),
         minimumSize: const Size(40, 40),
         elevation: 2.0,
-        shadowColor: wowPrimaryMagenta.withOpacity(0.4),
+        shadowColor: primaryMagenta.withOpacity(0.4),
       ),
       child: Tooltip(message: tooltip, child: Icon(icon, size: 20)),
     );
   }
 
-  Widget _buildWowTextButton({
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget invoiceButton({required String label, required VoidCallback onTap}) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: wowPrimaryMagenta,
+          backgroundColor: primaryMagenta,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           padding: const EdgeInsets.symmetric(vertical: 14),
           elevation: 3.0,
-          shadowColor: wowPrimaryMagenta.withOpacity(0.4),
+          shadowColor: primaryMagenta.withOpacity(0.4),
         ),
         onPressed: onTap,
         child: Text(
@@ -420,7 +415,7 @@ class SingleOrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWowItemRow({
+  Widget itemRow({
     required String code,
     required String name,
     required double price,
@@ -438,7 +433,7 @@ class SingleOrderScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 3.0),
             child: Icon(
               Icons.inventory_2_outlined,
-              color: wowBackgroundColor,
+              color: backgroundColor,
               size: 20,
             ),
           ),
@@ -450,7 +445,7 @@ class SingleOrderScreen extends StatelessWidget {
                 Text(
                   name,
                   style: const TextStyle(
-                    color: wowDarkTextColor,
+                    color: darkTextColor,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -458,18 +453,12 @@ class SingleOrderScreen extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   'Code: $code',
-                  style: const TextStyle(
-                    color: wowLightTextColor,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: lightTextColor, fontSize: 12),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   'Price: ${price.toStringAsFixed(2)} ${discount > 0 ? " / Disc: ${discount.toStringAsFixed(2)} " : ""} $currency',
-                  style: const TextStyle(
-                    color: wowMediumTextColor,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: mediumTextColor, fontSize: 12),
                 ),
               ],
             ),
@@ -482,7 +471,7 @@ class SingleOrderScreen extends StatelessWidget {
               Text(
                 'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)}',
                 style: const TextStyle(
-                  color: wowMediumTextColor,
+                  color: mediumTextColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -491,7 +480,7 @@ class SingleOrderScreen extends StatelessWidget {
               Text(
                 '${itemTotal.toStringAsFixed(2)} $currency',
                 style: const TextStyle(
-                  color: wowDarkTextColor,
+                  color: darkTextColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -503,7 +492,7 @@ class SingleOrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWowTotalRow({
+  Widget totalRow({
     required String label,
     required String value,
     bool isValueBold = false,
@@ -516,7 +505,7 @@ class SingleOrderScreen extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: wowMediumTextColor,
+            color: mediumTextColor,
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -524,7 +513,7 @@ class SingleOrderScreen extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            color: valueColor ?? wowDarkTextColor,
+            color: valueColor ?? darkTextColor,
             fontSize: valueFontSize,
             fontWeight: isValueBold ? FontWeight.bold : FontWeight.w600,
           ),

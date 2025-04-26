@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:dio/dio.dart';
 
 abstract class Failures {

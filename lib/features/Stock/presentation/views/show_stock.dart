@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -41,7 +43,6 @@ class _WarehouseStockPageState extends State<WarehouseStockPage> {
   static const Color positiveStockColor = Color(0xFF28a745);
   static const Color zeroStockColor = labelColor;
   static const Color lowStockColor = Color(0xFFffc107);
-  static const Color negativeStockColor = Color(0xFFdc3545);
   static const Color searchBarColor = Color(0xFF002244);
 
   final List<StockItem> _allStockItems = [
@@ -126,10 +127,10 @@ class _WarehouseStockPageState extends State<WarehouseStockPage> {
 
   String? _selectedItemGroup;
   List<String> _availableItemGroups = [];
-  static const String _allGroupsValue = "All Groups";
+  static const String _allGroupsValue = 'All Groups';
 
-  final NumberFormat _qtyFormatter = NumberFormat("#,##0", "en_US");
-  final NumberFormat _percentFormatter = NumberFormat("0.##'%'", "en_US");
+  final NumberFormat _qtyFormatter = NumberFormat('#,##0', 'en_US');
+  final NumberFormat _percentFormatter = NumberFormat('0.##%%', 'en_US');
 
   @override
   void initState() {
@@ -223,7 +224,7 @@ class _WarehouseStockPageState extends State<WarehouseStockPage> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text("Warehouse Stock"),
+        title: const Text('Warehouse Stock'),
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 2.0,
@@ -584,19 +585,19 @@ class StockItemExpandableCard extends StatelessWidget {
                         const SizedBox(height: 8),
                         _buildDetailRow(
                           Icons.straighten_outlined,
-                          "UoM",
+                          'UoM',
                           item.uom,
                           textTheme,
                         ),
                         _buildDetailRow(
                           Icons.category_outlined,
-                          "Group",
+                          'Group',
                           item.itemGroup,
                           textTheme,
                         ),
                         _buildDetailRow(
                           Icons.percent_outlined,
-                          "Tax",
+                          'Tax',
                           percentFormatter.format(item.taxPercentage / 100),
                           textTheme,
                         ),
@@ -643,67 +644,6 @@ class StockItemExpandableCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  static const Color primaryColor = Color(0xFF003366);
-  static const Color accentColor = Color(0xFF004a99);
-  static const Color backgroundColor = Color(0xFFF0F2F5);
-  static const Color cardBackgroundColor = Colors.white;
-  static const Color textColor = Color(0xFF212529);
-  static const Color labelColor = Color(0xFF6c757d);
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        primary: primaryColor,
-        secondary: accentColor,
-        background: backgroundColor,
-        onBackground: textColor,
-        surface: cardBackgroundColor,
-        onSurface: textColor,
-        error: Colors.red.shade700,
-        brightness: Brightness.light,
-      ),
-      useMaterial3: true,
-      scaffoldBackgroundColor: backgroundColor,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 2.0,
-        titleTextStyle: TextStyle(
-          fontSize: 20,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-      cardTheme: CardTheme(
-        elevation: 1.5,
-        color: cardBackgroundColor,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      textTheme: const TextTheme(
-        labelSmall: TextStyle(color: labelColor),
-      ).apply(bodyColor: textColor, displayColor: textColor),
-    );
-
-    return MaterialApp(
-      title: 'Warehouse Stock Viewer',
-      theme: theme,
-      home: const WarehouseStockPage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

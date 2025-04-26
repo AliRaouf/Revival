@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:dartz/dartz.dart';
 import 'package:revival/core/failures/failures.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';

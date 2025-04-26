@@ -1,24 +1,24 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:revival/features/order/presentation/utils/order_utils.dart';
+import 'package:revival/features/ar_invoice/presentation/utils/invoice_utils.dart';
 import 'package:revival/features/order/presentation/views/widgets/add_items_dialogue.dart';
 
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/order/presentation/views/widgets/new_order_bottom_appbar.dart';
 
-class NewOrderScreen extends StatefulWidget {
-  const NewOrderScreen({super.key});
+class NewInvoiceScreen extends StatefulWidget {
+  const NewInvoiceScreen({super.key});
 
   @override
-  State<NewOrderScreen> createState() => _NewOrderScreenState();
+  State<NewInvoiceScreen> createState() => _NewInvoiceScreenState();
 }
 
-class _NewOrderScreenState extends State<NewOrderScreen> {
+class _NewInvoiceScreenState extends State<NewInvoiceScreen> {
   final TextEditingController _referenceController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   late TextEditingController _dateController;
   late TextEditingController _validUntilController;
-  final orderUtils = OrderUtils();
+  final InvoiceUtils invoiceUtils = InvoiceUtils();
   DateTime _selectedDate = DateTime.now();
   DateTime _selectedValidUntilDate = DateTime.now().add(
     const Duration(days: 30),
@@ -146,7 +146,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   void _submitOrder() {
     print("Submit tapped");
 
-    orderUtils.showSuccessDialog(context);
+    invoiceUtils.showSuccessDialog(context);
   }
 
   @override
@@ -270,11 +270,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
                         child: Text("Add Text Line"),
                       ),
-                      TextButton(
-                        onPressed: _addItem,
-
-                        child: Text("Add Items"),
-                      ),
+                      TextButton(onPressed: _addItem, child: Text("Add Items")),
                     ],
                   ),
                   const SizedBox(height: 80),
@@ -282,7 +278,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
-          NewOrderBottomAppbar(context, saveDraft: _saveDraft, submitOrder: _submitOrder,),
+          NewOrderBottomAppbar(
+            context,
+            saveDraft: _saveDraft,
+            submitOrder: _submitOrder,
+          ),
         ],
       ),
     );
@@ -298,7 +298,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('New Order'),
+          Text('New Invoice'),
           Text(
             'Revival',
             style: TextStyle(

@@ -1,32 +1,34 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:revival/shared/utils.dart';
 
 class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({super.key, required this.textScale});
-
-  final double textScale;
+  ForgotPassword({
+    super.key,
+    required this.forgotPassword,
+    required this.isLoading,
+  });
+  bool isLoading;
+  final void Function()? forgotPassword;
 
   @override
   Widget build(BuildContext context) {
+    final utilities = Utilities(context);
     return Center(
       child: TextButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Forgot Password functionality not implemented yet.',
-              ),
-            ),
-          );
-        },
+        onPressed: isLoading ? null : forgotPassword,
         child: Text(
-          'Forgot Password?',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: const Color(0xFF6B7280),
-            fontSize: 12.8 * textScale,
-            fontWeight: FontWeight.w400,
+          'ForgotPassword',
+
+          style: utilities.textTheme.bodySmall?.copyWith(
+            color:
+                isLoading
+                    ? utilities.theme.disabledColor
+                    : utilities.colorScheme.primary,
           ),
         ),
       ),
-    );
+    ).animate().fadeIn(delay: 600.ms);
   }
 }

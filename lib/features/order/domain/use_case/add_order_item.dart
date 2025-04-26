@@ -5,7 +5,7 @@ class AddOrderItem {
   final OrderRepo orderRepository;
   AddOrderItem(this.orderRepository);
 
-  Future<void> call(Order order) async {
+  Future<void> call(OrderInfo order) async {
     // await orderRepository.(order);
   }
 }

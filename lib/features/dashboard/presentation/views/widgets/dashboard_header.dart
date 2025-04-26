@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:revival/shared/language_icon_button.dart';
 
 Widget buildHeader(BuildContext context, double textScale, bool isTablet) {
   final iconSize = isTablet ? 52.0 : 40.0;
@@ -40,11 +41,7 @@ Widget buildHeader(BuildContext context, double textScale, bool isTablet) {
             color: Colors.white.withOpacity(0.2),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.person_outline,
-            color: Colors.white,
-            size: iconSize * 0.55,
-          ),
+          child: LanguageIconButton(),
         ),
       ],
     ),

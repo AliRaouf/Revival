@@ -1,21 +1,19 @@
-class Order {
+class OrderInfo {
   final String id;
+  final String invoice;
+  final String order;
   final String orderCode;
+  final String quote;
   final String customerName;
-  final String documentDate;
-  final String deliveryDate;
-  final List<Item> items;
-  final String totalValue;
-  Order({
-    required this.id,
-    required this.orderCode,
-    required this.customerName,
-    required this.documentDate,
-    required this.deliveryDate,
-    required this.items,
-    required this.totalValue,
-  });
 
+  OrderInfo({
+    required this.id,
+    required this.invoice,
+    required this.order,
+    required this.orderCode,
+    required this.quote,
+    required this.customerName,
+  });
 }
 class Item {
   final String itemCode;

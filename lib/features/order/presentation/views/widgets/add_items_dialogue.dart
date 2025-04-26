@@ -107,7 +107,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
 
                 _buildRow(
                   context,
-                  'Item Code'.tr(),
+                  'Item Code',
                   _styledField(
                     context,
                     controller: _itemCodeController,
@@ -116,7 +116,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Description'.tr(),
+                  'Description',
                   _styledField(
                     context,
                     controller: _descController,
@@ -125,7 +125,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Quantity'.tr(),
+                  'Quantity',
                   _styledField(
                     context,
                     controller: _qtyController,
@@ -134,7 +134,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Unit Price'.tr(),
+                  'Unit Price',
                   _styledField(
                     context,
                     controller: _unitPriceController,
@@ -145,7 +145,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 ),
                 _buildRow(
                   context,
-                  'Discount'.tr(),
+                  'Discount',
                   _styledField(
                     context,
                     controller: _discountController,
@@ -158,7 +158,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
 
                 _buildRow(
                   context,
-                  'Warehouse'.tr(),
+                  'Warehouse',
                   DropdownButtonFormField<String>(
                     value: _selectedWarehouse,
                     items:
@@ -190,10 +190,10 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
 
                 const Divider(height: 32),
 
-                _buildDisplayRow(context, 'Total'.tr(), _total),
+                _buildDisplayRow(context, 'Total', _total),
                 _buildDisplayRow(
                   context,
-                  'After Discount'.tr(),
+                  'After Discount',
                   _discountedTotal,
                 ),
 
@@ -205,13 +205,13 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       style: kTextButtonErrorStyle,
-                      child: Text('Cancel'.tr()),
+                      child: Text('Cancel'),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
                       onPressed: _addItem,
 
-                      child: Text('Add Item'.tr()),
+                      child: Text('Add Item'),
                     ),
                   ],
                 ),

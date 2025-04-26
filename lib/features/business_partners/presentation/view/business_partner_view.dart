@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-
-class AppColors {
-  static const Color primaryColor = Color(0xFF003366);
-  static const Color accentColor = Color(0xFF004a99);
-  static const Color cardBackgroundColor = Colors.white;
-  static const Color backgroundColor = Color(0xFFF0F2F5);
-  static const Color labelColor = Color(0xFF6c757d);
-  static const Color textColor = Color(0xFF212529);
-  static const Color subtleBorderColor = Color(0xFFced4da);
-}
+import 'package:easy_localization/easy_localization.dart';
+import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_textfield.dart';
+import 'package:revival/features/business_partners/presentation/view/widgets/dropdown.dart';
+import 'package:revival/features/business_partners/presentation/view/widgets/save_partner_button.dart';
+import 'package:revival/shared/utils.dart'; // Import easy_localization
 
 class NewBusinessPartnerPage extends StatefulWidget {
   const NewBusinessPartnerPage({super.key});
@@ -18,53 +13,12 @@ class NewBusinessPartnerPage extends StatefulWidget {
 }
 
 class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
-  final TextStyle _sectionTitleStyle = const TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
-    color: AppColors.primaryColor,
-    letterSpacing: 0.5,
-  );
-
   String? _selectedType;
   String? _selectedCurrency;
   String? _selectedPaymentTerms;
   String? _selectedPriceList;
   String? _selectedGroupNo;
   String? _selectedAddressId;
-
-  final List<String> _typeOptions = ['Customer', 'Supplier', 'Lead'];
-  final List<String> _currencyOptions = [
-    'USD',
-    'EUR',
-    'GBP',
-    'JPY',
-    'CAD',
-    'EGP',
-  ];
-  final List<String> _paymentTermsOptions = [
-    'Net 30',
-    'Net 60',
-    'Due on Receipt',
-    'Custom',
-  ];
-  final List<String> _priceListOptions = [
-    'Retail Price List',
-    'Wholesale Price List',
-    'Distributor Price List',
-  ];
-  final List<String> _groupNoOptions = [
-    'G001',
-    'G002',
-    'CUST-Domestic',
-    'CUST-Intl',
-  ];
-  final List<String> _addressIdOptions = [
-    'BILL_TO_MAIN',
-    'SHIP_TO_WAREHOUSE',
-    'HQ',
-    'Branch-1',
-  ];
-
   final _codeController = TextEditingController();
   final _nameController = TextEditingController();
   final _mobilePhoneController = TextEditingController();
@@ -91,17 +45,20 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        title: const Text("Create New Partner"),
+    final utilities = Utilities(context);
 
-        backgroundColor: AppColors.primaryColor,
-        foregroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
+    return Scaffold(
+      // Use theme's scaffold background color
+      backgroundColor: utilities.theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        // Localize title
+        title: Text("Create New Partner"),
+        backgroundColor: utilities.colorScheme.primary,
+        foregroundColor: utilities.colorScheme.onPrimary,
+        titleTextStyle: utilities.textTheme.titleLarge?.copyWith(
+          // Use theme's titleLarge style
+          color: utilities.colorScheme.onPrimary,
+          // fontSize: 20, // Use theme's font size or override if needed
           fontWeight: FontWeight.w600,
         ),
         elevation: 2.0,
@@ -113,151 +70,169 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Pass theme colors and text styles to helper methods
               _buildSection(
-                title: "General Information",
+                context: context, // Pass context
+                title: "General Information", // Localize title
                 icon: Icons.business_center,
                 children: [
-                  _buildTextField(
-                    label: "Code",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "Code", // Localize label
                     controller: _codeController,
-
                     validator:
                         (value) =>
                             (value == null || value.isEmpty)
                                 ? 'Code cannot be empty'
+                                // Localize validator message
                                 : null,
                   ),
-                  _buildTextField(
-                    label: "Name",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "Name", // Localize label
                     controller: _nameController,
                     validator:
                         (value) =>
                             (value == null || value.isEmpty)
                                 ? 'Name cannot be empty'
+                                // Localize validator message
                                 : null,
                   ),
-                  _buildDropdownField(
-                    label: "Type",
-                    hint: "Select Type",
-                    value: _selectedType,
-                    items: _typeOptions,
+                  BusinessPartnerDropdown(
+                    context: context, // Pass context
+                    label: "Type", // Localize label
+                    hint: "Select Type", // Localize hint
+                    value: _selectedType!,
+                    items: utilities.typeOptions,
                     onChanged:
                         (newValue) => setState(() => _selectedType = newValue),
                     validator:
                         (value) =>
                             value == null ? 'Please select a type' : null,
+                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                      utilities.typeOptions,
+                    ), // Localize validator message
                   ),
-                  _buildDropdownField(
-                    label: "Currency",
-                    hint: "Select Currency",
-                    value: _selectedCurrency,
-                    items: _currencyOptions,
+                  BusinessPartnerDropdown(
+                    context: context, // Pass context
+                    label: "Currency", // Localize label
+                    hint: "Select Currency", // Localize hint
+                    value: _selectedCurrency!,
+                    items: utilities.currencyOptions,
                     onChanged:
                         (newValue) =>
                             setState(() => _selectedCurrency = newValue),
                     validator:
                         (value) =>
                             value == null ? 'Please select a currency' : null,
+                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                      utilities.currencyOptions,
+                    ), // Localize validator message
                   ),
-                  _buildTextField(
-                    label: "Mobile Phone",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "Mobile Phone", // Localize label
                     controller: _mobilePhoneController,
                     keyboardType: TextInputType.phone,
                   ),
-                  _buildDropdownField(
+                  BusinessPartnerDropdown(
+                    context: context, //
                     label: "Payment Terms",
                     hint: "Select Terms",
-                    value: _selectedPaymentTerms,
-                    items: _paymentTermsOptions,
+                    value: _selectedPaymentTerms!,
+                    items: utilities.paymentTermsOptions,
                     onChanged:
                         (newValue) =>
                             setState(() => _selectedPaymentTerms = newValue),
+                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                      utilities.paymentTermsOptions,
+                    ),
                   ),
-                  _buildDropdownField(
-                    label: "Price List",
-                    hint: "Select Price List",
-                    value: _selectedPriceList,
-                    items: _priceListOptions,
+                  BusinessPartnerDropdown(
+                    context: context, // Pass context
+                    label: "Price List", // Localize label
+                    hint: "Select Price List", // Localize hint
+                    value: _selectedPriceList!,
+                    items: utilities.priceListOptions,
                     onChanged:
                         (newValue) =>
                             setState(() => _selectedPriceList = newValue),
+                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                      utilities.priceListOptions,
+                    ),
                   ),
                 ],
               ),
 
               _buildSection(
-                title: "Group Information",
+                context: context, // Pass context
+                title: "Group Information", // Localize title
                 icon: Icons.group_work,
                 children: [
-                  _buildDropdownField(
-                    label: "Group No.",
-                    hint: "Select Group Number",
-                    value: _selectedGroupNo,
-                    items: _groupNoOptions,
+                  BusinessPartnerDropdown(
+                    context: context, // Pass context
+                    label: "Group No.", // Localize label
+                    hint: "Select Group Number", // Localize hint
+                    value: _selectedGroupNo!,
+                    items: utilities.groupNoOptions,
                     onChanged:
                         (newValue) =>
                             setState(() => _selectedGroupNo = newValue),
+                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                      utilities.groupNoOptions,
+                    ),
                   ),
-                  _buildTextField(
-                    label: "Group Name",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "Group Name", // Localize label
                     controller: _groupNameController,
                   ),
-                  _buildTextField(
-                    label: "Group Type",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "Group Type", // Localize label
                     controller: _groupTypeController,
                   ),
-                  _buildTextField(
-                    label: "GroupsCode",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "GroupsCode", // Localize label
                     controller: _groupsCodeController,
                   ),
                 ],
               ),
 
               _buildSection(
-                title: "Address Information",
+                context: context, // Pass context
+                title: "Address Information", // Localize title
                 icon: Icons.location_on,
                 children: [
-                  _buildDropdownField(
-                    label: "Address ID",
-                    hint: "Select Address ID",
-                    value: _selectedAddressId,
-                    items: _addressIdOptions,
+                  BusinessPartnerDropdown(
+                    context: context, // Pass context
+                    label: "Address ID", // Localize label
+                    hint: "Select Address ID", // Localize hint
+                    value: _selectedAddressId!,
+                    items: utilities.addressIdOptions,
                     onChanged:
                         (newValue) =>
                             setState(() => _selectedAddressId = newValue),
+                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                      utilities.addressIdOptions,
+                    ),
                   ),
-                  _buildTextField(label: "City", controller: _cityController),
-                  _buildTextField(
-                    label: "County",
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "City", // Localize label
+                    controller: _cityController,
+                  ),
+                  buildTextField(
+                    context: context, // Pass context
+                    label: "County", // Localize label
                     controller: _countyController,
                   ),
                 ],
               ),
 
               const SizedBox(height: 24),
-              Center(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.save_alt_outlined),
-                  label: const Text("Save Partner"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 14,
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    elevation: 2.0,
-                  ),
-                  onPressed: _saveForm,
-                ),
-              ),
+              SavePartnerButton(saveForm: _saveForm),
               const SizedBox(height: 16),
             ],
           ),
@@ -267,10 +242,15 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
   }
 
   Widget _buildSection({
+    required BuildContext context, // Added context
     required String title,
     required IconData icon,
     required List<Widget> children,
   }) {
+    final theme = Theme.of(context); // Access theme
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
@@ -279,302 +259,72 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(icon, color: AppColors.primaryColor, size: 22),
+              // Use theme's primary color for icon
+              Icon(icon, color: colorScheme.primary, size: 22),
               const SizedBox(width: 10),
-              Text(title, style: _sectionTitleStyle),
+              Text(
+                title,
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.primary, // Use theme's primary color
+                  letterSpacing: 0.5,
+                ),
+              ),
             ],
           ),
-
+          // Use theme's divider color
           Divider(
             height: 20,
             thickness: 0.8,
-            color: AppColors.labelColor.withOpacity(0.3),
+            color: theme.dividerColor.withOpacity(
+              0.7,
+            ), // Use theme's divider color
           ),
           ...children,
         ],
       ),
     );
-  }
+  } // Helper to localize dropdown items
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-    bool obscureText = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: TextFormField(
-        controller: controller,
-        style: const TextStyle(color: AppColors.textColor, fontSize: 15),
-        keyboardType: keyboardType,
-        obscureText: obscureText,
-        validator: validator,
-        decoration: InputDecoration(
-          labelText: label,
-
-          labelStyle: const TextStyle(
-            color: AppColors.labelColor,
-            fontSize: 15,
-          ),
-          hintStyle: const TextStyle(color: AppColors.labelColor, fontSize: 15),
-
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 12.0,
-            horizontal: 12.0,
-          ),
-
-          border: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppColors.subtleBorderColor),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppColors.subtleBorderColor),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: AppColors.primaryColor,
-              width: 1.5,
-            ),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red.shade700, width: 1.0),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red.shade700, width: 1.5),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          filled: true,
-          fillColor: AppColors.cardBackgroundColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String label,
-    required String hint,
-    required String? value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        isExpanded: true,
-        hint: Text(
-          hint,
-          style: const TextStyle(color: AppColors.labelColor, fontSize: 15),
-        ),
-
-        style: const TextStyle(color: AppColors.textColor, fontSize: 15),
-        validator: validator,
-        decoration: InputDecoration(
-          labelText: label,
-
-          labelStyle: const TextStyle(
-            color: AppColors.labelColor,
-            fontSize: 15,
-          ),
-
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 12.0,
-            horizontal: 12.0,
-          ),
-
-          border: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppColors.subtleBorderColor),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppColors.subtleBorderColor),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: AppColors.primaryColor,
-              width: 1.5,
-            ),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red.shade700, width: 1.0),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red.shade700, width: 1.5),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          filled: true,
-          fillColor: AppColors.cardBackgroundColor,
-        ),
-        items:
-            items.map<DropdownMenuItem<String>>((String itemValue) {
-              return DropdownMenuItem<String>(
-                value: itemValue,
-                child: Text(itemValue, overflow: TextOverflow.ellipsis),
-              );
-            }).toList(),
-        onChanged: onChanged,
-
-        icon: const Icon(
-          Icons.keyboard_arrow_down,
-          color: AppColors.labelColor,
-        ),
-        dropdownColor: AppColors.cardBackgroundColor,
-      ),
-    );
+  List<DropdownMenuItem<String>> _getLocalizedDropdownItems(
+    List<String> items,
+  ) {
+    return items.map<DropdownMenuItem<String>>((String itemValue) {
+      return DropdownMenuItem<String>(
+        value: itemValue,
+        // Localize the item text
+        child: Text(itemValue, overflow: TextOverflow.ellipsis),
+      );
+    }).toList();
   }
 
   void _saveForm() {
     if (_formKey.currentState?.validate() ?? false) {
-      final code = _codeController.text;
-      final name = _nameController.text;
-      final mobile = _mobilePhoneController.text;
-      final groupName = _groupNameController.text;
-      final groupType = _groupTypeController.text;
-      final groupsCode = _groupsCodeController.text;
-      final city = _cityController.text;
-      final county = _countyController.text;
-
-      print("--- FORM VALID - Saving Business Partner ---");
-      print("Code: $code");
-      print("Name: $name");
-      print("Type: $_selectedType");
-      print("Currency: $_selectedCurrency");
-      print("Mobile: $mobile");
-      print("Payment Terms: $_selectedPaymentTerms");
-      print("Price List: $_selectedPriceList");
-      print("Group No: $_selectedGroupNo");
-      print("Group Name: $groupName");
-      print("Group Type: $groupType");
-      print("GroupsCode: $groupsCode");
-      print("Address ID: $_selectedAddressId");
-      print("City: $city");
-      print("County: $county");
-      print("------------------------------------------");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Form Valid! Data logged to console.'),
-          backgroundColor: Colors.green,
-        ),
+      // Form is valid, proceed with saving data
+      // final code = _codeController.text;
+      // final name = _nameController.text;
+      // final mobile = _mobilePhoneController.text;
+      // final groupName = _groupNameController.text;
+      // final groupType = _groupTypeController.text;
+      // final groupsCode = _groupsCodeController.text;
+      // final city = _cityController.text;
+      // final county = _countyController.text;
+      SnackBar(
+        // Localize snackbar message
+        content: Text('Form Valid! Data logged to console.'),
+        backgroundColor:
+            Colors.green, // Consider using theme's success color if available
       );
     } else {
+      // Form is invalid, show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please fix the errors in the form.'),
-          backgroundColor: Colors.red.shade700,
+          // Localize snackbar message
+          content: Text('Please fix the errors in the form.'),
+          backgroundColor:
+              Theme.of(context).colorScheme.error, // Use theme's error color
         ),
       );
     }
-  }
-}
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryColor,
-        primary: AppColors.primaryColor,
-        secondary: AppColors.accentColor,
-        background: AppColors.backgroundColor,
-        onBackground: AppColors.textColor,
-        surface: AppColors.cardBackgroundColor,
-        onSurface: AppColors.textColor,
-        error: Colors.red.shade700,
-        brightness: Brightness.light,
-      ),
-      useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.backgroundColor,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 2.0,
-        titleTextStyle: TextStyle(
-          fontSize: 20,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-      cardTheme: CardTheme(
-        elevation: 1.5,
-        color: AppColors.cardBackgroundColor,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-
-      inputDecorationTheme: InputDecorationTheme(
-        labelStyle: const TextStyle(color: AppColors.labelColor, fontSize: 15),
-        hintStyle: const TextStyle(color: AppColors.labelColor, fontSize: 15),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 12.0,
-          horizontal: 12.0,
-        ),
-        border: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.subtleBorderColor),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.subtleBorderColor),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: AppColors.primaryColor,
-            width: 1.5,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red.shade700, width: 1.0),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red.shade700, width: 1.5),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        filled: true,
-        fillColor: AppColors.cardBackgroundColor,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accentColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
-      textTheme: const TextTheme(
-        bodyMedium: TextStyle(color: AppColors.textColor),
-        labelSmall: TextStyle(color: AppColors.labelColor),
-      ).apply(
-        bodyColor: AppColors.textColor,
-        displayColor: AppColors.textColor,
-      ),
-    );
-
-    return MaterialApp(
-      title: 'SAP B1 Create Partner',
-      theme: theme,
-
-      home: const NewBusinessPartnerPage(),
-      debugShowCheckedModeBanner: false,
-    );
   }
 }

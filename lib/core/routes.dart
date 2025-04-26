@@ -1,6 +1,9 @@
+
 import 'package:go_router/go_router.dart';
 import 'package:revival/features/Stock/presentation/views/show_stock.dart';
-import 'package:revival/features/business_partners/presentation/view/all_businesspartenars.dart';
+import 'package:revival/features/ar_invoice/presentation/views/new_invoice.dart';
+import 'package:revival/features/ar_invoice/presentation/views/open_invoices.dart';
+import 'package:revival/features/business_partners/presentation/view/all_business_partners.dart';
 import 'package:revival/features/business_partners/presentation/view/business_partner_view.dart';
 import 'package:revival/features/dashboard/presentation/views/dashboard_page.dart';
 import 'package:revival/features/login/presentation/views/login_page.dart';
@@ -11,10 +14,7 @@ import 'package:revival/features/order/presentation/views/single_order.dart';
 abstract class AppRouter {
   static final router = GoRouter(
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashBoard(),
@@ -29,7 +29,27 @@ abstract class AppRouter {
           ),
           GoRoute(
             path: 'single_order',
-            builder: (context, state) => SingleOrderScreen(orderId: state.pathParameters['orderId']!),
+            builder:
+                (context, state) => SingleOrderScreen(
+                  orderId: state.pathParameters['orderId']!,
+                ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/invoice',
+        builder: (context, state) => const OpenInvoicesScreen(),
+        routes: [
+          GoRoute(
+            path: 'new_invoice',
+            builder: (context, state) => const NewInvoiceScreen(),
+          ),
+          GoRoute(
+            path: 'single_order',
+            builder:
+                (context, state) => SingleOrderScreen(
+                  orderId: state.pathParameters['orderId']!,
+                ),
           ),
         ],
       ),
@@ -39,7 +59,9 @@ abstract class AppRouter {
         routes: [
           GoRoute(
             path: 'new_business_partner',
-            builder: (context, state) => const NewBusinessPartnerPage(),)]
+            builder: (context, state) => const NewBusinessPartnerPage(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/stock',
