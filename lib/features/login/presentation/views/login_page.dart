@@ -90,17 +90,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               child: BlocConsumer<LoginCubit, LoginCubitState>(
                 listener: (context, state) {
                   if (state is CredentialsSuccess) {
-                    _rememberMe = state.rememberMe;
-                    if (state.userCredentials != null) {
-                      _databaseNameController.text =
-                          state.userCredentials!.dbName;
-                      _usernameController.text =
-                          state.userCredentials!.username;
-                      _passwordController.text =
-                          state.userCredentials!.password;
-                    }
-
-                    setState(() {});
+                    setState(() {
+                  _rememberMe = state.rememberMe;
+                  if (state.userCredentials != null) {
+                    _databaseNameController.text =
+                        state.userCredentials!.dbName;
+                    _usernameController.text =
+                        state.userCredentials!.username;
+                    _passwordController.text =
+                        state.userCredentials!.password;
+                  }
+               });
                   }
 
                   if (state is LoginError) {
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Login',
+                                'Login'.tr(),
                                 textAlign: TextAlign.center,
                                 style: utilities.textTheme.headlineSmall,
                               ).animate().slideY(
@@ -157,6 +157,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 obscureText: _obscureText,
                               ),
                               RememberMe(
+                                onChanged: (value) => setState(() => _rememberMe = value ?? false),
                                 rememberMe: _rememberMe,
                                 utilities: utilities,
                                 isLoading: isLoading,

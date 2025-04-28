@@ -4,8 +4,8 @@ import 'package:revival/shared/utils.dart';
 class BusinessPartnerDropdown extends StatelessWidget {
   final String label;
   final String hint;
-  final String value;
-  final List<String> items;
+  final String? value;
+  final List<String>? items;
   final ValueChanged<String?> onChanged;
   final String? Function(String?)? validator;
   final List<DropdownMenuItem<String>> getLocalizedDropdownItems;

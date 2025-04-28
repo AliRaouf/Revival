@@ -19,7 +19,7 @@ class ForgotPassword extends StatelessWidget {
       child: TextButton(
         onPressed: isLoading ? null : forgotPassword,
         child: Text(
-          'ForgotPassword',
+          'ForgotPassword'.tr(),
 
           style: utilities.textTheme.bodySmall?.copyWith(
             color:

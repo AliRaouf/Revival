@@ -10,6 +10,7 @@ import 'package:revival/features/login/presentation/views/login_page.dart';
 import 'package:revival/features/order/presentation/views/new_orders.dart';
 import 'package:revival/features/order/presentation/views/open_orders.dart';
 import 'package:revival/features/order/presentation/views/single_order.dart';
+import 'package:revival/features/sales_analysis/presentation/sales_analysis_view.dart';
 
 abstract class AppRouter {
   static final router = GoRouter(
@@ -66,6 +67,10 @@ abstract class AppRouter {
       GoRoute(
         path: '/stock',
         builder: (context, state) => const WarehouseStockPage(),
+      ),
+      GoRoute(
+        path: '/sales_analysis',
+        builder: (context, state) => const SalesAnalysisView(),
       ),
     ],
   );

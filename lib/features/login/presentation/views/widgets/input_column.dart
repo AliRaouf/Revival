@@ -30,7 +30,7 @@ class _InputColumnState extends State<InputColumn> {
         SizedBox(height: utilities.vSpace(2)),
 
         LabeledField(
-          label: 'DBName',
+          label: 'DBName'.tr(),
           controller: widget.databaseNameController,
           keyboardType: TextInputType.url,
           validator:
@@ -43,7 +43,7 @@ class _InputColumnState extends State<InputColumn> {
         SizedBox(height: utilities.vSpace(1.5)),
 
         LabeledField(
-          label: 'Username',
+          label: 'Username'.tr(),
           controller: widget.usernameController,
           keyboardType: TextInputType.visiblePassword,
           validator:
@@ -54,7 +54,7 @@ class _InputColumnState extends State<InputColumn> {
         SizedBox(height: utilities.vSpace(1.5)),
 
         LabeledField(
-          label: 'Password',
+          label: 'Password'.tr(),
           obscureText: widget.obscureText,
           controller: widget.passwordController,
           keyboardType: TextInputType.visiblePassword,

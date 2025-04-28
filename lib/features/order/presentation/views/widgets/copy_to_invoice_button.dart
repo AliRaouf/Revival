@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revival/features/order/presentation/views/single_order.dart';
 
 class CopyToInvoiceCollectButton extends StatelessWidget {
@@ -22,6 +23,7 @@ class CopyToInvoiceCollectButton extends StatelessWidget {
           shadowColor: wowPrimaryMagenta.withOpacity(0.4),
         ),
         onPressed: () {
+          context.push('/invoice');
           print('Copy to Invoice button tapped');
         },
         child: Row(

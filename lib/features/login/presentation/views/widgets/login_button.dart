@@ -24,7 +24,7 @@ class LoginButton extends StatelessWidget {
                 child:
                     isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : Text('Login'),
+                        : Text('Login'.tr()),
               )
               .animate(delay: 500.ms)
               .scale(duration: 200.ms, curve: Curves.easeInOut)

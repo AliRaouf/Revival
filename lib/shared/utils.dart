@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/features/business_partners/domain/entities/business_partner.dart';
+import 'package:revival/features/sales_analysis/domain/entity/sales_entry.dart';
 
 class Utilities {
   final BuildContext context;
@@ -22,6 +23,105 @@ class Utilities {
   late final crossAxisCount = isTablet ? 3 : 2;
 
   late final aspectRatio = isTablet ? 1.1 : 1.0;
+
+final List<SalesEntry> fakeSalesData = [
+  SalesEntry(
+    number: 1,
+    date: DateTime(2025, 4, 28), // Using current year based on context
+    paymentMethod: 'Visa Card',
+    items: ['Laptop Charger', 'Mouse Pad XL'],
+    discount: 0.0,
+    total: 65.00,
+  ),
+  SalesEntry(
+    number: 2,
+    date: DateTime(2025, 4, 28),
+    paymentMethod: 'Cash',
+    items: ['USB-C Cable', 'Wall Adapter'],
+    discount: 5.0,
+    total: 33.25,
+  ),
+  SalesEntry(
+    number: 3,
+    date: DateTime(2025, 4, 27),
+    paymentMethod: 'Mobile Wallet',
+    items: ['Headphones - Wireless', 'Case'],
+    discount: 10.0,
+    total: 135.00,
+  ),
+  SalesEntry(
+    number: 4,
+    date: DateTime(2025, 4, 26),
+    paymentMethod: 'Mastercard',
+    items: ['Mechanical Keyboard', 'Wrist Rest'],
+    discount: 15.0,
+    total: 148.75,
+  ),
+  SalesEntry(
+    number: 5,
+    date: DateTime(2025, 4, 25),
+    paymentMethod: 'Bank Transfer',
+    items: ['Projector', 'Screen (Portable)'],
+    discount: 5.0,
+    total: 475.00,
+  ),
+  SalesEntry(
+    number: 6,
+    date: DateTime(2025, 4, 25),
+    paymentMethod: 'PayPal',
+    items: ['Software Subscription - 1 Year'],
+    discount: .0,
+    total: 96.00,
+  ),
+  SalesEntry(
+    number: 7,
+    date: DateTime(2025, 4, 24),
+    paymentMethod: 'Cash',
+    items: ['Monitor Arm', 'Cable Ties (Pack)'],
+    discount: 0.0,
+    total: 88.50,
+  ),
+  SalesEntry(
+    number: 8,
+    date: DateTime(2025, 4, 23),
+    paymentMethod: 'Visa Card',
+    items: ['External Hard Drive 2TB'],
+    discount: 0.0,
+    total: 110.00,
+  ),
+  SalesEntry(
+    number: 9,
+    date: DateTime(2025, 4, 22),
+    paymentMethod: 'Mobile Wallet',
+    items: ['Smart Watch', 'Extra Strap'],
+    discount: 10.0,
+    total: 243.00,
+  ),
+  SalesEntry(
+    number: 10,
+    date: DateTime(2025, 4, 21),
+    paymentMethod: 'Cash',
+    items: ['Ring Light', 'Tripod'],
+    discount: 5.0,
+    total: 52.25,
+  ),
+  SalesEntry(
+    number: 11,
+    date: DateTime(2025, 4, 20),
+    paymentMethod: 'Mastercard',
+    items: ['Graphic Tablet'],
+    discount: 0.0,
+    total: 99.99,
+  ),
+  SalesEntry(
+    number: 12,
+    date: DateTime(25, 4, 19),
+    paymentMethod: 'Bank Transfer',
+    items: ['Router AC', 'Ethernet Cable 10m'],
+    discount: 10.0,
+    total: 117.00,
+  ),
+];
   final menuItems = [
     {
       'title': 'Business Partner'.tr(),
@@ -44,13 +144,13 @@ class Utilities {
       'path'.tr(): '/stock',
     },
     {
-      'title'.tr(): 'Collect'.tr(),
-      'icon'.tr(): Icons.payments_outlined,
-      'path'.tr(): '/order',
+      'title'.tr(): 'Sales Analysis'.tr(),
+      'icon'.tr(): Icons.bar_chart_rounded,
+      'path'.tr(): '/sales_analysis',
     },
     {
-      'title'.tr(): 'Reports'.tr(),
-      'icon'.tr(): Icons.bar_chart_rounded,
+      'title'.tr(): 'Inventory Analysis'.tr(),
+      'icon'.tr(): Icons.inventory_rounded,
       'path'.tr(): '/order',
     },
   ];
@@ -65,7 +165,7 @@ class Utilities {
   final List<BusinessPartner> allBusinessPartners = [
     BusinessPartner(
       code: 'C20000'.tr(),
-      name: 'Global Solutions Inc.'.tr(),
+      name: 'جلوبال'.tr(),
       balance: 1250.75,
       location: '123 Global Ave, Downtown'.tr(),
       contactPerson: 'Alice Smith'.tr(),

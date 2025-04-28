@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:revival/features/ar_invoice/presentation/views/single_invoice.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_textfield.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/dropdown.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/save_partner_button.dart';
@@ -63,178 +64,180 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
         ),
         elevation: 2.0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Pass theme colors and text styles to helper methods
-              _buildSection(
-                context: context, // Pass context
-                title: "General Information", // Localize title
-                icon: Icons.business_center,
-                children: [
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "Code", // Localize label
-                    controller: _codeController,
-                    validator:
-                        (value) =>
-                            (value == null || value.isEmpty)
-                                ? 'Code cannot be empty'
-                                // Localize validator message
-                                : null,
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "Name", // Localize label
-                    controller: _nameController,
-                    validator:
-                        (value) =>
-                            (value == null || value.isEmpty)
-                                ? 'Name cannot be empty'
-                                // Localize validator message
-                                : null,
-                  ),
-                  BusinessPartnerDropdown(
-                    context: context, // Pass context
-                    label: "Type", // Localize label
-                    hint: "Select Type", // Localize hint
-                    value: _selectedType!,
-                    items: utilities.typeOptions,
-                    onChanged:
-                        (newValue) => setState(() => _selectedType = newValue),
-                    validator:
-                        (value) =>
-                            value == null ? 'Please select a type' : null,
-                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                      utilities.typeOptions,
-                    ), // Localize validator message
-                  ),
-                  BusinessPartnerDropdown(
-                    context: context, // Pass context
-                    label: "Currency", // Localize label
-                    hint: "Select Currency", // Localize hint
-                    value: _selectedCurrency!,
-                    items: utilities.currencyOptions,
-                    onChanged:
-                        (newValue) =>
-                            setState(() => _selectedCurrency = newValue),
-                    validator:
-                        (value) =>
-                            value == null ? 'Please select a currency' : null,
-                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                      utilities.currencyOptions,
-                    ), // Localize validator message
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "Mobile Phone", // Localize label
-                    controller: _mobilePhoneController,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  BusinessPartnerDropdown(
-                    context: context, //
-                    label: "Payment Terms",
-                    hint: "Select Terms",
-                    value: _selectedPaymentTerms!,
-                    items: utilities.paymentTermsOptions,
-                    onChanged:
-                        (newValue) =>
-                            setState(() => _selectedPaymentTerms = newValue),
-                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                      utilities.paymentTermsOptions,
+      body: Container(color: backgroundColor,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Pass theme colors and text styles to helper methods
+                _buildSection(
+                  context: context, // Pass context
+                  title: "General Information", // Localize title
+                  icon: Icons.business_center,
+                  children: [
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "Code", // Localize label
+                      controller: _codeController,
+                      validator:
+                          (value) =>
+                              (value == null || value.isEmpty)
+                                  ? 'Code cannot be empty'
+                                  // Localize validator message
+                                  : null,
                     ),
-                  ),
-                  BusinessPartnerDropdown(
-                    context: context, // Pass context
-                    label: "Price List", // Localize label
-                    hint: "Select Price List", // Localize hint
-                    value: _selectedPriceList!,
-                    items: utilities.priceListOptions,
-                    onChanged:
-                        (newValue) =>
-                            setState(() => _selectedPriceList = newValue),
-                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                      utilities.priceListOptions,
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "Name", // Localize label
+                      controller: _nameController,
+                      validator:
+                          (value) =>
+                              (value == null || value.isEmpty)
+                                  ? 'Name cannot be empty'
+                                  // Localize validator message
+                                  : null,
                     ),
-                  ),
-                ],
-              ),
-
-              _buildSection(
-                context: context, // Pass context
-                title: "Group Information", // Localize title
-                icon: Icons.group_work,
-                children: [
-                  BusinessPartnerDropdown(
-                    context: context, // Pass context
-                    label: "Group No.", // Localize label
-                    hint: "Select Group Number", // Localize hint
-                    value: _selectedGroupNo!,
-                    items: utilities.groupNoOptions,
-                    onChanged:
-                        (newValue) =>
-                            setState(() => _selectedGroupNo = newValue),
-                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                      utilities.groupNoOptions,
+                    BusinessPartnerDropdown(
+                      context: context, // Pass context
+                      label: "Type", // Localize label
+                      hint: "Select Type", // Localize hint
+                      value: _selectedType,
+                      items: utilities.typeOptions,
+                      onChanged:
+                          (newValue) => setState(() => _selectedType = newValue),
+                      validator:
+                          (value) =>
+                              value == null ? 'Please select a type' : null,
+                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                        utilities.typeOptions,
+                      ), // Localize validator message
                     ),
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "Group Name", // Localize label
-                    controller: _groupNameController,
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "Group Type", // Localize label
-                    controller: _groupTypeController,
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "GroupsCode", // Localize label
-                    controller: _groupsCodeController,
-                  ),
-                ],
-              ),
-
-              _buildSection(
-                context: context, // Pass context
-                title: "Address Information", // Localize title
-                icon: Icons.location_on,
-                children: [
-                  BusinessPartnerDropdown(
-                    context: context, // Pass context
-                    label: "Address ID", // Localize label
-                    hint: "Select Address ID", // Localize hint
-                    value: _selectedAddressId!,
-                    items: utilities.addressIdOptions,
-                    onChanged:
-                        (newValue) =>
-                            setState(() => _selectedAddressId = newValue),
-                    getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                      utilities.addressIdOptions,
+                    BusinessPartnerDropdown(
+                      context: context, // Pass context
+                      label: "Currency", // Localize label
+                      hint: "Select Currency", // Localize hint
+                      value: _selectedCurrency,
+                      items: utilities.currencyOptions,
+                      onChanged:
+                          (newValue) =>
+                              setState(() => _selectedCurrency = newValue),
+                      validator:
+                          (value) =>
+                              value == null ? 'Please select a currency' : null,
+                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                        utilities.currencyOptions,
+                      ), // Localize validator message
                     ),
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "City", // Localize label
-                    controller: _cityController,
-                  ),
-                  buildTextField(
-                    context: context, // Pass context
-                    label: "County", // Localize label
-                    controller: _countyController,
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-              SavePartnerButton(saveForm: _saveForm),
-              const SizedBox(height: 16),
-            ],
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "Mobile Phone", // Localize label
+                      controller: _mobilePhoneController,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    BusinessPartnerDropdown(
+                      context: context, //
+                      label: "Payment Terms",
+                      hint: "Select Terms",
+                      value: _selectedPaymentTerms,
+                      items: utilities.paymentTermsOptions,
+                      onChanged:
+                          (newValue) =>
+                              setState(() => _selectedPaymentTerms = newValue),
+                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                        utilities.paymentTermsOptions,
+                      ),
+                    ),
+                    BusinessPartnerDropdown(
+                      context: context, // Pass context
+                      label: "Price List", // Localize label
+                      hint: "Select Price List", // Localize hint
+                      value: _selectedPriceList,
+                      items: utilities.priceListOptions,
+                      onChanged:
+                          (newValue) =>
+                              setState(() => _selectedPriceList = newValue),
+                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                        utilities.priceListOptions,
+                      ),
+                    ),
+                  ],
+                ),
+        
+                _buildSection(
+                  context: context, // Pass context
+                  title: "Group Information", // Localize title
+                  icon: Icons.group_work,
+                  children: [
+                    BusinessPartnerDropdown(
+                      context: context, // Pass context
+                      label: "Group No.", // Localize label
+                      hint: "Select Group Number", // Localize hint
+                      value: _selectedGroupNo,
+                      items: utilities.groupNoOptions,
+                      onChanged:
+                          (newValue) =>
+                              setState(() => _selectedGroupNo = newValue),
+                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                        utilities.groupNoOptions,
+                      ),
+                    ),
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "Group Name", // Localize label
+                      controller: _groupNameController,
+                    ),
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "Group Type", // Localize label
+                      controller: _groupTypeController,
+                    ),
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "GroupsCode", // Localize label
+                      controller: _groupsCodeController,
+                    ),
+                  ],
+                ),
+        
+                _buildSection(
+                  context: context, // Pass context
+                  title: "Address Information", // Localize title
+                  icon: Icons.location_on,
+                  children: [
+                    BusinessPartnerDropdown(
+                      context: context, // Pass context
+                      label: "Address ID", // Localize label
+                      hint: "Select Address ID", // Localize hint
+                      value: _selectedAddressId,
+                      items: utilities.addressIdOptions,
+                      onChanged:
+                          (newValue) =>
+                              setState(() => _selectedAddressId = newValue),
+                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
+                        utilities.addressIdOptions,
+                      ),
+                    ),
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "City", // Localize label
+                      controller: _cityController,
+                    ),
+                    buildTextField(
+                      context: context, // Pass context
+                      label: "County", // Localize label
+                      controller: _countyController,
+                    ),
+                  ],
+                ),
+        
+                const SizedBox(height: 24),
+                SavePartnerButton(saveForm: _saveForm),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
