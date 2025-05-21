@@ -4,12 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:revival/shared/utils.dart';
 
 class ForgotPassword extends StatelessWidget {
-  ForgotPassword({
+  const ForgotPassword({
     super.key,
     required this.forgotPassword,
     required this.isLoading,
   });
-  bool isLoading;
+  final bool isLoading;
   final void Function()? forgotPassword;
 
   @override

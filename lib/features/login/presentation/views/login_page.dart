@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    context.read<LoginCubit>().loadSavedCredentials();
+    // context.read<LoginCubit>().loadSavedCredentials();
 
     _logoAnimationController = AnimationController(
       vsync: this,
@@ -52,7 +52,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void _login() async {
     if (_formKey.currentState?.validate() ?? false) {
       final userCredentials = UserCredentials(
-        dbName: _databaseNameController.text,
         username: _usernameController.text,
         password: _passwordController.text,
       );
@@ -91,22 +90,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 listener: (context, state) {
                   if (state is CredentialsSuccess) {
                     setState(() {
-                  _rememberMe = state.rememberMe;
-                  if (state.userCredentials != null) {
-                    _databaseNameController.text =
-                        state.userCredentials!.dbName;
-                    _usernameController.text =
-                        state.userCredentials!.username;
-                    _passwordController.text =
-                        state.userCredentials!.password;
-                  }
-               });
+                      _rememberMe = state.rememberMe;
+                      if (state.userCredentials != null) {
+                        _usernameController.text =
+                            state.userCredentials!.username;
+                        _passwordController.text =
+                            state.userCredentials!.password;
+                      }
+                    });
                   }
 
                   if (state is LoginError) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Error: ${state.errorMessage}'),
+                        content: Text('Error: ${state.errorMessage}'.tr()),
                         backgroundColor: Colors.redAccent,
                       ),
                     );
@@ -115,7 +112,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   if (state is LoginSuccess) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Login Successful!'),
+                        content: Text('Login Successful!'.tr()),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -157,7 +154,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 obscureText: _obscureText,
                               ),
                               RememberMe(
-                                onChanged: (value) => setState(() => _rememberMe = value ?? false),
+                                onChanged:
+                                    (value) => setState(
+                                      () => _rememberMe = value ?? false,
+                                    ),
                                 rememberMe: _rememberMe,
                                 utilities: utilities,
                                 isLoading: isLoading,

@@ -1,18 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
+
 
 class UserCredentials {
-  final String dbName;
   final String username;
   final String password;
 
   UserCredentials({
-    required this.dbName,
     required this.username,
     required this.password,
   }) {
-    if (dbName.trim().isEmpty) {
-      throw ArgumentError('Database name cannot be empty.');
-    }
     if (username.trim().isEmpty) {
       throw ArgumentError('Username cannot be empty.');
     }

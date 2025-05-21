@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 Widget buildBrandBar(BuildContext context, double textScale, bool isTablet) {
-    // ... (Brand bar code remains the same)
     final barHeight = isTablet ? 72.0 : 56.0;
     return Material(
-      // Use Material for elevation control
       elevation: 4.0, // Increased elevation
       shadowColor: Color(0x1A000000).withOpacity(0.5), // Customize shadow color
       color: Colors.white,

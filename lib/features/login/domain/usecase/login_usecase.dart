@@ -15,11 +15,6 @@ class LoginUseCase {
       isRememberMe: isRememberMe,
     );
     await _credentialsRepository.setRememberMePreference(isRememberMe);
-    if (isRememberMe) {
-      await _credentialsRepository.saveCredentials(userCredentials);
-    } else {
-      await _credentialsRepository.clearCredentials();
-    }
     return result;
   }
 }

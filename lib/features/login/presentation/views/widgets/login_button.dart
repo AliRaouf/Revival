@@ -4,10 +4,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:revival/shared/utils.dart';
 
 class LoginButton extends StatelessWidget {
-  void Function()? onPressed;
+  final void Function()? onPressed;
   final bool isLoading;
   final void Function()? login;
-  LoginButton({super.key, this.onPressed, required this.isLoading, this.login});
+  const LoginButton({super.key, this.onPressed, required this.isLoading, this.login});
   @override
   Widget build(BuildContext context) {
     final utilities = Utilities(context);

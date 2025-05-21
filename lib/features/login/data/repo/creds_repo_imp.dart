@@ -10,14 +10,6 @@ class CredsRepoImp implements CredentialsRepo {
   static const String _passwordKey = 'password';
 
   @override
-  Future<void> saveCredentials(UserCredentials credentials) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_databaseNameKey, credentials.dbName);
-    await prefs.setString(_usernameKey, credentials.username);
-    await prefs.setString(_passwordKey, credentials.password);
-  }
-
-  @override
   Future<UserCredentials?> loadCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     final dbname = prefs.getString(_databaseNameKey);
@@ -26,7 +18,6 @@ class CredsRepoImp implements CredentialsRepo {
 
     if (dbname != null && username != null && password != null) {
       return UserCredentials(
-        dbName: dbname,
         username: username,
         password: password,
       );

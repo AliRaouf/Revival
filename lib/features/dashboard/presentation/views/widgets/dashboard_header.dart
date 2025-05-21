@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/shared/language_icon_button.dart';
 
@@ -16,7 +17,7 @@ Widget buildHeader(BuildContext context, double textScale, bool isTablet) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Username',
+              'Username'.tr(),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: (isTablet ? 19 : 17) * textScale,
@@ -25,7 +26,7 @@ Widget buildHeader(BuildContext context, double textScale, bool isTablet) {
             ),
             const SizedBox(height: 5),
             Text(
-              'Sales Person Code: 12345',
+              'Sales Person Code: ${12345}'.tr(),
               style: TextStyle(
                 color: Color(0xFFD1D5DB),
                 fontSize: (isTablet ? 12 : 10.2) * textScale,
