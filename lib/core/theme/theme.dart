@@ -168,7 +168,7 @@ final ThemeData appTheme = ThemeData(
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       textStyle: kTextTheme.labelLarge?.copyWith(color: Colors.white),
-      minimumSize: const Size(64, 44),
+      minimumSize: const Size.fromHeight(52),
     ),
   ),
 

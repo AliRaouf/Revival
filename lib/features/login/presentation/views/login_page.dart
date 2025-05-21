@@ -7,7 +7,7 @@ import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/login/presentation/views/widgets/forgot_password.dart';
 import 'package:revival/features/login/presentation/views/widgets/input_column.dart';
 import 'package:revival/features/login/presentation/views/widgets/login_button.dart';
-import 'package:revival/features/login/presentation/views/widgets/remember_me.dart';
+import 'package:revival/features/login/presentation/views/widgets/quick_login.dart';
 import 'package:revival/shared/utils.dart';
 import 'package:revival/shared/logo_image.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
@@ -153,21 +153,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 passwordController: _passwordController,
                                 obscureText: _obscureText,
                               ),
-                              RememberMe(
-                                onChanged:
-                                    (value) => setState(
-                                      () => _rememberMe = value ?? false,
+                              SizedBox(height: utilities.vSpace(1)),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: LoginButton(
+                                      isLoading: isLoading,
+                                      login: _login,
                                     ),
-                                rememberMe: _rememberMe,
-                                utilities: utilities,
-                                isLoading: isLoading,
-                              ),
-                              SizedBox(height: utilities.vSpace(1.5)),
-                              LoginButton(
-                                isLoading: isLoading,
-                                login: _login,
+                                  ),
+                                  QuickLogin(),
+                                ],
                               ).animate().fadeIn(delay: 500.ms),
                               SizedBox(height: utilities.vSpace(1.5)),
+
                               ForgotPassword(
                                 isLoading: isLoading,
                                 forgotPassword: _forgotPassword,
