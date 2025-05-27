@@ -13,7 +13,7 @@ class LogoImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScaleTransition(
           scale: logoAnimation,
-          child: Image.network(
+          child: Image.asset(
             'assets/images/image.png',
             width: cardWidth * 0.45,
             fit: BoxFit.contain,

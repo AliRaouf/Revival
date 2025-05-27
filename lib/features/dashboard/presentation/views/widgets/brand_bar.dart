@@ -11,7 +11,7 @@ Widget buildBrandBar(BuildContext context, double textScale, bool isTablet) {
         height: barHeight,
         // Removed explicit decoration, rely on Material
         child: Center(
-          child: Image.network(
+          child: Image.asset(
             'assets/images/image.png',
             height: barHeight * 0.5, // Control height relative to bar
             fit: BoxFit.contain,
