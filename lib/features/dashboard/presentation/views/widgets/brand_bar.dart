@@ -12,7 +12,7 @@ Widget buildBrandBar(BuildContext context, double textScale, bool isTablet) {
         // Removed explicit decoration, rely on Material
         child: Center(
           child: Image.network(
-            'https://revival-me.com/new2/wp-content/uploads/2020/05/Revival-transparent.png',
+            'assets/images/image.png',
             height: barHeight * 0.5, // Control height relative to bar
             fit: BoxFit.contain,
           ),

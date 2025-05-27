@@ -1,83 +1,186 @@
-// lib/widgets/sales_analysis_table.dart (or your preferred location)
+// lib/features/sales_analysis/presentation/widgets/sales_analysis_table.dart
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-// Ensure these imports point to the correct locations in your project
+import 'package:revival/core/theme/theme.dart'; // Your theme file
 import 'package:revival/features/sales_analysis/domain/entity/sales_entry.dart';
-import 'package:revival/features/sales_analysis/presentation/widgets/sales_analysis_table_row.dart';
 
 class SalesAnalysisTable extends StatelessWidget {
   final List<SalesEntry> entries;
 
   const SalesAnalysisTable({super.key, required this.entries});
 
-  @override
-  Widget build(BuildContext context) {
-    // Use a Column to place the Header above the list of rows
-    return Column(
-      // *** REMOVED mainAxisSize: MainAxisSize.min HERE ***
-      children: [
-        _buildHeaderRow(), // Add the header row
-        const SizedBox(height: 8), // Space between header and first data row
-        // Column containing the mapped rows
-        Column(
-          children:
-              entries.map((entry) {
-                // Create a SalesAnalysisTableRow for each entry
-                return SalesAnalysisTableRow(
-                  key: ValueKey(entry.number),
-                  number: entry.number,
-                  date: entry.date,
-                  paymentMethod: entry.paymentMethod,
-                  items: entry.items,
-                  discount: entry.discount,
-                  total: entry.total,
+  // Define column widths.
+  // Using a mix of FlexColumnWidth for responsiveness and IntrinsicColumnWidth for the button.
+  static const Map<int, TableColumnWidth> _columnWidths = {
+    0: FlexColumnWidth(1.0), // No
+    1: FlexColumnWidth(2.0), // Date
+    2: FlexColumnWidth(3.5), // Payment Method
+    3: IntrinsicColumnWidth(), // Items (button) - sizes to content
+    4: FlexColumnWidth(2.5), // Discount
+    5: FlexColumnWidth(2.5), // Total
+  };
+
+  // Helper to show the items dialog (adapted from SalesAnalysisTableRow)
+  void _showItemsDialog(BuildContext context, List<String> items, ThemeData theme) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Items'.tr()),
+          content: SizedBox(
+            width: double.maxFinite, // Use available width
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(items[index], style: theme.textTheme.bodyMedium),
                 );
-              }).toList(), // Convert the mapped Iterable to a List of Widgets
-        ),
-      ],
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'.tr()),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDialogBorderRadius), // From your theme
+          ),
+        );
+      },
     );
   }
 
-  // Helper widget to build the static header row - Remains the same
-  Widget _buildHeaderRow() {
-    // Mimics the structure of the data row for alignment
-    return Container(
-  width: double.infinity, // ensure full width
-  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-  decoration: BoxDecoration(
-    color: Colors.grey.shade100,
-    borderRadius: BorderRadius.circular(8.0),
-  ),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center, // make sure items don't squeeze
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Expanded(flex: 1, child: _buildHeaderColumn('No')),        // changed to Expanded
-      Expanded(flex: 2, child: _buildHeaderColumn('Date')),
-      Expanded(flex: 4, child: _buildHeaderColumn('Payment Method')),
-      Expanded(flex: 2, child: _buildHeaderColumn('Items')),
-      Expanded(flex: 2, child: _buildHeaderColumn('Discount')),
-      Expanded(flex: 3, child: _buildHeaderColumn('Total')),
-    ],
-  ),
-); }
-
-  // Specific helper for header columns for clarity and distinct styling - Remains the same
-  Widget _buildHeaderColumn(String header) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-    child: Align(
-      alignment: Alignment.centerLeft, // <-- Add Align
+  // Helper to build styled header cells
+  Widget _buildHeaderCell(String text, ThemeData theme, {TextAlign textAlign = TextAlign.start}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 12.0),
       child: Text(
-        header,
-        textAlign: TextAlign.left, // <-- changed from center
-        style: TextStyle(
-          fontSize: 12,
+        text,
+        textAlign: textAlign,
+        style: theme.textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.grey.shade700,
+          color: theme.colorScheme.onSurface.withOpacity(0.8),
         ),
         overflow: TextOverflow.ellipsis,
       ),
-    ),
-  );
-}
+    );
+  }
+
+  // Helper to build styled data cells
+  Widget _buildDataCell(Widget child, ThemeData theme, {TextAlign textAlign = TextAlign.start, TableCellVerticalAlignment verticalAlignment = TableCellVerticalAlignment.middle}) {
+    return TableCell(
+      verticalAlignment: verticalAlignment,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 10.0),
+        child: DefaultTextStyle(
+          style: theme.textTheme.bodyMedium ?? const TextStyle(),
+          textAlign: textAlign,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    if (entries.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            'No sales data available.'.tr(), // Or your preferred empty state message
+            style: theme.textTheme.titleMedium,
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: theme.dividerColor, width: 1.0),
+          // bottom: BorderSide(color: theme.dividerColor, width: 1.0), // Keep if you want bottom border for the whole table
+        ),
+      ),
+      child: Table(
+        columnWidths: _columnWidths,
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        border: TableBorder(
+          horizontalInside: BorderSide(color: theme.dividerColor.withOpacity(0.5), width: 0.5),
+          // verticalInside: BorderSide(color: theme.dividerColor.withOpacity(0.5), width: 0.5), // Optional: for vertical cell borders
+        ),
+        children: [
+          // Header Row
+          TableRow(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceVariant.withOpacity(0.3), // Subtle header background
+            ),
+            children: [
+              _buildHeaderCell('No'.tr(), theme),
+              _buildHeaderCell('Date'.tr(), theme),
+              _buildHeaderCell('Payment Method'.tr(), theme),
+              _buildHeaderCell('Items'.tr(), theme, textAlign: TextAlign.center), // Center align header for button column
+              _buildHeaderCell('Discount'.tr(), theme, textAlign: TextAlign.end), // Align numeric headers to end
+              _buildHeaderCell('Total'.tr(), theme, textAlign: TextAlign.end), // Align numeric headers to end
+            ],
+          ),
+          // Data Rows
+          ...entries.map((entry) {
+            return TableRow(
+              key: ValueKey(entry.number),
+              children: [
+                _buildDataCell(Text(entry.number.toString()), theme),
+                _buildDataCell(Text(DateFormat.Md(context.locale.toString()).format(entry.date)), theme), // Localized date format
+                _buildDataCell(
+                  Text(entry.paymentMethod, overflow: TextOverflow.ellipsis),
+                  theme,
+                ),
+                _buildDataCell(
+                  Center( // Center the button in its cell
+                    child: TextButton(
+                      onPressed: () => _showItemsDialog(context, entry.items, theme),
+                      style: TextButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        alignment: Alignment.center,
+                        textStyle: theme.textTheme.labelSmall?.copyWith(fontSize: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(kDefaultBorderRadius / 2),
+                        ),
+                      ),
+                      child: Text('Show'.tr()),
+                    ),
+                  ),
+                  theme,
+                ),
+                _buildDataCell(
+                  Text('${entry.discount.toStringAsFixed(0)}%'),
+                  theme,
+                  textAlign: TextAlign.center, // Align numeric data to end
+                ),
+                _buildDataCell(
+                  Text(
+                    entry.total.toStringAsFixed(context.locale.languageCode == 'ar' ? 1 : 2), // Adjust precision based on locale
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  theme,
+                  textAlign: TextAlign.end, // Align numeric data to end
+                ),
+              ],
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
 }

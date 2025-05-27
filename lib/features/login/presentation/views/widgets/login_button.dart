@@ -22,9 +22,11 @@ class LoginButton extends StatelessWidget {
           style: utilities.theme.elevatedButtonTheme.style?.copyWith(
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  topLeft: Radius.circular(8),
+                borderRadius: Localizations.localeOf(context).languageCode == 'ar'?BorderRadius.only(
+                bottomRight: Radius.circular(8),
+                topRight: Radius.circular(8)) :BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                topLeft: Radius.circular(8),
                 ),
               ),
             ),

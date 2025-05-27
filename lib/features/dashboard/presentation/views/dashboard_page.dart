@@ -1,10 +1,9 @@
+// lib/features/dashboard/presentation/views/dashboard_page.dart
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/dashboard_grid.dart';
-import 'package:revival/features/dashboard/presentation/views/widgets/dashboard_header.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/layout_builder.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/shared/utils.dart';
@@ -17,17 +16,73 @@ class DashBoard extends StatelessWidget {
     final Utilities utilities = Utilities(context);
 
     return Scaffold(
+      appBar: AppBar(automaticallyImplyLeading: false,
+      title: Text(
+              'Username'.tr(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Color(0xFF17405E)),
+              child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Username'.tr(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              'Sales Person Code: ${12345}'.tr(),
+              style: TextStyle(
+                color: Color(0xFFD1D5DB),
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+            ),
+            ListTile(onTap: () => utilities.showLanguageDialog(context),
+              leading: Icon(Icons.language),
+              title: Text('Language'),
+            ),
+            ListTile(
+              leading: Icon(Icons.sync),
+              title: Text('Sync Data'),
+            ),
+            ListTile(
+              onTap: () => context.go('/'),
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+            ),
+          ],
+        ),
+      ),
       backgroundColor: utilities.theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Container(
-          color: scaffoldBackgroundColor,
-          child: ResponsiveLayout(
-            child: Column(
-              children: [
-                buildHeader(context, 1.0, utilities.isTablet),
-                buildBrandBar(context, 1.0, utilities.isTablet),
+        child: Container( // This container can remain if it's for the overall page background
+          color: scaffoldBackgroundColor, // Or utilities.theme.scaffoldBackgroundColor
+          child: Column( // Main column for the page
+            children: [
+              // Header and BrandBar are now outside ResponsiveLayout for full width
+              
+              buildBrandBar(context, 1.0, utilities.isTablet),
 
-                Expanded(
+              // ResponsiveLayout now only wraps the content that needs padding (the Grid)
+              Expanded(
+                child: ResponsiveLayout(
                   child: GridView.builder(
                     padding: const EdgeInsets.all(20.0),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -52,8 +107,8 @@ class DashBoard extends StatelessWidget {
                     },
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

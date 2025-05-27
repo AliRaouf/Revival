@@ -14,7 +14,7 @@ class LogoImage extends StatelessWidget {
     return ScaleTransition(
           scale: logoAnimation,
           child: Image.network(
-            'https://revival-me.com/new2/wp-content/uploads/2020/05/Revival-transparent.png',
+            'assets/images/image.png',
             width: cardWidth * 0.45,
             fit: BoxFit.contain,
           ),

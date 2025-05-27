@@ -13,7 +13,9 @@ class QuickLogin extends StatelessWidget {
           minimumSize: WidgetStatePropertyAll(const Size.square(52)),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
+              borderRadius: Localizations.localeOf(context).languageCode == 'ar'?BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                topLeft: Radius.circular(8)) :BorderRadius.only(
                 bottomRight: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),

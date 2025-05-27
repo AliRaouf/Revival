@@ -248,4 +248,31 @@ class Utilities {
     'HQ',
     'Branch-1',
   ];
+  void showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text('Select Language'),
+          children:
+              context.supportedLocales.map((locale) {
+                final isSelected = context.locale == locale;
+                return ListTile(
+                  title: Text(
+                    locale.languageCode == 'en' ? 'English' : 'العربية',
+                  ),
+                  trailing:
+                      isSelected
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                  onTap: () {
+                    context.setLocale(locale);
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+        );
+      },
+    );
+  }
 }

@@ -56,6 +56,7 @@ class _SalesAnalysisViewState extends State<SalesAnalysisView> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  SizedBox(height: utilities.vSpace(1)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -67,8 +68,8 @@ class _SalesAnalysisViewState extends State<SalesAnalysisView> {
                             showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
-                              firstDate: DateTime(2025),
-                              lastDate: DateTime(2026),
+                              firstDate: DateTime.now().subtract(const Duration(days: 2)),
+                              lastDate: DateTime.now().add(const Duration(days: 14)),
                             ).then((selectedDate) {
                               if (selectedDate != null) {
                                 stDateController.text = DateFormat()
