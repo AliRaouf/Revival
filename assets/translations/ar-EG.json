@@ -175,5 +175,9 @@
     "biometric_prompt" : "يرجى المصادقة للمتابعة",
     "biometric_auth_failed": "فشلت المصادقة البيومترية",
     "biometric_not_supported": "تسجيل الدخول البيومتري غير مدعوم على هذا الجهاز",
-    "no_stored_credentials": "لا توجد بيانات اعتماد مخزنة"
+    "no_stored_credentials": "لا توجد بيانات اعتماد مخزنة",
+    "Coming Soon": "قريباً",
+    "Language": "اللغة",
+    "Sync Data": "مزامنة البيانات",
+    "Logout": "تسجيل الخروج"
   }

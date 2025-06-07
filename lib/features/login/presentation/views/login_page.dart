@@ -159,10 +159,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   Expanded(
                                     child: LoginButton(
                                       isLoading: isLoading,
-                                      login: _login,
+                                      onPressed: _login,
                                     ),
                                   ),
-                                  QuickLogin(),
+                                  isLoading ? SizedBox.shrink() : QuickLogin(),
                                 ],
                               ).animate().fadeIn(delay: 500.ms),
                               SizedBox(height: utilities.vSpace(1.5)),

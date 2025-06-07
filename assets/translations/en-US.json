@@ -175,6 +175,10 @@
     "biometric_prompt": "Please authenticate to continue",
     "biometric_auth_failed": "Biometric authentication failed",
     "biometric_not_supported": "Biometric login not supported on this device",
-    "no_stored_credentials": "No stored credentials found"
+    "no_stored_credentials": "No stored credentials found",
+    "Coming Soon": "Coming Soon",
+    "Sync Data": "Sync Data",
+    "Language": "Language",
+    "Logout": "Logout"
 
   }

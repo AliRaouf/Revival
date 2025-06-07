@@ -16,15 +16,17 @@ class DashBoard extends StatelessWidget {
     final Utilities utilities = Utilities(context);
 
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false,
-      title: Text(
-              'Username'.tr(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Username'.tr(),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -32,55 +34,49 @@ class DashBoard extends StatelessWidget {
             DrawerHeader(
               decoration: BoxDecoration(color: Color(0xFF17405E)),
               child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Username'.tr(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Username'.tr(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    'Sales Person Code: ${12345}'.tr(),
+                    style: TextStyle(
+                      color: Color(0xFFD1D5DB),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              'Sales Person Code: ${12345}'.tr(),
-              style: TextStyle(
-                color: Color(0xFFD1D5DB),
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-            ),
-            ListTile(onTap: () => utilities.showLanguageDialog(context),
-              leading: Icon(Icons.language),
-              title: Text('Language'),
             ),
             ListTile(
-              leading: Icon(Icons.sync),
-              title: Text('Sync Data'),
+              onTap: () => utilities.showLanguageDialog(context),
+              leading: Icon(Icons.language),
+              title: Text('Language'.tr()),
             ),
+            ListTile(leading: Icon(Icons.sync), title: Text('Sync Data'.tr())),
             ListTile(
               onTap: () => context.go('/'),
               leading: Icon(Icons.logout),
-              title: Text('Logout'),
+              title: Text('Logout'.tr()),
             ),
           ],
         ),
       ),
       backgroundColor: utilities.theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Container( // This container can remain if it's for the overall page background
-          color: scaffoldBackgroundColor, // Or utilities.theme.scaffoldBackgroundColor
-          child: Column( // Main column for the page
+        child: Container(
+          color: scaffoldBackgroundColor,
+          child: Column(
             children: [
-              // Header and BrandBar are now outside ResponsiveLayout for full width
-              
               buildBrandBar(context, 1.0, utilities.isTablet),
-
-              // ResponsiveLayout now only wraps the content that needs padding (the Grid)
               Expanded(
                 child: ResponsiveLayout(
                   child: GridView.builder(
@@ -98,11 +94,17 @@ class DashBoard extends StatelessWidget {
                           index % utilities.menuItemColors.length;
                       final itemColor = utilities.menuItemColors[colorIndex];
 
+                      final bool comingSoon = index >= 2;
+
                       return DashboardGridItem(
                         title: item['title'] as String,
                         icon: item['icon'] as IconData,
-                        onTap: () => context.push(item['path'] as String),
+                        onTap:
+                            comingSoon
+                                ? null
+                                : () => context.push(item['path'] as String),
                         backgroundColor: itemColor,
+                        comingSoon: comingSoon,
                       );
                     },
                   ),
