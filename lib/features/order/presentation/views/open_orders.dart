@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
+import 'package:revival/features/order/data/models/all_orders/value.dart';
 import 'package:revival/features/order/domain/entity/order.dart';
 import 'package:revival/features/order/presentation/utils/order_utils.dart';
 import 'package:revival/shared/open_orders_invoices_header.dart';
@@ -21,13 +22,17 @@ class OpenOrdersScreen extends StatefulWidget {
 class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  List<OrderInfo> _filteredOrders = [];
+  List<Value> _filteredOrders = [];
+   List<Value> _sourceOrders = []; 
   final OrderUtils orderUtils = OrderUtils();
 
   @override
   void initState() {
     super.initState();
-    _filteredOrders = List.from(orderUtils.allOrders);
+ if (orderUtils.allOrders.success == true && orderUtils.allOrders.data?.value != null) {
+      _sourceOrders = List.from(orderUtils.allOrders.data!.value!);
+      _filteredOrders = List.from(_sourceOrders);
+    }
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -38,14 +43,20 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     setState(() {
       _searchQuery = query;
       if (_searchQuery.isEmpty) {
-        _filteredOrders = List.from(orderUtils.allOrders);
+        // If search is empty, show all original orders
+        _filteredOrders = List.from(_sourceOrders);
       } else {
-        _filteredOrders =
-            orderUtils.allOrders.where((order) {
-              return order.customerName.toLowerCase().contains(_searchQuery) ||
-                  order.orderCode.toLowerCase().contains(_searchQuery) ||
-                  order.order.toLowerCase().contains(_searchQuery);
-            }).toList();
+        // 2. Filter the source list, not the entire response object
+        _filteredOrders = _sourceOrders.where((order) {
+          // Add null checks for safety if these fields can be null
+          final customerName = order.docNum.toString();
+          final orderCode = order.cardCode!;
+          final orderName = order.docEntry.toString();
+
+          return customerName.contains(_searchQuery) ||
+              orderCode.contains(_searchQuery) ||
+              orderName.contains(_searchQuery);
+        }).toList();
       }
     });
   }
@@ -77,7 +88,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   }
 
   Widget _buildContent(BuildContext context) {
-    if (orderUtils.allOrders.isEmpty) {
+    if (orderUtils.allOrders.success == false) {
       return _buildEmptyState(
         context: context,
         icon: Icons.list_alt_outlined,
@@ -100,7 +111,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
       itemCount: _filteredOrders.length,
       itemBuilder: (context, index) {
         final order = _filteredOrders[index];
-        return OrderInvoiceSummaryCard(order: order,);
+        return OrderInvoiceSummaryCard(order: order);
       },
     );
   }

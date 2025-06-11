@@ -7,7 +7,7 @@ class LanguageSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-final Utilities utilities = Utilities(context);
+    final Utilities utilities = Utilities(context);
     final currentLocale = context.locale;
 
     final List<Locale> supportedLocales = [
@@ -44,10 +44,7 @@ final Utilities utilities = Utilities(context);
       borderColor: utilities.colorScheme.primary.withOpacity(0.5),
       selectedBorderColor: utilities.colorScheme.primary,
       borderRadius: BorderRadius.circular(8.0),
-      constraints: const BoxConstraints(
-        minHeight: 36.0,
-        minWidth: 60.0,
-      ),
+      constraints: const BoxConstraints(minHeight: 36.0, minWidth: 60.0),
       children: const <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),

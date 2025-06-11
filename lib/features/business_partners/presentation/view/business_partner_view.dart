@@ -64,7 +64,8 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
         ),
         elevation: 2.0,
       ),
-      body: Container(color: backgroundColor,
+      body: Container(
+        color: backgroundColor,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Form(
@@ -107,7 +108,8 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
                       value: _selectedType,
                       items: utilities.typeOptions,
                       onChanged:
-                          (newValue) => setState(() => _selectedType = newValue),
+                          (newValue) =>
+                              setState(() => _selectedType = newValue),
                       validator:
                           (value) =>
                               value == null ? 'Please select a type' : null,
@@ -165,7 +167,7 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
                     ),
                   ],
                 ),
-        
+
                 _buildSection(
                   context: context, // Pass context
                   title: "Group Information", // Localize title
@@ -201,7 +203,7 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
                     ),
                   ],
                 ),
-        
+
                 _buildSection(
                   context: context, // Pass context
                   title: "Address Information", // Localize title
@@ -232,7 +234,7 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
                     ),
                   ],
                 ),
-        
+
                 const SizedBox(height: 24),
                 SavePartnerButton(saveForm: _saveForm),
                 const SizedBox(height: 16),

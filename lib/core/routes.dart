@@ -1,4 +1,3 @@
-
 import 'package:go_router/go_router.dart';
 import 'package:revival/features/Stock/presentation/views/show_stock.dart';
 import 'package:revival/features/ar_invoice/presentation/views/new_invoice.dart';
@@ -32,7 +31,7 @@ abstract class AppRouter {
             path: 'single_order',
             builder:
                 (context, state) => SingleOrderScreen(
-                  orderId: state.pathParameters['orderId']!,
+                  // orderId: state.pathParameters['orderId']!,
                 ),
           ),
         ],
@@ -49,7 +48,7 @@ abstract class AppRouter {
             path: 'single_order',
             builder:
                 (context, state) => SingleOrderScreen(
-                  orderId: state.pathParameters['orderId']!,
+                  // orderId: state.pathParameters['orderId']!,
                 ),
           ),
         ],

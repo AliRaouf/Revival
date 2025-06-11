@@ -9,7 +9,10 @@ class LoginUseCase {
   final LoginRepo _loginRepository;
   final CredentialsRepo _credentialsRepository;
   LoginUseCase(this._loginRepository, this._credentialsRepository);
-  Future<Either<Failures, AuthToken>>executeLogin({required UserCredentials userCredentials,required bool isRememberMe})async{
+  Future<Either<Failures, AuthToken>> executeLogin({
+    required UserCredentials userCredentials,
+    required bool isRememberMe,
+  }) async {
     final result = await _loginRepository.login(
       userCredentials: userCredentials,
       isRememberMe: isRememberMe,

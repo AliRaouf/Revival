@@ -43,8 +43,6 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
     _calculateTotals();
   }
 
- 
-
   void _calculateTotals() {
     final qty = int.tryParse(_qtyController.text) ?? 0;
     final unitPrice = double.tryParse(_unitPriceController.text) ?? 0.0;
@@ -56,7 +54,8 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
       discount: discountAmount,
     );
     final total = calculateItemTotals.calculateCurrentTotal();
-    final discountedTotal = calculateItemTotals.calculateCurrentDiscountedTotal();
+    final discountedTotal =
+        calculateItemTotals.calculateCurrentDiscountedTotal();
 
     setState(() {
       _total = total.toStringAsFixed(2);
@@ -191,11 +190,7 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
                 const Divider(height: 32),
 
                 _buildDisplayRow(context, 'Total', _total),
-                _buildDisplayRow(
-                  context,
-                  'After Discount',
-                  _discountedTotal,
-                ),
+                _buildDisplayRow(context, 'After Discount', _discountedTotal),
 
                 const SizedBox(height: 24),
 
@@ -309,7 +304,8 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
       ),
     );
   }
-   @override
+
+  @override
   void dispose() {
     _itemCodeController.dispose();
     _descController.dispose();

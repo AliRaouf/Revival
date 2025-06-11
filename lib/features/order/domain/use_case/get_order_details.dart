@@ -5,7 +5,7 @@ class GetOrderDetails {
   final OrderRepo orderRepository;
   GetOrderDetails({required this.orderRepository});
 
-  Future<OrderInfo> call(String orderId) async {
-    return await orderRepository.getOrderDetails(orderId);
-  }
+  // Future<OrderInfo> call(String orderId) async {
+  //   return await orderRepository.getOrderDetails(orderId);
+  // }
 }

@@ -6,7 +6,7 @@ class GetOpenOrders {
 
   GetOpenOrders(this.orderRepository);
 
-  Future<List<OrderInfo>> call() async {
-    return await orderRepository.getOpenOrders();
-  }
+  // Future<List<OrderInfo>> call() async {
+  //   return await orderRepository.getOpenOrders();
+  // }
 }

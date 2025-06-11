@@ -192,8 +192,7 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Create Invoice for ${partner.name} (${partner.code})'
-                                            ,
+                                        'Create Invoice for ${partner.name} (${partner.code})',
                                       ),
                                     ),
                                   );

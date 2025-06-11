@@ -17,10 +17,7 @@ class CredsRepoImp implements CredentialsRepo {
     final password = prefs.getString(_passwordKey);
 
     if (dbname != null && username != null && password != null) {
-      return UserCredentials(
-        username: username,
-        password: password,
-      );
+      return UserCredentials(username: username, password: password);
     }
     return null;
   }

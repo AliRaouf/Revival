@@ -9,9 +9,9 @@ class CredentialsUseCase {
     final bool rememberMe =
         await _credentialsRepository.getRememberMePreference();
     UserCredentials? userCredentials;
-if(rememberMe){
-  userCredentials = await _credentialsRepository.loadCredentials();
-}
-return (rememberMe, userCredentials!);
+    if (rememberMe) {
+      userCredentials = await _credentialsRepository.loadCredentials();
+    }
+    return (rememberMe, userCredentials!);
   }
 }

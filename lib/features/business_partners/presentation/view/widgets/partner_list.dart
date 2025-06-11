@@ -13,14 +13,15 @@ class PartnerList extends StatefulWidget {
   final List<dynamic> filteredBusinessPartners;
   String? expandedPartnerCode;
   final NumberFormat currencyFormatter;
-   PartnerList({
+  PartnerList({
     super.key,
     required this.isEmpty,
     required this.selectedPartnerType,
     required this.searchController,
     required this.length,
     required this.filteredBusinessPartners,
-    required this.expandedPartnerCode, required this.currencyFormatter,
+    required this.expandedPartnerCode,
+    required this.currencyFormatter,
   });
 
   @override

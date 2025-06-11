@@ -7,7 +7,12 @@ class NewOrderBottomAppbar extends StatelessWidget {
   static const String estimatedTotal = '0.00 GBP';
   final void Function() saveDraft;
   final void Function() submitOrder;
-  const NewOrderBottomAppbar(BuildContext context, {super.key, required this.saveDraft, required this.submitOrder});
+  const NewOrderBottomAppbar(
+    BuildContext context, {
+    super.key,
+    required this.saveDraft,
+    required this.submitOrder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,9 @@ class NewOrderBottomAppbar extends StatelessWidget {
             children: [
               Text(
                 "Estimated net total",
-                style: utilities.textTheme.bodyLarge?.copyWith(color: mediumTextColor),
+                style: utilities.textTheme.bodyLarge?.copyWith(
+                  color: mediumTextColor,
+                ),
               ),
               Row(
                 children: [

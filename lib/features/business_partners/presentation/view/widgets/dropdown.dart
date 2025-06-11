@@ -17,7 +17,8 @@ class BusinessPartnerDropdown extends StatelessWidget {
     required this.value,
     required this.items,
     required this.onChanged,
-    this.validator, required this.getLocalizedDropdownItems,
+    this.validator,
+    required this.getLocalizedDropdownItems,
   });
 
   @override

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:revival/features/ar_invoice/domain/entity/invoice.dart';
 import 'package:revival/features/ar_invoice/presentation/views/single_invoice.dart';
-import 'package:revival/features/order/domain/entity/order.dart';
+import 'package:revival/features/order/data/models/all_orders/value.dart';
 import 'package:revival/features/order/presentation/views/single_order.dart';
 
 class OrderInvoiceSummaryCard extends StatelessWidget {
-  final OrderInfo? order;
+  final Value? order;
   final Invoice? invoice;
 
-  const OrderInvoiceSummaryCard({
-    super.key, this.order, this.invoice,
-  });
+  const OrderInvoiceSummaryCard({super.key, this.order, this.invoice});
 
   @override
   Widget build(BuildContext context) {
@@ -24,22 +22,21 @@ class OrderInvoiceSummaryCard extends StatelessWidget {
         splashColor: theme.splashColor,
         highlightColor: theme.highlightColor,
         onTap: () {
-            if (order != null) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => SingleOrderScreen(orderId: order!.id),
-    ),
-  );
-}else{
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => SingleInvoiceScreen(invoiceId: invoice!.id),
-    ),
-  );
-}
-          },
+          if (order != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SingleOrderScreen()),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => SingleInvoiceScreen(invoiceId: invoice!.id),
+              ),
+            );
+          }
+        },
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: colorScheme.primary.withOpacity(0.1),
@@ -50,7 +47,7 @@ class OrderInvoiceSummaryCard extends StatelessWidget {
             ),
           ),
           title: Text(
-            order?.customerName??invoice!.customerName,
+            order?.docEntry.toString() ?? invoice!.customerName,
 
             style:
                 listTileTheme.titleTextStyle?.copyWith(
@@ -67,7 +64,7 @@ class OrderInvoiceSummaryCard extends StatelessWidget {
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
-              'Code: ${order?.orderCode??invoice!.orderCode} / Order: ${order?.order??invoice!.order}',
+              'Code: ${order?.cardCode ?? invoice!.orderCode} / Order: ${order?.docNum ?? invoice!.order}',
 
               style: listTileTheme.subtitleTextStyle,
               maxLines: 1,

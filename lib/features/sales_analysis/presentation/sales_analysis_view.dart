@@ -68,8 +68,12 @@ class _SalesAnalysisViewState extends State<SalesAnalysisView> {
                             showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
-                              firstDate: DateTime.now().subtract(const Duration(days: 2)),
-                              lastDate: DateTime.now().add(const Duration(days: 14)),
+                              firstDate: DateTime.now().subtract(
+                                const Duration(days: 2),
+                              ),
+                              lastDate: DateTime.now().add(
+                                const Duration(days: 14),
+                              ),
                             ).then((selectedDate) {
                               if (selectedDate != null) {
                                 stDateController.text = DateFormat()

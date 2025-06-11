@@ -10,16 +10,17 @@ import 'package:revival/features/login/domain/usecase/login_usecase.dart';
 import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
 import 'dart:ui' as ui;
 
-void main()async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  runApp(EasyLocalization(supportedLocales: [
-    const Locale('en', 'US'),
-    const Locale('ar', 'EG'),
-  ],
-  fallbackLocale: const Locale('en', 'US'),
-  path: 'assets/translations',
-  child: const RevivalApp()));
+  runApp(
+    EasyLocalization(
+      supportedLocales: [const Locale('en', 'US'), const Locale('ar', 'EG')],
+      fallbackLocale: const Locale('en', 'US'),
+      path: 'assets/translations',
+      child: const RevivalApp(),
+    ),
+  );
 }
 
 class RevivalApp extends StatelessWidget {
@@ -47,9 +48,10 @@ class RevivalApp extends StatelessWidget {
         locale: context.locale,
         builder: (context, child) {
           return Directionality(
-            textDirection: context.locale.languageCode == 'ar'
-                ? ui.TextDirection.rtl
-                : ui.TextDirection.ltr,
+            textDirection:
+                context.locale.languageCode == 'ar'
+                    ? ui.TextDirection.rtl
+                    : ui.TextDirection.ltr,
             child: child!,
           );
         },

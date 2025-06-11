@@ -48,7 +48,9 @@ class _InputColumnState extends State<InputColumn> {
           keyboardType: TextInputType.visiblePassword,
           validator:
               (value) =>
-                  value == null || value.isEmpty ? 'UserNameisRequired'.tr() : null,
+                  value == null || value.isEmpty
+                      ? 'UserNameisRequired'.tr()
+                      : null,
         ).animate().fadeIn(delay: 200.ms),
 
         SizedBox(height: utilities.vSpace(1.5)),
@@ -60,7 +62,9 @@ class _InputColumnState extends State<InputColumn> {
           keyboardType: TextInputType.visiblePassword,
           validator:
               (value) =>
-                  value == null || value.isEmpty ? 'PasswordisRequired'.tr() : null,
+                  value == null || value.isEmpty
+                      ? 'PasswordisRequired'.tr()
+                      : null,
           suffix: IconButton(
             iconSize: 24,
             splashRadius: 24,

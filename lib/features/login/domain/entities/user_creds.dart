@@ -1,13 +1,8 @@
-
-
 class UserCredentials {
   final String username;
   final String password;
 
-  UserCredentials({
-    required this.username,
-    required this.password,
-  }) {
+  UserCredentials({required this.username, required this.password}) {
     if (username.trim().isEmpty) {
       throw ArgumentError('Username cannot be empty.');
     }

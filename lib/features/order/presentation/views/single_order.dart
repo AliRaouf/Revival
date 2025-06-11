@@ -1,500 +1,257 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/order/data/models/single_order/order_line.dart';
+import 'package:revival/features/order/data/models/single_order/single_order.dart';
+import 'package:revival/features/order/presentation/utils/order_utils.dart';
 import 'package:revival/features/order/presentation/views/widgets/copy_to_invoice_button.dart';
-
-const Color wowPrimaryMagenta = Color(0xFF173F5D);
-const Color wowSecondaryMagenta = Color(0xFF173F5D);
-const Color wowBackgroundColor = Color(0xFFFFFFFF);
-const Color wowLightBackground = Color(0xFFF9FAFB);
-const Color wowDarkTextColor = Color(0xFF1A202C);
-const Color wowMediumTextColor = Color(0xFF4A5568);
-const Color wowLightTextColor = Color(0xFF718096);
-const Color wowSubtleBorderColor = Color(0xFFE2E8F0);
-const Color wowShadowColor = Color(0xFFE2E8F0);
+// Assuming your theme file is in a path like this. Please adjust the import path if needed.
 
 class SingleOrderScreen extends StatelessWidget {
-  final String orderId;
+  // final String orderId;
 
-  const SingleOrderScreen({super.key, required this.orderId});
+  const SingleOrderScreen({
+    super.key,
+    // required this.orderId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    print("Received Order ID: $orderId");
+    // Fetch order data once and pass it down to child widgets.
+    final orderData = OrderUtils().order;
 
-    final String customerName = '2Demo (VAT Exempt)';
-    final orderData = _getPlaceholderOrderData(orderId);
-    final DateFormat dateFormat = DateFormat('EEEE, MMMM d, yyyy');
+    // Use a loading or error widget if orderData is null
+    if (orderData.data == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Order Details')),
+        body: const Center(child: Text('Order not found.')),
+      );
+    }
 
     return Scaffold(
-      backgroundColor: wowBackgroundColor,
-      appBar: _buildWowAppBar(context, orderId, customerName),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
-        child: Column(
+      // The Scaffold's background color is now handled by the appTheme.
+      appBar: AppBar(
+        // The AppBar's style is now handled by appTheme.appBarTheme.
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildSectionCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildWowInfoRow(
-                    label: 'Customer',
-                    value: orderData['customerType'] as String,
-                    valueFontSize: 16,
-                    isValueBold: true,
-                  ),
-                  const SizedBox(height: 18),
-                  _buildWowInfoRow(
-                    label: 'Document Date',
-                    value: dateFormat.format(
-                      orderData['documentDate'] as DateTime,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  _buildWowInfoRow(
-                    label: 'Delivery Date',
-                    value: dateFormat.format(
-                      orderData['deliveryDate'] as DateTime,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  _buildWowInfoRow(
-                    label: 'Reference Number',
-                    value: orderData['referenceNumber'] as String? ?? '-',
-                  ),
-                  const SizedBox(height: 18),
-                  _buildWowInfoRow(
-                    label: 'Title',
-                    value: orderData['title'] as String? ?? '-',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildWowInfoRow(
-                    label: 'Sales Person',
-                    value: orderData['salesPerson'] as String,
-                    valueFontSize: 16,
-                    isValueBold: true,
-                  ),
-                  const SizedBox(height: 18),
-                  _buildWowInfoRow(
-                    label: 'Contact Person',
-                    value: orderData['contactPerson'] as String? ?? '-',
-                  ),
-                  const SizedBox(height: 20),
-
-                  _buildWowContactActions(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            _buildWowTextButton(
-              label: 'Custom Fields',
-              onTap: () {
-                print('Custom Fields button tapped');
-              },
-            ),
-            const SizedBox(height: 24),
-
+            Text('Order ${orderData.data?.salesEmployeeMobile ?? ""}'),
+            const SizedBox(height: 3),
             Text(
-              'Items',
-              style: TextStyle(
-                color: wowMediumTextColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.8,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: (orderData['items'] as List).length,
-              itemBuilder: (context, index) {
-                final item = (orderData['items'] as List)[index];
-                return _buildWowItemRow(
-                  code: item['code'] as String,
-                  name: item['name'] as String,
-                  price: item['price'] as double,
-                  discount: item['discount'] as double,
-                  currency: item['currency'] as String,
-                  quantity: item['quantity'] as double,
-                );
-              },
-              separatorBuilder:
-                  (context, index) => const Divider(
-                    height: 24,
-                    thickness: 1,
-                    color: wowSubtleBorderColor,
-                  ),
-            ),
-            const SizedBox(height: 24),
-
-            _buildSectionCard(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Column(
-                children: [
-                  _buildWowTotalRow(
-                    label: 'Discount',
-                    value:
-                        '${(orderData['discountPercent'] as double).toStringAsFixed(2)}% (${(orderData['discountValue'] as double).toStringAsFixed(2)} ${orderData['currency']})',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildWowTotalRow(
-                    label: 'VAT',
-                    value:
-                        '${(orderData['vatValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: wowSubtleBorderColor.withOpacity(0.6),
-                    ),
-                  ),
-                  _buildWowTotalRow(
-                    label: 'Total',
-                    value:
-                        '${(orderData['totalValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
-                    isValueBold: true,
-                    valueFontSize: 20,
-                    valueColor: wowPrimaryMagenta,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            CopyToInvoiceCollectButton(type: "Invoice"),
-
-            const SizedBox(height: 30),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Map<String, dynamic> _getPlaceholderOrderData(String orderId) {
-    return {
-      'customerType': 'VAT Exempted Customer',
-      'documentDate': DateTime(2023, 10, 12),
-      'deliveryDate': DateTime(2023, 10, 12),
-      'referenceNumber': 'REF-${orderId.split('._').last}',
-      'title': 'Demo Order Title',
-      'salesPerson': 'Admin User',
-      'contactPerson': 'Contact Person Name',
-      'contactPhone': '',
-      'contactEmail': '',
-      'items': [
-        {
-          'code': 'B001',
-          'name': 'Dune',
-          'price': 10.00,
-          'discount': 0.00,
-          'currency': 'EUR',
-          'quantity': 1.00,
-        },
-        {
-          'code': 'A015',
-          'name': 'Spice Blend',
-          'price': 25.50,
-          'discount': 2.50,
-          'currency': 'EUR',
-          'quantity': 2.00,
-        },
-      ],
-      'discountValue': 2.50 * 2,
-      'discountPercent': 10.00,
-      'vatValue': ((10.00 * 1.00) + (23.00 * 2.00)) * 0.15,
-      'totalValue':
-          (10.00 * 1.00) +
-          (23.00 * 2.00) +
-          (((10.00 * 1.00) + (23.00 * 2.00)) * 0.15),
-      'currency': 'EUR',
-    };
-  }
-
-  PreferredSizeWidget _buildWowAppBar(
-    BuildContext context,
-    String orderId,
-    String customerName,
-  ) {
-    return AppBar(
-      backgroundColor: wowPrimaryMagenta,
-      elevation: 2.0,
-      shadowColor: wowPrimaryMagenta.withOpacity(0.3),
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios_new,
-          color: Colors.white,
-          size: 22,
-        ),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Order $orderId',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 19,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            customerName,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-      centerTitle: false,
-      titleSpacing: -5,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.email_outlined, color: Colors.white, size: 24),
-          tooltip: 'Email Order',
-          onPressed: () {
-            print('Email button tapped');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.print_outlined, color: Colors.white, size: 24),
-          tooltip: 'Print Order',
-          onPressed: () {
-            print('Print button tapped');
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSectionCard({required Widget child, EdgeInsets? padding}) {
-    return Container(
-      width: double.infinity,
-      padding: padding ?? const EdgeInsets.all(18.0),
-      decoration: BoxDecoration(
-        color: wowLightBackground,
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(color: wowSubtleBorderColor, width: 0.8),
-      ),
-      child: child,
-    );
-  }
-
-  Widget _buildWowInfoRow({
-    required String label,
-    required String value,
-    bool isValueBold = false,
-    double valueFontSize = 15.0,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: const TextStyle(
-              color: wowLightTextColor,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            value.isEmpty ? '-' : value,
-            style: TextStyle(
-              color: wowDarkTextColor,
-              fontSize: valueFontSize,
-              fontWeight: isValueBold ? FontWeight.w600 : FontWeight.normal,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWowContactActions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Contact Actions',
-          style: TextStyle(
-            color: wowLightTextColor,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            _buildWowIconButton(
-              icon: Icons.phone_outlined,
-              tooltip: 'Call Contact',
-              onTap: () {
-                print('Phone button tapped');
-              },
-            ),
-            const SizedBox(width: 16),
-            _buildWowIconButton(
-              icon: Icons.email_outlined,
-              tooltip: 'Email Contact',
-              onTap: () {
-                print('Contact email button tapped');
-              },
+              orderData.data?.salesEmployeeName ?? "No Customer Name",
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
             ),
           ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildWowIconButton({
-    required IconData icon,
-    required String tooltip,
-    required VoidCallback onTap,
-  }) {
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: wowPrimaryMagenta,
-        foregroundColor: Colors.white,
-        shape: const CircleBorder(),
-        padding: const EdgeInsets.all(10),
-        minimumSize: const Size(40, 40),
-        elevation: 2.0,
-        shadowColor: wowPrimaryMagenta.withOpacity(0.4),
+        centerTitle: false,
+        titleSpacing: -5,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.email_outlined),
+            tooltip: 'Email Order',
+            onPressed: () => print('Email button tapped'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.print_outlined),
+            tooltip: 'Print Order',
+            onPressed: () => print('Print button tapped'),
+          ),
+        ],
       ),
-      child: Tooltip(message: tooltip, child: Icon(icon, size: 20)),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Replaced _buildSectionCard with a dedicated widget
+              OrderInfoCard(orderData: orderData),
+              const SizedBox(height: 24),
+
+              // Replaced _buildSectionCard for contact info
+              ContactInfoCard(orderData: orderData),
+              const SizedBox(height: 24),
+
+              // Replaced _buildWowTextButton with a standard ElevatedButton using the theme
+              ElevatedButton(
+                onPressed: () => print('Custom Fields button tapped'),
+                child: const Text('Custom Fields'),
+              ),
+              const SizedBox(height: 24),
+
+              // Replaced item list with a dedicated widget
+              OrderItemsList(orderLines: orderData.data?.orderLines ?? []),
+              const SizedBox(height: 24),
+
+              // Replaced totals section with a dedicated widget
+              OrderTotalsCard(orderLines: orderData.data?.orderLines ?? []),
+              const SizedBox(height: 30),
+
+              CopyToInvoiceCollectButton(type: "Invoice"),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildWowTextButton({
-    required String label,
-    required VoidCallback onTap,
-  }) {
+/// A reusable card widget to display information sections.
+/// It uses the app's CardTheme for styling.
+class InfoCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsets? padding;
+
+  const InfoCard({super.key, required this.child, this.padding});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: wowPrimaryMagenta,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kCardBorderRadius),
+          side: BorderSide(
+            color: Theme.of(context).dividerTheme.color!,
+            width: 1,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          elevation: 3.0,
-          shadowColor: wowPrimaryMagenta.withOpacity(0.4),
         ),
-        onPressed: onTap,
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            letterSpacing: 0.5,
-          ),
+        child: Padding(
+          padding: padding ?? const EdgeInsets.all(18.0),
+          child: child,
         ),
       ),
     );
   }
+}
 
-  Widget _buildWowItemRow({
-    required String code,
-    required String name,
-    required double price,
-    required double discount,
-    required String currency,
-    required double quantity,
-  }) {
-    final double itemTotal = (price * quantity) - (discount * quantity);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
+/// A reusable row widget to display a label and a value.
+/// It uses text styles from the app's TextTheme.
+class InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isValueBold;
+
+  const InfoRow({
+    super.key,
+    required this.label,
+    required this.value,
+    this.isValueBold = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label.toUpperCase(),
+          // Uses labelSmall from the appTheme for labels
+          style: textTheme.labelSmall?.copyWith(color: mediumTextColor),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          value.isEmpty ? '-' : value,
+          // Uses titleMedium for prominent values and bodyMedium for regular ones
+          style: (isValueBold ? textTheme.titleMedium : textTheme.bodyMedium)
+              ?.copyWith(height: 1.3),
+        ),
+      ],
+    );
+  }
+}
+
+/// Displays the main order details card.
+class OrderInfoCard extends StatelessWidget {
+  final dynamic orderData; // Replace 'dynamic' with your actual OrderData model
+  const OrderInfoCard({super.key, required this.orderData});
+
+  @override
+  Widget build(BuildContext context) {
+    return InfoCard(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 3.0),
-            child: Icon(
-              Icons.inventory_2_outlined,
-              color: wowBackgroundColor,
-              size: 20,
+          InfoRow(
+            label: 'Customer',
+            value: orderData.data?.salesEmployeeName as String,
+            isValueBold: true,
+          ),
+          const SizedBox(height: 18),
+          InfoRow(
+            label: 'Document Date',
+            value: (DateFormat.yMMMd().format(
+              DateTime.parse(orderData.data.docDate!),
+            )),
+          ),
+          const SizedBox(height: 18),
+          InfoRow(
+            label: 'Due Date',
+            value: DateFormat.yMMMd().format(
+              DateTime.parse(orderData.data.docDueDate!),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: wowDarkTextColor,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Code: $code',
-                  style: const TextStyle(
-                    color: wowLightTextColor,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Price: ${price.toStringAsFixed(2)} ${discount > 0 ? " / Disc: ${discount.toStringAsFixed(2)} " : ""} $currency',
-                  style: const TextStyle(
-                    color: wowMediumTextColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
+          const SizedBox(height: 18),
+          InfoRow(
+            label: 'Reference Number',
+            value: orderData.data.docEntry.toString(),
           ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.start,
+          const SizedBox(height: 18),
+          InfoRow(label: 'Title', value: orderData.data.cardCode ?? '-'),
+        ],
+      ),
+    );
+  }
+}
+
+/// Displays the contact information and action buttons.
+class ContactInfoCard extends StatelessWidget {
+  final SingleOrder orderData;
+  const ContactInfoCard({super.key, required this.orderData});
+
+  @override
+  Widget build(BuildContext context) {
+    return InfoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InfoRow(
+            label: 'Sales Person',
+            value: orderData.data?.salesEmployeeName ?? '',
+            isValueBold: true,
+          ),
+          const SizedBox(height: 18),
+          InfoRow(
+            label: 'Contact Person',
+            value: orderData.data?.salesEmployeeName ?? '',
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'CONTACT ACTIONS',
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: mediumTextColor),
+          ),
+          const SizedBox(height: 12),
+          Row(
             children: [
-              Text(
-                'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)}',
-                style: const TextStyle(
-                  color: wowMediumTextColor,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
+              ContactIconButton(
+                icon: Icons.phone_outlined,
+                tooltip: 'Call Contact',
+                onTap: () => print('Phone button tapped'),
               ),
-              const SizedBox(height: 5),
-              Text(
-                '${itemTotal.toStringAsFixed(2)} $currency',
-                style: const TextStyle(
-                  color: wowDarkTextColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+              const SizedBox(width: 16),
+              ContactIconButton(
+                icon: Icons.email_outlined,
+                tooltip: 'Email Contact',
+                onTap: () => print('Contact email button tapped'),
               ),
             ],
           ),
@@ -502,33 +259,183 @@ class SingleOrderScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildWowTotalRow({
-    required String label,
-    required String value,
-    bool isValueBold = false,
-    double valueFontSize = 15.0,
-    Color? valueColor,
-  }) {
+/// A circular icon button for contact actions.
+class ContactIconButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const ContactIconButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Overrides the theme for a circular shape but uses theme colors.
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(10),
+        minimumSize: const Size(40, 40),
+        // Uses the primary color from the theme's colorScheme
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      child: Tooltip(message: tooltip, child: Icon(icon, size: 20)),
+    );
+  }
+}
+
+/// Displays the list of items in the order.
+class OrderItemsList extends StatelessWidget {
+  final List<dynamic> orderLines; // Replace with your OrderLine model
+  const OrderItemsList({super.key, required this.orderLines});
+
+  @override
+  Widget build(BuildContext context) {
+    if (orderLines.isEmpty) {
+      return const Center(child: Text('No items found'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('ITEMS', style: Theme.of(context).textTheme.labelMedium),
+        const SizedBox(height: 12),
+        ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: orderLines.length,
+          itemBuilder: (context, index) {
+            final item = orderLines[index];
+            return OrderItemTile(item: item);
+          },
+          // DividerTheme from appTheme is used here automatically
+          separatorBuilder: (context, index) => const Divider(height: 24),
+        ),
+      ],
+    );
+  }
+}
+
+/// Displays a single item in the order list.
+class OrderItemTile extends StatelessWidget {
+  final OrderLine item;
+  const OrderItemTile({super.key, required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final price = item.price ?? 0.0;
+    final quantity = item.quantity ?? 0.0;
+    final discount = item.discPrcnt ?? 0.0;
+    final itemTotal = (price * quantity) - (discount * quantity);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 3.0),
+          // Using a theme color for the icon
+          child: Text((item.lineNum! + 1).toString()),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(item.itemName ?? "No Name", style: textTheme.titleMedium),
+              const SizedBox(height: 5),
+              Text('Code: ${item.itemCode ?? "-"}', style: textTheme.bodySmall),
+              const SizedBox(height: 5),
+              Text(
+                'Price: ${price.toStringAsFixed(2)}${discount > 0 ? " / Disc: ${discount.toStringAsFixed(2)} " : ""} EGP',
+                style: textTheme.bodySmall?.copyWith(color: mediumTextColor),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)}',
+              style: textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              '${itemTotal.toStringAsFixed(2)} EGP',
+              style: textTheme.titleMedium,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Displays the totals section (Discount, VAT, Total).
+class OrderTotalsCard extends StatelessWidget {
+  final List<OrderLine> orderLines; // Replace with your OrderLine model
+  const OrderTotalsCard({super.key, required this.orderLines});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final totalValue = OrderUtils().totalPrice(orderLines).toStringAsFixed(2);
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return InfoCard(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        children: [
+          TotalRow(label: 'Discount', value: '0%'),
+          const SizedBox(height: 12),
+          TotalRow(label: 'VAT', value: '0'),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.0),
+            // The Divider now uses the app's dividerTheme
+            child: Divider(),
+          ),
+          TotalRow(
+            label: 'Total',
+            value: totalValue,
+            valueStyle: textTheme.headlineSmall?.copyWith(color: primaryColor),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A simple row for the totals card.
+class TotalRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final TextStyle? valueStyle;
+
+  const TotalRow({
+    super.key,
+    required this.label,
+    required this.value,
+    this.valueStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: wowMediumTextColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            color: valueColor ?? wowDarkTextColor,
-            fontSize: valueFontSize,
-            fontWeight: isValueBold ? FontWeight.bold : FontWeight.w600,
-          ),
-        ),
+        Text(label, style: textTheme.bodyLarge),
+        Text(value, style: valueStyle ?? textTheme.titleMedium),
       ],
     );
   }

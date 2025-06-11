@@ -59,12 +59,20 @@ class SalesAnalysisTableRow extends StatelessWidget {
   Widget build(BuildContext context) {
     // This Container defines the look of a single row
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4.0), // Increased vertical padding slightly
+      padding: const EdgeInsets.symmetric(
+        vertical: 10.0,
+        horizontal: 4.0,
+      ), // Increased vertical padding slightly
       margin: const EdgeInsets.only(bottom: 8.0), // Add space between rows
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0), // Add rounded corners to each row container
-        border: Border.all(color: Colors.grey.shade200, width: 1.0), // Subtle border
+        borderRadius: BorderRadius.circular(
+          8.0,
+        ), // Add rounded corners to each row container
+        border: Border.all(
+          color: Colors.grey.shade200,
+          width: 1.0,
+        ), // Subtle border
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
@@ -75,73 +83,86 @@ class SalesAnalysisTableRow extends StatelessWidget {
         ],
       ),
       child: Row(
-  mainAxisAlignment: MainAxisAlignment.start,
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    Expanded(flex: 1, child: _buildColumn(null, Text(number.toString()))),
-    Expanded(flex: 2, child: _buildColumn(null, Text(DateFormat.Md().format(date)))),
-    Expanded(flex: 4, child: _buildColumn(null, Text(paymentMethod))),
-    Expanded(
-      flex: 2,
-      child: _buildColumn(
-        null,
-         TextButton(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(flex: 1, child: _buildColumn(null, Text(number.toString()))),
+          Expanded(
+            flex: 2,
+            child: _buildColumn(null, Text(DateFormat.Md().format(date))),
+          ),
+          Expanded(flex: 4, child: _buildColumn(null, Text(paymentMethod))),
+          Expanded(
+            flex: 2,
+            child: _buildColumn(
+              null,
+              TextButton(
                 onPressed: () => _showItemsDialog(context),
                 style: TextButton.styleFrom(
                   backgroundColor: primaryColor, // Use theme color
                   foregroundColor: Colors.white, // Text color for the button
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 8,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   alignment: Alignment.center,
                   textStyle: const TextStyle(fontSize: 12),
-                  shape: RoundedRectangleBorder( // Rounded corners for the button
+                  shape: RoundedRectangleBorder(
+                    // Rounded corners for the button
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
                 child: const Text('Show'),
-              ),  
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: _buildColumn(null, Text('${discount.toStringAsFixed(0)}%')),
+          ),
+          Expanded(
+            flex: 3,
+            child: _buildColumn(null, Text(total.toStringAsFixed(1))),
+          ),
+        ],
       ),
-    ),
-    Expanded(flex: 2, child: _buildColumn(null, Text('${discount.toStringAsFixed(0)}%'))),
-    Expanded(flex: 3, child: _buildColumn(null, Text(total.toStringAsFixed(1)))),
-  ],
-)
-
     );
   }
 
   // Helper method to build each data cell within a column
   // Header text is now optional
   Widget _buildColumn(String? header, Widget dataWidget) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch, // <-- changed from center
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (header != null) ...[
-          Text(
-            header,
-            textAlign: TextAlign.left, // <-- changed from center
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade600,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.stretch, // <-- changed from center
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (header != null) ...[
+            Text(
+              header,
+              textAlign: TextAlign.left, // <-- changed from center
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-            overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 4.0),
+          ],
+          DefaultTextStyle(
+            style: const TextStyle(fontSize: 12, color: Colors.black87),
+            child: Align(
+              alignment: Alignment.centerLeft, // <-- add Align wrapper
+              child: dataWidget,
+            ),
           ),
-          const SizedBox(height: 4.0),
         ],
-        DefaultTextStyle(
-          style: const TextStyle(fontSize: 12, color: Colors.black87),
-          child: Align(
-            alignment: Alignment.centerLeft, // <-- add Align wrapper
-            child: dataWidget,
-          ),
-        ),
-      ],
-    ),
-  );
-}
+      ),
+    );
+  }
 }

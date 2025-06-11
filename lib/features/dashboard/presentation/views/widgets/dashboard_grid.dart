@@ -49,7 +49,7 @@ class DashboardGridItem extends StatelessWidget {
                     ),
                   ),
                   alignment: Alignment.center,
-                  child:  Text(
+                  child: Text(
                     'Coming Soon'.tr(),
                     style: TextStyle(
                       color: Colors.white,

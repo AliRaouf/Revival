@@ -5,7 +5,7 @@ class Invoice {
   final String orderCode;
   final String quote;
   final String customerName;
-Invoice({
+  Invoice({
     required this.id,
     required this.invoice,
     required this.order,

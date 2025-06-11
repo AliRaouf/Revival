@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 
 abstract class Failures {
@@ -27,6 +26,6 @@ class ServerFailure extends Failures {
         return ServerFailure('Connection error with ApiServer');
       case DioExceptionType.unknown:
         return ServerFailure('Unknown error with ApiServer');
-      }
+    }
   }
 }

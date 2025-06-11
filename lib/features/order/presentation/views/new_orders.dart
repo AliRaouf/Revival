@@ -270,11 +270,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
                         child: Text("Add Text Line"),
                       ),
-                      TextButton(
-                        onPressed: _addItem,
-
-                        child: Text("Add Items"),
-                      ),
+                      TextButton(onPressed: _addItem, child: Text("Add Items")),
                     ],
                   ),
                   const SizedBox(height: 80),
@@ -282,7 +278,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
-          NewOrderBottomAppbar(context, saveDraft: _saveDraft, submitOrder: _submitOrder,),
+          NewOrderBottomAppbar(
+            context,
+            saveDraft: _saveDraft,
+            submitOrder: _submitOrder,
+          ),
         ],
       ),
     );

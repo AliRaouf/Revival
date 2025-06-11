@@ -16,7 +16,9 @@ final class LoginError extends LoginCubitState {
   final String errorMessage;
   LoginError({required this.errorMessage});
 }
+
 final class CredentialsLoading extends LoginCubitState {}
+
 final class CredentialsSuccess extends LoginCubitState {
   final bool rememberMe;
   final UserCredentials? userCredentials;
