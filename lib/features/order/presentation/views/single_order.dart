@@ -5,7 +5,6 @@ import 'package:revival/features/order/data/models/single_order/order_line.dart'
 import 'package:revival/features/order/data/models/single_order/single_order.dart';
 import 'package:revival/features/order/presentation/utils/order_utils.dart';
 import 'package:revival/features/order/presentation/views/widgets/copy_to_invoice_button.dart';
-// Assuming your theme file is in a path like this. Please adjust the import path if needed.
 
 class SingleOrderScreen extends StatelessWidget {
   // final String orderId;
@@ -17,10 +16,7 @@ class SingleOrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch order data once and pass it down to child widgets.
     final orderData = OrderUtils().order;
-
-    // Use a loading or error widget if orderData is null
     if (orderData.data == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Order Details')),
@@ -46,20 +42,6 @@ class SingleOrderScreen extends StatelessWidget {
             ),
           ],
         ),
-        centerTitle: false,
-        titleSpacing: -5,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.email_outlined),
-            tooltip: 'Email Order',
-            onPressed: () => print('Email button tapped'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.print_outlined),
-            tooltip: 'Print Order',
-            onPressed: () => print('Print button tapped'),
-          ),
-        ],
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surface,

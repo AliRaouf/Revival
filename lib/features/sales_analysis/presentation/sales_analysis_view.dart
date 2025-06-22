@@ -50,7 +50,7 @@ class _SalesAnalysisViewState extends State<SalesAnalysisView> {
         onRefresh: _onRefresh,
         child: Container(
           height: double.infinity,
-          color: backgroundColor,
+          color: scaffoldBackgroundColor,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
             child: SingleChildScrollView(

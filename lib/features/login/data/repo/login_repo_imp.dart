@@ -1,12 +1,15 @@
-import 'package:easy_localization/easy_localization.dart';
+
 
 import 'package:dartz/dartz.dart';
 import 'package:revival/core/failures/failures.dart';
+import 'package:revival/core/services/api_service.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
 import 'package:revival/features/login/domain/repo/login_repo.dart';
 
 class LoginRepoImp implements LoginRepo {
+  final ApiService apiService;
+  LoginRepoImp(this.apiService);
   @override
   Future<Either<Failures, AuthToken>> login({
     required UserCredentials userCredentials,

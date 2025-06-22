@@ -3,6 +3,7 @@ import 'package:revival/features/login/domain/repo/creds_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CredsRepoImp implements CredentialsRepo {
+  
   static const String _rememberMeKey = 'rememberMe';
   static const String _databaseNameKey = 'databaseName';
   static const String _usernameKey = 'username';

@@ -1,16 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/order/presentation/views/widgets/copy_to_invoice_button.dart';
-
-const Color primaryMagenta = Color(0xFF173F5D);
-const Color secondaryMagenta = Color(0xFF173F5D);
-const Color backgroundColor = Color(0xFFFFFFFF);
-const Color lightBackground = Color(0xFFF9FAFB);
-const Color darkTextColor = Color(0xFF1A202C);
-const Color mediumTextColor = Color(0xFF4A5568);
-const Color lightTextColor = Color(0xFF718096);
-const Color subtleBorderColor = Color(0xFFE2E8F0);
-const Color shadowColor = Color(0xFFE2E8F0);
 
 class SingleInvoiceScreen extends StatelessWidget {
   final String invoiceId;
@@ -24,7 +15,7 @@ class SingleInvoiceScreen extends StatelessWidget {
     final DateFormat dateFormat = DateFormat('EEEE, MMMM d, yyyy');
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      // backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: singleInvoiceAppBar(context, invoiceId, customerName),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
@@ -164,7 +155,7 @@ class SingleInvoiceScreen extends StatelessWidget {
                         '${(orderData['totalValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
                     isValueBold: true,
                     valueFontSize: 20,
-                    valueColor: primaryMagenta,
+                    valueColor: primaryColor,
                   ),
                 ],
               ),
@@ -226,9 +217,9 @@ class SingleInvoiceScreen extends StatelessWidget {
     String customerName,
   ) {
     return AppBar(
-      backgroundColor: primaryMagenta,
+      backgroundColor: primaryColor,
       elevation: 2.0,
-      shadowColor: primaryMagenta.withOpacity(0.3),
+      shadowColor: primaryColor.withOpacity(0.3),
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back_ios_new,
@@ -287,7 +278,7 @@ class SingleInvoiceScreen extends StatelessWidget {
       width: double.infinity,
       padding: padding ?? const EdgeInsets.all(18.0),
       decoration: BoxDecoration(
-        color: lightBackground,
+        color: scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: subtleBorderColor, width: 0.8),
       ),
@@ -376,13 +367,13 @@ class SingleInvoiceScreen extends StatelessWidget {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryMagenta,
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(10),
         minimumSize: const Size(40, 40),
         elevation: 2.0,
-        shadowColor: primaryMagenta.withOpacity(0.4),
+        shadowColor: primaryColor.withOpacity(0.4),
       ),
       child: Tooltip(message: tooltip, child: Icon(icon, size: 20)),
     );
@@ -393,14 +384,14 @@ class SingleInvoiceScreen extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryMagenta,
+          backgroundColor: primaryColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           padding: const EdgeInsets.symmetric(vertical: 14),
           elevation: 3.0,
-          shadowColor: primaryMagenta.withOpacity(0.4),
+          shadowColor: primaryColor.withOpacity(0.4),
         ),
         onPressed: onTap,
         child: Text(
@@ -433,7 +424,7 @@ class SingleInvoiceScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 3.0),
             child: Icon(
               Icons.inventory_2_outlined,
-              color: backgroundColor,
+              color: scaffoldBackgroundColor,
               size: 20,
             ),
           ),

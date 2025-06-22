@@ -7,19 +7,15 @@ import 'package:meta/meta.dart';
 import 'package:revival/core/failures/failures.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
-import 'package:revival/features/login/domain/usecase/creds_usecase.dart';
 import 'package:revival/features/login/domain/usecase/login_usecase.dart';
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginCubitState> {
   final LoginUseCase _loginUsecase;
-  final CredentialsUseCase _credentialsUseCase;
   LoginCubit({
     required LoginUseCase loginUsecase,
-    required CredentialsUseCase credentialsUseCase,
   }) : _loginUsecase = loginUsecase,
-       _credentialsUseCase = credentialsUseCase,
        super(LoginCubitInitial());
 
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();

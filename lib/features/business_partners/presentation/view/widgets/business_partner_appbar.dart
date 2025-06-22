@@ -33,7 +33,7 @@ class _BusinessPartnerAppbarState extends State<BusinessPartnerAppbar> {
   Widget build(BuildContext context) {
     Utilities utilities = Utilities(context);
     return AppBar(
-      title: Text(widget.selectedPartnerType)
+      title: Text("Business Partners")
           .animate()
           .fadeIn(duration: 400.ms)
           .slideY(begin: -0.2, duration: 300.ms, curve: Curves.easeOut),

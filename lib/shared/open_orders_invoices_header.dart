@@ -11,18 +11,18 @@ Widget openOrdersInvoicesHeader(BuildContext context, String title) {
     ),
     title: Text(title),
     actions: [
-      IconButton(
-        icon: const Icon(Icons.person_outline),
-        tooltip: 'Profile',
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile button tapped!'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
-      ),
+      // IconButton(
+      //   icon: const Icon(Icons.person_outline),
+      //   tooltip: 'Profile',
+      //   onPressed: () {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(
+      //         content: Text('Profile button tapped!'),
+      //         behavior: SnackBarBehavior.floating,
+      //       ),
+      //     );
+      //   },
+      // ),
     ],
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/ar_invoice/presentation/views/single_invoice.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_textfield.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/dropdown.dart';
@@ -49,23 +50,19 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
     final utilities = Utilities(context);
 
     return Scaffold(
-      // Use theme's scaffold background color
       backgroundColor: utilities.theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        // Localize title
         title: Text("Create New Partner"),
         backgroundColor: utilities.colorScheme.primary,
         foregroundColor: utilities.colorScheme.onPrimary,
         titleTextStyle: utilities.textTheme.titleLarge?.copyWith(
-          // Use theme's titleLarge style
           color: utilities.colorScheme.onPrimary,
-          // fontSize: 20, // Use theme's font size or override if needed
           fontWeight: FontWeight.w600,
         ),
         elevation: 2.0,
       ),
       body: Container(
-        color: backgroundColor,
+        color: scaffoldBackgroundColor,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Form(
@@ -73,7 +70,6 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Pass theme colors and text styles to helper methods
                 _buildSection(
                   context: context, // Pass context
                   title: "General Information", // Localize title
@@ -87,7 +83,6 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
                           (value) =>
                               (value == null || value.isEmpty)
                                   ? 'Code cannot be empty'
-                                  // Localize validator message
                                   : null,
                     ),
                     buildTextField(

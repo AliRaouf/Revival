@@ -7,13 +7,12 @@ const Color cardBackgroundColor = Colors.white;
 const Color errorColor = Color(0xFFD32F2F);
 const Color successColor = Color(0xFF28a745);
 const Color whatsappColor = Color(0xFF25D366);
-
 const Color darkTextColor = Color(0xFF1F2937);
 const Color mediumTextColor = Color(0xFF6B7280);
 const Color lightTextColor = Color(0xFF374151);
 const Color lightBorderColor = Color(0xFFD1D5DB);
 const Color shadowColor = Color(0x1A000000);
-
+const Color subtleBorderColor = Color(0xFFE2E8F0);
 const double kDefaultBorderRadius = 8.0;
 const double kCardBorderRadius = 12.0;
 const double kDialogBorderRadius = 16.0;

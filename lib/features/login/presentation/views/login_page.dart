@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/features/login/presentation/views/widgets/forgot_password.dart';
+// import 'package:revival/features/login/presentation/views/widgets/forgot_password.dart';
 import 'package:revival/features/login/presentation/views/widgets/input_column.dart';
 import 'package:revival/features/login/presentation/views/widgets/login_button.dart';
 import 'package:revival/features/login/presentation/views/widgets/quick_login.dart';
@@ -35,9 +36,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
-    // context.read<LoginCubit>().loadSavedCredentials();
-
     _logoAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -50,6 +48,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _login() async {
+    if (!await InternetConnection().hasInternetAccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'No internet connection. Please check your network settings.'.tr(),
+          ),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+
     if (_formKey.currentState?.validate() ?? false) {
       final userCredentials = UserCredentials(
         username: _usernameController.text,
@@ -63,16 +72,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void _forgotPassword() {
-    print('Forgot Password tapped');
-  }
-
   @override
   Widget build(BuildContext context) {
     final utilities = Utilities(context);
 
     final cardWidth =
-        utilities.isTablet ? 500.0 : utilities.screenSize.width * 0.9;
+        utilities.isTablet
+            ? utilities.screenSize.width * 0.6
+            : utilities.screenSize.width * 0.9;
 
     return Scaffold(
       body: Container(
@@ -167,11 +174,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ).animate().fadeIn(delay: 500.ms),
                               SizedBox(height: utilities.vSpace(1.5)),
 
-                              ForgotPassword(
-                                isLoading: isLoading,
-                                forgotPassword: _forgotPassword,
-                              ),
-                              SizedBox(height: utilities.vSpace(0.5)),
+                              // ForgotPassword(
+                              //   isLoading: isLoading,
+                              //   forgotPassword: () {
+                              //   }
+                              // ),
+                              // SizedBox(height: utilities.vSpace(0.5)),
                               Center(child: LanguageSwitcher()),
                             ],
                           ),

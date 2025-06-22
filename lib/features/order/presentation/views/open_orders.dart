@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
 import 'package:revival/features/order/data/models/all_orders/value.dart';
-import 'package:revival/features/order/domain/entity/order.dart';
 import 'package:revival/features/order/presentation/utils/order_utils.dart';
 import 'package:revival/shared/open_orders_invoices_header.dart';
 import 'package:revival/features/order/presentation/views/widgets/open_orders_search.dart';
