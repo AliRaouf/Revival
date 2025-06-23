@@ -4,7 +4,11 @@
 <dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use Face ID to secure your data.</string>
-	
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  		<string>sms</string>
+  		<string>tel</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

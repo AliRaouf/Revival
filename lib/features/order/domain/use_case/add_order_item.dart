@@ -1,4 +1,3 @@
-import 'package:revival/features/order/domain/entity/order.dart';
 import 'package:revival/features/order/domain/repo/order_repo.dart';
 
 class AddOrderItem {

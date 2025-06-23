@@ -179,5 +179,8 @@
     "Coming Soon": "قريباً",
     "Language": "اللغة",
     "Sync Data": "مزامنة البيانات",
-    "Logout": "تسجيل الخروج"
+    "Logout": "تسجيل الخروج",
+    "Connection Error. Please check your internet connection." : "خطأ في الاتصال. يرجى التحقق من اتصالك بالإنترنت.",
+    "Invalid credentials. Please double-check your username, password and Database Name" : "بيانات الاعتماد غير صالحة. يرجى التحقق من اسم المستخدم وكلمة المرور واسم قاعدة البيانات.",
+    "Access Denied: You do not have permission to view this page." :  "تم رفض الوصول: ليس لديك إذن لعرض هذه الصفحة."
   }

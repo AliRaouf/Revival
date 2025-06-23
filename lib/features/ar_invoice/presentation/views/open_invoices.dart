@@ -99,7 +99,7 @@ class _OpenInvoicesScreenState extends State<OpenInvoicesScreen> {
       itemCount: _filteredInvoices.length,
       itemBuilder: (context, index) {
         final invoice = _filteredInvoices[index];
-        return OrderInvoiceSummaryCard(invoice: invoice);
+        return OrderInvoiceSummaryCard();
       },
     );
   }

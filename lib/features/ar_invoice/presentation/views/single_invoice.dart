@@ -162,8 +162,7 @@ class SingleInvoiceScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            CopyToInvoiceCollectButton(type: "Collect"),
-
+            // CopyToInvoiceCollectButton(type: "Collect"),
             const SizedBox(height: 30),
           ],
         ),

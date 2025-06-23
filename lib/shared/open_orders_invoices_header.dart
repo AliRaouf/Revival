@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 Widget openOrdersInvoicesHeader(BuildContext context, String title) {
   return AppBar(
@@ -7,7 +8,7 @@ Widget openOrdersInvoicesHeader(BuildContext context, String title) {
     leading: IconButton(
       icon: const Icon(Icons.arrow_back),
       tooltip: 'Back',
-      onPressed: () => Navigator.pop(context),
+      onPressed: () => context.push("/dashboard"),
     ),
     title: Text(title),
     actions: [

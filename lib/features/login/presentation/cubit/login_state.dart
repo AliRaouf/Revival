@@ -8,8 +8,8 @@ final class LoginCubitInitial extends LoginCubitState {}
 final class LoginLoading extends LoginCubitState {}
 
 final class LoginSuccess extends LoginCubitState {
-  final AuthToken authToken;
-  LoginSuccess({required this.authToken});
+  final User user;
+  LoginSuccess({required this.user});
 }
 
 final class LoginError extends LoginCubitState {

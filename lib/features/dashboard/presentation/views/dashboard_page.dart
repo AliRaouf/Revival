@@ -1,16 +1,26 @@
 // lib/features/dashboard/presentation/views/dashboard_page.dart
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/dashboard_grid.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/layout_builder.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
+import 'package:revival/features/order/presentation/cubit/open_order/order_cubit.dart';
 import 'package:revival/shared/utils.dart';
 
-class DashBoard extends StatelessWidget {
+class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
 
+  @override
+  State<DashBoard> createState() => _DashBoardState();
+}
+
+class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     final Utilities utilities = Utilities(context);
@@ -31,30 +41,37 @@ class DashBoard extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF17405E)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Username'.tr(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
+            BlocBuilder<LoginCubit, LoginCubitState>(
+              builder: (BuildContext context, state) {
+                if (state is LoginSuccess) {
+                  return DrawerHeader(
+                    decoration: BoxDecoration(color: Color(0xFF17405E)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.user.data?.salesEmployeeName ?? '',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          state.user.data?.username ?? '',
+                          style: TextStyle(
+                            color: Color(0xFFD1D5DB),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Sales Person Code: ${12345}'.tr(),
-                    style: TextStyle(
-                      color: Color(0xFFD1D5DB),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
+                  );
+                }
+                return SizedBox.shrink();
+              },
             ),
             ListTile(
               onTap: () => utilities.showLanguageDialog(context),

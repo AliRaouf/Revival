@@ -1,14 +1,17 @@
+import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/core/theme/theme.dart';
-// import 'package:revival/features/login/presentation/views/widgets/forgot_password.dart';
+import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/login/presentation/views/widgets/input_column.dart';
 import 'package:revival/features/login/presentation/views/widgets/login_button.dart';
 import 'package:revival/features/login/presentation/views/widgets/quick_login.dart';
+import 'package:revival/features/order/presentation/cubit/open_order/order_cubit.dart';
 import 'package:revival/shared/utils.dart';
 import 'package:revival/shared/logo_image.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
@@ -63,6 +66,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       final userCredentials = UserCredentials(
         username: _usernameController.text,
         password: _passwordController.text,
+        companyDB: _databaseNameController.text,
       );
 
       context.read<LoginCubit>().login(
@@ -110,7 +114,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   if (state is LoginError) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Error: ${state.errorMessage}'.tr()),
+                        content: Text(state.errorMessage.tr()),
                         backgroundColor: Colors.redAccent,
                       ),
                     );
@@ -123,6 +127,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         backgroundColor: Colors.green,
                       ),
                     );
+                    getIt<OrderQuery>().setOrderQuery({
+                      "companyDb": state.user.data?.companyDb,
+                      "clientId": state.user.data?.clientId,
+                      "companyDbId": state.user.data?.companyDbId,
+                    });
+                    log(state.user.data!.token.toString());
+                    context.read<OrderCubit>().getOpenOrders({
+                      "companyDb": state.user.data?.companyDb,
+                      "clientId": state.user.data?.clientId,
+                      "companyDbId": state.user.data?.companyDbId,
+                    });
                     context.pushReplacement('/dashboard');
                   }
                 },

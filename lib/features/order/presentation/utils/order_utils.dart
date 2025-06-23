@@ -7,7 +7,7 @@ import 'package:revival/features/order/presentation/views/widgets/summary_row.da
 import 'package:revival/shared/utils.dart';
 
 class OrderUtils {
-    SingleOrder order = SingleOrder.fromJson({
+  SingleOrder order = SingleOrder.fromJson({
     "success": true,
     "statusCode": 200,
     "message": "Order details retrieved successfully",
@@ -341,6 +341,7 @@ class OrderUtils {
       },
     );
   }
+
   double totalPrice(List<OrderLine> orderLines) {
     double total = 0.0;
     for (var line in orderLines) {

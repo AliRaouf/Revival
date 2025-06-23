@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:flutter/foundation.dart';
 
 class ApiException implements Exception {
   final String message;
@@ -12,7 +11,7 @@ class ApiException implements Exception {
 
   @override
   String toString() {
-    return 'ApiException: $message (Status Code: $statusCode)';
+    return message;
   }
 }
 
@@ -58,26 +57,24 @@ class ApiService {
       }
     } else {
       throw ApiException(
-        'No internet connection. Please check your network settings.',
+        'Connection Error. Please check your internet connection.'.tr(),
       );
     }
   }
 
   Never _handleDioException(DioException e) {
     if (e.response != null) {
-      debugPrint('Status Code: ${e.response?.statusCode}');
       switch (e.response?.statusCode) {
         case 400:
-          throw ApiException('Bad Request.', e.response?.statusCode);
+          throw ApiException('Something went wrong. Please try again later.');
         case 401:
           throw ApiException(
-            'Unauthorized. Please log in again.',
-            e.response?.statusCode,
+            'Invalid credentials. Please double-check your username, password and Database Name.'
+                .tr(),
           );
         case 403:
           throw ApiException(
-            'Forbidden. You do not have permission.',
-            e.response?.statusCode,
+            'Access Denied: You do not have permission to view this page.'.tr(),
           );
         case 404:
           final errorMessage =
@@ -95,13 +92,12 @@ class ApiService {
           );
       }
     } else {
-      debugPrint('DioException without response: ${e.message}');
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
           e.error is SocketException) {
         throw ApiException(
-          'Connection Error. Please check your internet connection.',
+          'Connection Error. Please check your internet connection.'.tr(),
         );
       }
       throw ApiException('An unexpected error occurred: ${e.message}');

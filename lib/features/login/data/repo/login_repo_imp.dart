@@ -1,9 +1,8 @@
-
-
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:revival/core/failures/failures.dart';
 import 'package:revival/core/services/api_service.dart';
-import 'package:revival/features/login/domain/entities/auth_token.dart';
+import 'package:revival/features/login/data/model/user/user.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
 import 'package:revival/features/login/domain/repo/login_repo.dart';
 
@@ -11,28 +10,20 @@ class LoginRepoImp implements LoginRepo {
   final ApiService apiService;
   LoginRepoImp(this.apiService);
   @override
-  Future<Either<Failures, AuthToken>> login({
+  Future<Either<Failures, User>> login({
     required UserCredentials userCredentials,
-    required bool isRememberMe,
   }) async {
-    await Future.delayed(const Duration(seconds: 2));
-    if (userCredentials.username == 'test' &&
-        userCredentials.password == 'test') {
-      return Right(AuthToken(token: 'dummy_auth_token_12345'));
-    } else {
-      print('Login failed for user: ${userCredentials.username}');
-
-      return Left(ServerFailure('Invalid credentials'));
+    try {
+      final user = await apiService.post(
+        '/vansales/login',
+        data: userCredentials.toJson(),
+      );
+      return right(User.fromJson(user));
+    } catch (e) {
+      if (e is DioException) {
+        return left(ServerFailure(ServerFailure.fromDioError(e).errMessage));
+      }
+      return left(ServerFailure(e.toString()));
     }
-  }
-
-  @override
-  Future<Either<Failures, String>> forgotPassword({
-    required String dbname,
-    required String username,
-  }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    print('Forgot password requested for user: $username in database: $dbname');
-    return Right('Password reset instructions sent to your email.');
   }
 }

@@ -179,6 +179,8 @@
     "Coming Soon": "Coming Soon",
     "Sync Data": "Sync Data",
     "Language": "Language",
-    "Logout": "Logout"
-
+    "Logout": "Logout",
+    "Connection Error. Please check your internet connection." : "Connection Error. Please check your internet connection.",
+    "Invalid credentials. Please double-check your username, password and Database Name" : "Invalid credentials. Please double-check your username, password and Database Name.",
+    "Access Denied: You do not have permission to view this page." : "Access Denied: You do not have permission to view this page."
   }

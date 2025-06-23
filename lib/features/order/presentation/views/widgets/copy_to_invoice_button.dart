@@ -1,13 +1,18 @@
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/features/ar_invoice/presentation/views/single_invoice.dart';
-import 'package:revival/features/order/presentation/views/single_order.dart';
+import 'package:revival/features/order/data/models/copy_to_invoice/copy_to_invoice.dart';
+import 'package:revival/features/order/presentation/cubit/copy_order_invoice/copy_order_invoice_cubit.dart';
 
 class CopyToInvoiceCollectButton extends StatelessWidget {
   final String type;
-  const CopyToInvoiceCollectButton({super.key, required this.type});
+  final CopyToInvoice copyToInvoiceData;
+  const CopyToInvoiceCollectButton({
+    super.key,
+    required this.type,
+    required this.copyToInvoiceData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +30,10 @@ class CopyToInvoiceCollectButton extends StatelessWidget {
           shadowColor: primaryColor.withOpacity(0.4),
         ),
         onPressed: () {
-          context.push('/invoice');
-          print('Copy to Invoice button tapped');
+          context.read<CopyOrderInvoiceCubit>().copyOrderToInvoice(
+            copyToInvoiceData.documentLines?[0].baseEntry.toString() ?? "3",
+            copyToInvoiceData,
+          );
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

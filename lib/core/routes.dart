@@ -29,10 +29,7 @@ abstract class AppRouter {
           ),
           GoRoute(
             path: 'single_order',
-            builder:
-                (context, state) => SingleOrderScreen(
-                  // orderId: state.pathParameters['orderId']!,
-                ),
+            builder: (context, state) => SingleOrderScreen(),
           ),
         ],
       ),
@@ -46,10 +43,7 @@ abstract class AppRouter {
           ),
           GoRoute(
             path: 'single_order',
-            builder:
-                (context, state) => SingleOrderScreen(
-                  // orderId: state.pathParameters['orderId']!,
-                ),
+            builder: (context, state) => SingleOrderScreen(),
           ),
         ],
       ),

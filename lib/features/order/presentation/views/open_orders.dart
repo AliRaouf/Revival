@@ -1,11 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
+import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/order/data/models/all_orders/value.dart';
-import 'package:revival/features/order/presentation/utils/order_utils.dart';
+import 'package:revival/features/order/presentation/cubit/open_order/order_cubit.dart';
+import 'package:revival/features/order/presentation/cubit/single_order/single_order_cubit.dart';
 import 'package:revival/shared/open_orders_invoices_header.dart';
 import 'package:revival/features/order/presentation/views/widgets/open_orders_search.dart';
 import 'package:revival/shared/order_summary_card.dart';
@@ -20,42 +23,43 @@ class OpenOrdersScreen extends StatefulWidget {
 
 class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+
+  // This list holds the original, unmodified data from the API.
+  List<Value> _sourceOrders = [];
+
+  // This list holds the data to be displayed, which will be filtered.
   List<Value> _filteredOrders = [];
-   List<Value> _sourceOrders = []; 
-  final OrderUtils orderUtils = OrderUtils();
+  final query = getIt<OrderQuery>().getQuery;
+  // No need for a separate _searchQuery state variable, we can get it from the controller.
 
   @override
   void initState() {
     super.initState();
- if (orderUtils.allOrders.success == true && orderUtils.allOrders.data?.value != null) {
-      _sourceOrders = List.from(orderUtils.allOrders.data!.value!);
-      _filteredOrders = List.from(_sourceOrders);
-    }
+    // Add the listener ONCE when the widget is initialized.
     _searchController.addListener(_onSearchChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<OrderCubit>().getOpenOrders(query);
+    });
   }
 
   void _onSearchChanged() {
     final query = _searchController.text.trim().toLowerCase();
-    if (query == _searchQuery) return;
 
     setState(() {
-      _searchQuery = query;
-      if (_searchQuery.isEmpty) {
-        // If search is empty, show all original orders
+      if (query.isEmpty) {
+        // If the search query is empty, display the full original list.
         _filteredOrders = List.from(_sourceOrders);
       } else {
-        // 2. Filter the source list, not the entire response object
-        _filteredOrders = _sourceOrders.where((order) {
-          // Add null checks for safety if these fields can be null
-          final customerName = order.docNum.toString();
-          final orderCode = order.cardCode!;
-          final orderName = order.docEntry.toString();
+        // Otherwise, filter the source list based on the query.
+        _filteredOrders =
+            _sourceOrders.where((order) {
+              // Reimplementing search by docNum clearly.
+              // We use toString() to ensure the search works even if docNum is an integer.
+              final docNumString = order.docNum?.toString() ?? '';
+              final cardCode = order.cardCode?.toLowerCase() ?? '';
 
-          return customerName.contains(_searchQuery) ||
-              orderCode.contains(_searchQuery) ||
-              orderName.contains(_searchQuery);
-        }).toList();
+              return docNumString.contains(query) || cardCode.contains(query);
+            }).toList();
       }
     });
   }
@@ -67,53 +71,112 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
       backgroundColor: utilities.theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Container(
-          color: scaffoldBackgroundColor,
+          color:
+              scaffoldBackgroundColor, // Assuming this is a variable from your theme
           child: Column(
             children: [
-              openOrdersInvoicesHeader(context, 'Open Orders'),
+              openOrdersInvoicesHeader(context, 'Open Orders'.tr()),
               buildBrandBar(
                 context,
                 MediaQuery.textScalerOf(context).textScaleFactor,
                 MediaQuery.of(context).size.width > 600,
               ),
-              openOrdersSearch(context, _searchController, _searchQuery),
+              // Pass the controller. No need to pass the query string.
+              openOrdersSearch(
+                context,
+                _searchController,
+                _searchController.text,
+              ),
+
               Expanded(child: _buildContent(context)),
             ],
           ),
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(context),
+      // floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 
   Widget _buildContent(BuildContext context) {
-    if (orderUtils.allOrders.success == false) {
-      return _buildEmptyState(
-        context: context,
-        icon: Icons.list_alt_outlined,
-        title: 'No Orders Yet',
-        message: 'When orders are created, they will appear here.',
-      );
-    }
+    // Using BlocConsumer to combine listener and builder for cleaner code.
+    return BlocConsumer<OrderCubit, OrderCubitState>(
+      listener: (context, state) {
+        // The listener is perfect for side-effects that should only happen once per state change.
+        if (state is OrderSuccess) {
+          // 1. Initialize our source and filtered lists when data is successfully loaded.
+          _sourceOrders = state.allOrders.data?.value ?? [];
+          _filteredOrders = List.from(_sourceOrders);
+          // 2. If a search query already exists, re-apply it.
+          // This handles cases where the screen might be rebuilt after a search was entered.
+          _onSearchChanged();
+        }
+      },
+      builder: (context, state) {
+        if (state is OrderLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    if (_filteredOrders.isEmpty && _searchQuery.isNotEmpty) {
-      return _buildEmptyState(
-        context: context,
-        icon: Icons.search_off_outlined,
-        title: 'No Orders Found',
-        message: 'Try adjusting your search query.',
-      );
-    }
+        if (state is OrderError) {
+          return _buildEmptyState(
+            context: context,
+            icon: Icons.error_outline,
+            title: 'Error',
+            message: state.errorMessage,
+          );
+        }
 
-    return ListView.builder(
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 80, top: 8),
-      itemCount: _filteredOrders.length,
-      itemBuilder: (context, index) {
-        final order = _filteredOrders[index];
-        return OrderInvoiceSummaryCard(order: order);
+        if (state is OrderSuccess) {
+          // Handle the case where the initial list is empty.
+          if (_sourceOrders.isEmpty) {
+            return _buildEmptyState(
+              context: context,
+              icon: Icons.list_alt_outlined,
+              title: 'No Orders Yet',
+              message: 'When orders are created, they will appear here.',
+            );
+          }
+
+          // Handle the case where search yields no results.
+          if (_filteredOrders.isEmpty) {
+            return _buildEmptyState(
+              context: context,
+              icon: Icons.search_off_outlined,
+              title: 'No Orders Found',
+              message: 'Try adjusting your search query.',
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () {
+              return context.read<OrderCubit>().getOpenOrders(query);
+            },
+            child: ListView.builder(
+              padding: const EdgeInsets.only(
+                left: 12,
+                right: 12,
+                bottom: 80,
+                top: 8,
+              ),
+              itemCount:
+                  _filteredOrders.length, // Use the length of the filtered list
+              itemBuilder: (context, index) {
+                final order =
+                    _filteredOrders[index]; // Get the item from the filtered list
+                // Assuming OrderInvoiceSummaryCard has a tap handler to trigger SingleOrderCubit
+                return OrderInvoiceSummaryCard(order: order);
+              },
+            ),
+          );
+        }
+
+        // Default fallback state
+        return const SizedBox.shrink();
       },
     );
   }
+
+  // No changes needed for _buildEmptyState, _buildFloatingActionButton, or dispose.
+  // ... (keep your existing implementations for these methods)
 
   Widget _buildEmptyState({
     required BuildContext context,
@@ -164,6 +227,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
 
   @override
   void dispose() {
+    // It's crucial to remove the listener and dispose of the controller to prevent memory leaks.
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
