@@ -8,8 +8,11 @@ class Data extends Equatable {
   final String? canceled;
   final String? docDate;
   final String? docDueDate;
+  final double? vatSum;
+  final int? vatPercent;
   final String? cardCode;
   final String? phone1;
+  final String? cardName;
   final String? slpCode;
   final String? salesEmployeeName;
   final String? salesEmployeeMobile;
@@ -21,8 +24,11 @@ class Data extends Equatable {
     this.canceled,
     this.docDate,
     this.docDueDate,
+    this.vatSum,
+    this.vatPercent,
     this.cardCode,
     this.phone1,
+    this.cardName,
     this.slpCode,
     this.salesEmployeeName,
     this.salesEmployeeMobile,
@@ -35,8 +41,11 @@ class Data extends Equatable {
     canceled: json['canceled'] as String?,
     docDate: json['docDate'] as String?,
     docDueDate: json['docDueDate'] as String?,
+    vatSum: (json['vatSum'] as num?)?.toDouble(),
+    vatPercent: (json['vatPercent'] as num?)?.toInt(),
     cardCode: json['cardCode'] as String?,
     phone1: json['phone1'] as String?,
+    cardName: json['cardName'] as String?,
     slpCode: json['slpCode'] as String?,
     salesEmployeeName: json['salesEmployeeName'] as String?,
     salesEmployeeMobile: json['salesEmployeeMobile'] as String?,
@@ -52,8 +61,11 @@ class Data extends Equatable {
     'canceled': canceled,
     'docDate': docDate,
     'docDueDate': docDueDate,
+    'vatSum': vatSum,
+    'vatPercent': vatPercent,
     'cardCode': cardCode,
     'phone1': phone1,
+    'cardName': cardName,
     'slpCode': slpCode,
     'salesEmployeeName': salesEmployeeName,
     'salesEmployeeMobile': salesEmployeeMobile,
@@ -68,8 +80,11 @@ class Data extends Equatable {
       canceled,
       docDate,
       docDueDate,
+      vatSum,
+      vatPercent,
       cardCode,
       phone1,
+      cardName,
       slpCode,
       salesEmployeeName,
       salesEmployeeMobile,

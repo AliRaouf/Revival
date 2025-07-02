@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:revival/features/business_partners/domain/entities/business_partner.dart';
+import 'package:revival/features/business_partners/data/models/business_partner/business_partner.dart';
 import 'package:revival/features/sales_analysis/domain/entity/sales_entry.dart';
 
 class Utilities {
@@ -163,50 +163,6 @@ class Utilities {
     const Color(0xFFE8EAF6),
   ];
   final List<BusinessPartner> allBusinessPartners = [
-    BusinessPartner(
-      code: 'C20000',
-      name: 'جلوبال',
-      balance: 1250.75,
-      location: '123 Global Ave, Downtown',
-      contactPerson: 'Alice Smith',
-      phone: '555-1111',
-    ),
-    BusinessPartner(
-      code: 'C30500',
-      name: 'Acme Corporation',
-      balance: -890.20,
-      location: '45 Industrial Way, West Park',
-      contactPerson: 'Bob Jones',
-      phone: '555-2222',
-    ),
-    BusinessPartner(
-      code: 'V10000',
-      name: 'Tech Innovators Ltd.',
-      balance: 345.99,
-      location: '789 Tech Rd, Silicon Alley',
-      contactPerson: 'Charlie Kim',
-    ),
-    BusinessPartner(
-      code: 'C20010',
-      name: 'Sunrise Ventures',
-      balance: 2100.50,
-      location: '1 Sunrise Blvd, Eastside',
-      phone: '555-4444',
-    ),
-    BusinessPartner(
-      code: 'V10050',
-      name: 'Pinnacle Group',
-      balance: 567.80,
-      location: '2 Pinnacle Plz, North Hub',
-      contactPerson: 'Diana Ross',
-      phone: '555-5555',
-    ),
-    BusinessPartner(
-      code: 'C30000',
-      name: 'Alpha Industries',
-      balance: 0.00,
-      location: '3 Alpha Cres, Airport Zone',
-    ),
   ];
   Color getBalanceColor(BuildContext context, double balance) {
     if (balance < 0) return Colors.red.shade700; // Use a standard red

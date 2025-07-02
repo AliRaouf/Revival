@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/business_partners/presentation/cubit/business_partner_cubit.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/login/presentation/views/widgets/input_column.dart';
 import 'package:revival/features/login/presentation/views/widgets/login_button.dart';
@@ -132,13 +134,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       "clientId": state.user.data?.clientId,
                       "companyDbId": state.user.data?.companyDbId,
                     });
-                    log(state.user.data!.token.toString());
                     context.read<OrderCubit>().getOpenOrders({
                       "companyDb": state.user.data?.companyDb,
                       "clientId": state.user.data?.clientId,
                       "companyDbId": state.user.data?.companyDbId,
                     });
+                    context.read<BusinessPartnerCubit>().getBusinessPartners();
                     context.pushReplacement('/dashboard');
+                    log(state.user.data!.token.toString());
                   }
                 },
                 builder: (context, state) {

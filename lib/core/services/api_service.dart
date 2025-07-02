@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:revival/core/failures/failures.dart';
 
 class ApiException implements Exception {
   final String message;
@@ -33,7 +34,7 @@ class ApiService {
         );
         return response.data;
       } on DioException catch (e) {
-        _handleDioException(e);
+        throw ServerFailure.fromDioError(e);
       } catch (e) {
         throw ApiException('An unexpected error occurred: $e');
       }
@@ -51,7 +52,7 @@ class ApiService {
         final response = await dio.post(endpoint, data: data);
         return response.data;
       } on DioException catch (e) {
-        _handleDioException(e);
+        throw ServerFailure.fromDioError(e);
       } catch (e) {
         throw ApiException('An unexpected error occurred: $e');
       }
@@ -59,48 +60,6 @@ class ApiService {
       throw ApiException(
         'Connection Error. Please check your internet connection.'.tr(),
       );
-    }
-  }
-
-  Never _handleDioException(DioException e) {
-    if (e.response != null) {
-      switch (e.response?.statusCode) {
-        case 400:
-          throw ApiException('Something went wrong. Please try again later.');
-        case 401:
-          throw ApiException(
-            'Invalid credentials. Please double-check your username, password and Database Name.'
-                .tr(),
-          );
-        case 403:
-          throw ApiException(
-            'Access Denied: You do not have permission to view this page.'.tr(),
-          );
-        case 404:
-          final errorMessage =
-              e.response?.data['message'] ?? 'Resource not found.';
-          throw ApiException(errorMessage, e.response?.statusCode);
-        case 500:
-          throw ApiException(
-            'Internal Server Error. Please try again later.',
-            e.response?.statusCode,
-          );
-        default:
-          throw ApiException(
-            'Oops, something went wrong.',
-            e.response?.statusCode,
-          );
-      }
-    } else {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.sendTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.error is SocketException) {
-        throw ApiException(
-          'Connection Error. Please check your internet connection.'.tr(),
-        );
-      }
-      throw ApiException('An unexpected error occurred: ${e.message}');
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:revival/core/failures/failures.dart';
@@ -31,15 +33,26 @@ class OrderRepoImp implements OrderRepo {
   }
 
   @override
+  // In your repository/data source file
   Future<Either<Failures, SingleOrder>> getOrderDetails(String docEntry) async {
     final dbid = getIt<OrderQuery>().getQuery?['companyDbId'] ?? '';
+    var responseData;
     try {
       final data = await apiService.get(
         '/sync/$docEntry',
         queryParameters: {"companyDbId": dbid},
       );
+      responseData = data; // Store the data before parsing
+      // log(data.toString());
       return right(SingleOrder.fromJson(data));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // Capture the stack trace
+      // THIS IS THE MOST IMPORTANT PART FOR DEBUGGING
+      // log('🔴 FAILED TO PARSE JSON!');
+      // log('ERROR: $e');
+      // log('STACK TRACE: $stackTrace');
+      // log('RAW DATA THAT FAILED: $responseData'); // Log the problematic data
+
       if (e is DioException) {
         return left(ServerFailure(ServerFailure.fromDioError(e).errMessage));
       }
@@ -60,10 +73,17 @@ class OrderRepoImp implements OrderRepo {
       );
       return right(data);
     } catch (e) {
-      if (e is DioException) {
-        return left(ServerFailure(ServerFailure.fromDioError(e).errMessage));
+      // Check for the specific failure types first
+      if (e is ServerFailure) {
+        return left(e);
       }
-      return left(ServerFailure(e.toString()));
+      if (e is ApiException) {
+        return left(ServerFailure(e.message));
+      }
+      // Keep a fallback for any other truly unexpected errors
+      return left(
+        ServerFailure('An unexpected error occurred: ${e.toString()}'),
+      );
     }
   }
 }

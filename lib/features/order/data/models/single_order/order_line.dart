@@ -6,13 +6,13 @@ class OrderLine extends Equatable {
   final String? itemCode;
   final String? itemName;
   final String? itemGroupName;
-  final double? quantity;
+  final int? quantity;
   final double? price;
-  final double? discPrcnt;
+  final int? discPrcnt;
   final double? lineTotal;
   final String? whsCode;
   final String? uomCode;
-  final double? openQty;
+  final int? openQty;
   final int? baseLine;
   final int? baseEntry;
   final int? baseType;
@@ -41,13 +41,13 @@ class OrderLine extends Equatable {
     itemCode: json['itemCode'] as String?,
     itemName: json['itemName'] as String?,
     itemGroupName: json['itemGroupName'] as String?,
-    quantity: json['quantity'] as double?,
+    quantity: (json['quantity'] as num?)?.toInt(),
     price: (json['price'] as num?)?.toDouble(),
-    discPrcnt: json['discPrcnt'] as double?,
+    discPrcnt: (json['discPrcnt'] as num?)?.toInt(),
     lineTotal: (json['lineTotal'] as num?)?.toDouble(),
     whsCode: json['whsCode'] as String?,
     uomCode: json['uomCode'] as String?,
-    openQty: json['openQty'] as double?,
+    openQty: (json['openQty'] as num?)?.toInt(),
     baseLine: json['baseLine'] as int?,
     baseEntry: json['baseEntry'] as int?,
     baseType: json['baseType'] as int?,

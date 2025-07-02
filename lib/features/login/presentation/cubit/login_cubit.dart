@@ -1,11 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:meta/meta.dart';
-import 'package:revival/core/failures/failures.dart';
 import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/features/login/data/model/user/user.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
@@ -90,32 +88,28 @@ class LoginCubit extends Cubit<LoginCubitState> {
   //   }
   // }
 
-  Future<Either<Failures, User>> login({
+  Future<void> login({
     required UserCredentials userCredentials,
     required bool rememberMe,
   }) async {
-    emit(LoginLoading());
+    emit(LoginLoading()); // Indicate loading
 
-    try {
-      final result = await _loginUsecase.executeLogin(
-        userCredentials: userCredentials,
-        isRememberMe: rememberMe,
-      );
+    // Await the result from the usecase
+    final result = await _loginUsecase.executeLogin(
+      userCredentials: userCredentials,
+      isRememberMe: rememberMe,
+    );
 
-      result.fold(
-        (failure) => emit(LoginError(errorMessage: failure.errMessage)),
-        (user) {
-          emit(LoginSuccess(user: user));
-          storeCredentialsForBiometricLogin(userCredentials);
-          final dio = getIt<Dio>();
-          dio.options.headers['Authorization'] = 'Bearer ${user.data!.token}';
-        },
-      );
-
-      return result;
-    } catch (e) {
-      emit(LoginError(errorMessage: e.toString()));
-      return Left(ServerFailure(e.toString()));
-    }
+    result.fold(
+      (failure) {
+        emit(LoginError(errorMessage: failure.errMessage));
+      },
+      (user) {
+        emit(LoginSuccess(user: user));
+        storeCredentialsForBiometricLogin(userCredentials);
+        final dio = getIt<Dio>();
+        dio.options.headers['Authorization'] = 'Bearer ${user.data!.token}';
+      },
+    );
   }
 }

@@ -4,12 +4,16 @@ import 'package:revival/features/order/data/models/copy_to_invoice/copy_to_invoi
 import 'package:revival/features/order/domain/repo/order_repo.dart';
 
 class CopyOrderInvoice {
-   final OrderRepo orderRepository;
-    CopyOrderInvoice(this.orderRepository);
+  final OrderRepo orderRepository;
+  CopyOrderInvoice(this.orderRepository);
 
-  Future<Either<Failures,Map<String, dynamic>>> call(
-    String docEntry,CopyToInvoice copyToInvoiceData,
+  Future<Either<Failures, Map<String, dynamic>>> call(
+    String docEntry,
+    CopyToInvoice copyToInvoiceData,
   ) async {
-    return await orderRepository.copyOrderToInvoice(docEntry, copyToInvoiceData);
+    return await orderRepository.copyOrderToInvoice(
+      docEntry,
+      copyToInvoiceData,
+    );
   }
 }

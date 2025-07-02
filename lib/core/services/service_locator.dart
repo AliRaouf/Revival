@@ -2,6 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:revival/core/services/api_service.dart';
+import 'package:revival/features/business_partners/data/repo/get_business_partners_imp.dart';
+import 'package:revival/features/business_partners/domain/repo/get_business_partner_repo.dart';
+import 'package:revival/features/business_partners/domain/use_cases/business_partner_usecase.dart';
+import 'package:revival/features/business_partners/presentation/cubit/business_partner_cubit.dart';
 import 'package:revival/features/login/data/repo/creds_repo_imp.dart';
 import 'package:revival/features/login/data/repo/login_repo_imp.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
@@ -48,6 +52,9 @@ Future<void> init() async {
   getIt.registerLazySingleton<OrderRepo>(
     () => OrderRepoImp(getIt<ApiService>()),
   );
+  getIt.registerLazySingleton<GetBusinessPartnerRepo>(
+    () => GetBusinessPartnersImp(getIt<ApiService>()),
+  );
   // UseCases
   getIt.registerLazySingleton(
     () => CredentialsUseCase(getIt<CredentialsRepo>()),
@@ -56,6 +63,9 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => GetOpenOrders(getIt<OrderRepo>()));
   getIt.registerLazySingleton(() => GetOrderDetails(getIt<OrderRepo>()));
   getIt.registerLazySingleton(() => CopyOrderInvoice(getIt<OrderRepo>()));
+  getIt.registerLazySingleton(
+    () => BusinessPartnerUsecase(getIt<GetBusinessPartnerRepo>()),
+  );
 
   // Cubits
   getIt.registerFactory(() => LoginCubit(loginUsecase: getIt()));
@@ -68,6 +78,11 @@ Future<void> init() async {
   getIt.registerFactory(
     () => CopyOrderInvoiceCubit(
       copyOrderInvoiceUseCase: getIt<CopyOrderInvoice>(),
+    ),
+  );
+  getIt.registerFactory(
+    () => BusinessPartnerCubit(
+      businessPartnerUsecase: getIt<BusinessPartnerUsecase>(),
     ),
   );
 }

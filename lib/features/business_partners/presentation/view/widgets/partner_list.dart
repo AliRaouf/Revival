@@ -1,18 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:revival/features/business_partners/data/models/business_partner/datum.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_expandable_card.dart';
 import 'package:revival/shared/utils.dart';
 
 // ignore: must_be_immutable
 class PartnerList extends StatefulWidget {
-  final bool isEmpty;
-  final String selectedPartnerType;
-  final TextEditingController searchController;
-  final int length;
-  final List<dynamic> filteredBusinessPartners;
+  final bool? isEmpty;
+  final String? selectedPartnerType;
+  final TextEditingController? searchController;
+  final int? length;
+  final List<Datum>? filteredBusinessPartners;
   String? expandedPartnerCode;
-  final NumberFormat currencyFormatter;
   PartnerList({
     super.key,
     required this.isEmpty,
@@ -21,7 +21,6 @@ class PartnerList extends StatefulWidget {
     required this.length,
     required this.filteredBusinessPartners,
     required this.expandedPartnerCode,
-    required this.currencyFormatter,
   });
 
   @override
@@ -33,7 +32,7 @@ class _PartnerListState extends State<PartnerList> {
   Widget build(BuildContext context) {
     final utilities = Utilities(context);
 
-    if (widget.isEmpty) {
+    if (widget.isEmpty!) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -55,7 +54,7 @@ class _PartnerListState extends State<PartnerList> {
                 textAlign: TextAlign.center,
               ),
               if (widget.selectedPartnerType != 'All' ||
-                  widget.searchController.text.isNotEmpty)
+                  widget.searchController!.text.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
@@ -84,20 +83,24 @@ class _PartnerListState extends State<PartnerList> {
       ),
       itemCount: widget.length,
       itemBuilder: (context, index) {
-        final partner = widget.filteredBusinessPartners[index];
-        final bool isExpanded = widget.expandedPartnerCode == partner.code;
+        final partner = widget.filteredBusinessPartners?[index] ?? Datum();
+        final bool isExpanded =
+            widget.expandedPartnerCode == partner.id.toString();
         return BusinessPartnerExpandableCard(
               partner: partner,
-              currencyFormatter: widget.currencyFormatter,
+              currencyFormatter: NumberFormat.currency(
+                locale: 'en_US',
+                symbol: partner.currency ?? "EGP",
+              ),
               getBalanceColor:
                   (balance) => utilities.getBalanceColor(context, balance),
               isExpanded: isExpanded,
               onTap: () {
                 setState(() {
-                  if (widget.expandedPartnerCode == partner.code) {
+                  if (widget.expandedPartnerCode == partner.id.toString()) {
                     widget.expandedPartnerCode = null;
                   } else {
-                    widget.expandedPartnerCode = partner.code;
+                    widget.expandedPartnerCode = partner.id.toString();
                   }
                 });
               },

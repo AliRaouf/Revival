@@ -8,13 +8,15 @@ sealed class CopyOrderInvoiceState extends Equatable {
 }
 
 final class CopyOrderInvoiceInitial extends CopyOrderInvoiceState {}
+
 final class CopyOrderInvoiceLoading extends CopyOrderInvoiceState {}
+
 final class CopyOrderInvoiceSuccess extends CopyOrderInvoiceState {
   final Map<String, dynamic> response;
 
   const CopyOrderInvoiceSuccess({required this.response});
-
 }
+
 final class CopyOrderInvoiceError extends CopyOrderInvoiceState {
   final String errorMessage;
 

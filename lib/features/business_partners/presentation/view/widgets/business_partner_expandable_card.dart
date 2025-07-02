@@ -2,11 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:revival/features/business_partners/domain/entities/business_partner.dart';
+import 'package:revival/features/business_partners/data/models/business_partner/business_partner.dart';
+import 'package:revival/features/business_partners/data/models/business_partner/datum.dart';
 import 'package:revival/shared/utils.dart';
 
 class BusinessPartnerExpandableCard extends StatelessWidget {
-  final BusinessPartner partner;
+  final Datum partner;
   final NumberFormat currencyFormatter;
   final Color Function(double) getBalanceColor;
   final bool isExpanded;
@@ -23,7 +24,7 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final utilities = Utilities(context); // Access the utilities
-    final balanceColor = getBalanceColor(partner.balance);
+    // final balanceColor = getBalanceColor(partner.balance);
 
     return Card(
       elevation: isExpanded ? 4.0 : 1.5,
@@ -64,7 +65,7 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          partner.name,
+                          partner.cardName ?? 'Unknown Partner',
                           style: utilities.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             // Use utilities's onSurface color for text
@@ -75,7 +76,7 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          partner.code,
+                          partner.cardCode ?? 'No Code',
                           style: utilities.textTheme.bodySmall?.copyWith(
                             color: utilities.textTheme.bodySmall?.color
                                 ?.withOpacity(0.7),
@@ -89,10 +90,10 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        currencyFormatter.format(partner.balance),
+                        currencyFormatter.format(partner.currentBalance ?? 0),
                         style: utilities.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: balanceColor,
+                          color: utilities.colorScheme.primary,
                         ),
                       ),
                       Text(
@@ -139,28 +140,28 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
                           Icons.location_on_outlined,
                           // Localize label
                           "Location",
-                          partner.location,
+                          partner.currency ?? 'Unknown Location',
                           utilities.colorScheme.primary,
                           context, // Pass primary color for icon
                         ),
-                        if (partner.contactPerson != null)
-                          _buildDetailRow(
-                            Icons.person_outline,
-                            // Localize label
-                            "Contact",
-                            partner.contactPerson!,
-                            utilities.colorScheme.primary,
-                            context, // Pass primary color for icon
-                          ),
-                        if (partner.phone != null)
-                          _buildDetailRow(
-                            Icons.phone_outlined,
-                            // Localize label
-                            "Phone",
-                            partner.phone!,
-                            utilities.colorScheme.primary,
-                            context,
-                          ),
+                        // if (partner.contactPerson != null)
+                        //   _buildDetailRow(
+                        //     Icons.person_outline,
+                        //     // Localize label
+                        //     "Contact",
+                        //     partner.contactPerson!,
+                        //     utilities.colorScheme.primary,
+                        //     context, // Pass primary color for icon
+                        //   ),
+                        // if (partner.phone != null)
+                        //   _buildDetailRow(
+                        //     Icons.phone_outlined,
+                        //     // Localize label
+                        //     "Phone",
+                        //     partner.phone!,
+                        //     utilities.colorScheme.primary,
+                        //     context,
+                        //   ),
                         const SizedBox(height: 16),
                         Center(
                           child: ElevatedButton.icon(
@@ -189,13 +190,13 @@ class BusinessPartnerExpandableCard extends StatelessWidget {
                                 ),
                                 onPressed: () {
                                   // Localize snackbar message
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Create Invoice for ${partner.name} (${partner.code})',
-                                      ),
-                                    ),
-                                  );
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   SnackBar(
+                                  //     content: Text(
+                                  //       'Create Invoice for ${partner.name} (${partner.code})',
+                                  //     ),
+                                  //   ),
+                                  // );
                                 },
                               )
                               .animate()

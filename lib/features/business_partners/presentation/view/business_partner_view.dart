@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/features/ar_invoice/presentation/views/single_invoice.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_textfield.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/dropdown.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/save_partner_button.dart';

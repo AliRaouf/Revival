@@ -29,7 +29,6 @@ class CopyOrderInvoiceCubit extends Cubit<CopyOrderInvoiceState> {
         (failure) =>
             emit(CopyOrderInvoiceError(errorMessage: failure.errMessage)),
         (invoice) {
-          log('Invoice copied successfully: $invoice');
           emit(CopyOrderInvoiceSuccess(response: invoice));
         },
       );

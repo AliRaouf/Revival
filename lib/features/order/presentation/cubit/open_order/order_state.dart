@@ -7,8 +7,6 @@ final class OrderCubitInitial extends OrderCubitState {}
 
 final class OrderLoading extends OrderCubitState {}
 
-final class SingleOrderLoading extends OrderCubitState {}
-
 final class OrderSuccess extends OrderCubitState {
   final AllOrders allOrders;
   OrderSuccess({required this.allOrders});

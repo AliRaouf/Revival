@@ -18,7 +18,7 @@ class OrderInfoCard extends StatelessWidget {
         children: [
           InfoRow(
             label: 'Customer',
-            value: orderData.data?.salesEmployeeName as String,
+            value: orderData.data?.cardName as String,
             isValueBold: true,
           ),
           const SizedBox(height: 18),

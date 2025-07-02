@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:revival/core/routes.dart';
 import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/business_partners/presentation/cubit/business_partner_cubit.dart';
 import 'package:revival/features/login/presentation/cubit/login_cubit.dart';
 import 'package:revival/features/order/domain/use_case/copy_order_invoice.dart';
 import 'package:revival/features/order/presentation/cubit/copy_order_invoice/copy_order_invoice_cubit.dart';
@@ -38,6 +39,7 @@ class RevivalApp extends StatelessWidget {
         BlocProvider(create: (context) => getIt<OrderCubit>()),
         BlocProvider(create: (context) => getIt<SingleOrderCubit>()),
         BlocProvider(create: (context) => getIt<CopyOrderInvoiceCubit>()),
+        BlocProvider(create: (context) => getIt<BusinessPartnerCubit>()),
       ],
       child: MaterialApp.router(
         localizationsDelegates: context.localizationDelegates,
