@@ -4,15 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/features/dashboard/presentation/views/widgets/brand_bar.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/order/data/models/all_orders/value.dart';
 import 'package:revival/features/order/presentation/cubit/open_order/order_cubit.dart';
-import 'package:revival/features/order/presentation/cubit/single_order/single_order_cubit.dart';
 import 'package:revival/shared/open_orders_invoices_header.dart';
 import 'package:revival/features/order/presentation/views/widgets/open_orders_search.dart';
 import 'package:revival/shared/order_summary_card.dart';
 import 'package:revival/shared/utils.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class OpenOrdersScreen extends StatefulWidget {
   const OpenOrdersScreen({super.key});
@@ -68,7 +67,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   Widget build(BuildContext context) {
     final Utilities utilities = Utilities(context);
     return Scaffold(
-      backgroundColor: utilities.theme.scaffoldBackgroundColor,
+      backgroundColor: utilities.theme.primaryColor,
       body: SafeArea(
         child: Container(
           color:
@@ -76,18 +75,6 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
           child: Column(
             children: [
               openOrdersInvoicesHeader(context, 'Open Orders'.tr()),
-              buildBrandBar(
-                context,
-                MediaQuery.textScalerOf(context).textScaleFactor,
-                MediaQuery.of(context).size.width > 600,
-              ),
-              // Pass the controller. No need to pass the query string.
-              openOrdersSearch(
-                context,
-                _searchController,
-                _searchController.text,
-              ),
-
               Expanded(child: _buildContent(context)),
             ],
           ),
@@ -113,7 +100,9 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
       },
       builder: (context, state) {
         if (state is OrderLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: SpinKitWave(color: primaryColor, size: 40),
+          );
         }
 
         if (state is OrderError) {
@@ -146,26 +135,38 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
             );
           }
 
-          return RefreshIndicator(
-            onRefresh: () {
-              return context.read<OrderCubit>().getOpenOrders(query);
-            },
-            child: ListView.builder(
-              padding: const EdgeInsets.only(
-                left: 12,
-                right: 12,
-                bottom: 80,
-                top: 8,
+          return Column(
+            children: [
+              openOrdersSearch(
+                context,
+                _searchController,
+                _searchController.text,
               ),
-              itemCount:
-                  _filteredOrders.length, // Use the length of the filtered list
-              itemBuilder: (context, index) {
-                final order =
-                    _filteredOrders[index]; // Get the item from the filtered list
-                // Assuming OrderInvoiceSummaryCard has a tap handler to trigger SingleOrderCubit
-                return OrderInvoiceSummaryCard(order: order);
-              },
-            ),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () {
+                    return context.read<OrderCubit>().getOpenOrders(query);
+                  },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(
+                      left: 12,
+                      right: 12,
+                      bottom: 80,
+                      top: 8,
+                    ),
+                    itemCount:
+                        _filteredOrders
+                            .length, // Use the length of the filtered list
+                    itemBuilder: (context, index) {
+                      final order =
+                          _filteredOrders[index]; // Get the item from the filtered list
+                      // Assuming OrderInvoiceSummaryCard has a tap handler to trigger SingleOrderCubit
+                      return OrderInvoiceSummaryCard(order: order);
+                    },
+                  ),
+                ),
+              ),
+            ],
           );
         }
 
@@ -186,9 +187,9 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   }) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final iconColor = theme.iconTheme.color?.withOpacity(0.4);
-    final titleColor = theme.colorScheme.onSurface.withOpacity(0.6);
-    final messageColor = theme.colorScheme.onSurface.withOpacity(0.5);
+    final iconColor = primaryColor.withOpacity(0.6);
+    final titleColor = darkTextColor;
+    final messageColor = mediumTextColor;
 
     return Center(
       child: Padding(
@@ -196,34 +197,78 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 60, color: iconColor),
-            const SizedBox(height: 16),
+            // Enhanced icon container
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(60),
+                border: Border.all(
+                  color: primaryColor.withOpacity(0.2),
+                  width: 2,
+                ),
+              ),
+              child: Icon(icon, size: 48, color: iconColor),
+            ),
+            const SizedBox(height: 24),
+
+            // Title with enhanced styling
             Text(
               title,
-              style: textTheme.titleMedium?.copyWith(color: titleColor),
+              style: textTheme.headlineSmall?.copyWith(
+                color: titleColor,
+                fontWeight: FontWeight.w700,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
+
+            // Message with enhanced styling
             Text(
               message,
               textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(color: messageColor),
+              style: textTheme.bodyLarge?.copyWith(
+                color: messageColor,
+                height: 1.5,
+              ),
             ),
+
+            // Action button for some empty states
+            if (title == 'No Orders Yet') ...[
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.push('/order/new_order');
+                },
+                icon: const Icon(Icons.add, size: 20),
+                label: const Text('Create Your First Order'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return FloatingActionButton(
-      tooltip: 'Create New Order',
-      onPressed: () {
-        context.push('/order/new_order');
-      },
-      child: const Icon(Icons.add, size: 32),
-    );
-  }
+  // Widget _buildFloatingActionButton(BuildContext context) {
+  //   return FloatingActionButton(
+  //     tooltip: 'Create New Order',
+  //     onPressed: () {
+  //       context.push('/order/new_order');
+  //     },
+  //     child: const Icon(Icons.add, size: 32),
+  //   );
+  // }
 
   @override
   void dispose() {

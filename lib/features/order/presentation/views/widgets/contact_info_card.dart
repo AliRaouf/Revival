@@ -14,27 +14,31 @@ class ContactInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InfoCard(
+      title: 'Contact Information',
+      titleIcon: Icons.contact_phone,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoRow(
             label: 'Sales Person',
-            value: orderData.data?.salesEmployeeName ?? '',
+            value: orderData.data?.salesEmployeeName ?? 'Not specified',
             isValueBold: true,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
           InfoRow(
             label: 'Phone Number',
-            value: orderData.data?.salesEmployeeMobile ?? '',
+            value: orderData.data?.salesEmployeeMobile ?? 'Not specified',
           ),
           const SizedBox(height: 20),
           Text(
             'CONTACT ACTIONS',
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: mediumTextColor),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: mediumTextColor,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Row(
             children: [
               ContactIconButton(

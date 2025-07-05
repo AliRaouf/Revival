@@ -101,7 +101,7 @@
     "Login Successful!": "تم تسجيل الدخول بنجاح!",
     "Login": "تسجيل الدخول",
     "ForgotPassword": "هل نسيت كلمة المرور؟",
-    "DBName": "اسم قاعدة البيانات",
+    "DBName": "اسم الشركة",
     "Databasenamerequired": "اسم قاعدة البيانات مطلوب",
     "Username": "اسم المستخدم",
     "UserNameisRequired": "اسم المستخدم مطلوب",

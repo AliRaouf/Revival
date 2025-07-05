@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 import 'package:revival/features/order/data/models/all_orders/all_orders.dart';
 import 'package:revival/features/order/data/models/single_order/order_line.dart';
 import 'package:revival/features/order/data/models/single_order/single_order.dart';
@@ -313,13 +314,9 @@ class OrderUtils {
                     ),
                     onPressed: () {
                       print('WhatsApp UI Button Tapped');
-                      ScaffoldMessenger.of(dialogContext).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'WhatsApp integration not implemented.',
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                        ),
+                      ToastUtils.showInfoToast(
+                        dialogContext,
+                        'WhatsApp integration not implemented.',
                       );
                     },
                   ),

@@ -1,6 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 import 'package:revival/shared/utils.dart';
 
 class NewOrderBottomAppbar extends StatelessWidget {
@@ -54,13 +54,9 @@ class NewOrderBottomAppbar extends StatelessWidget {
                   const SizedBox(width: 8),
                   InkWell(
                     onTap: () {
-                      print("Refresh total tapped");
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Recalculate total not implemented.'),
-                          behavior: SnackBarBehavior.floating,
-                        ),
+                      ToastUtils.showInfoToast(
+                        context,
+                        'Recalculate total not implemented.',
                       );
                     },
                     child: Icon(

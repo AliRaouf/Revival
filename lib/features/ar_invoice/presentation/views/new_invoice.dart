@@ -5,6 +5,7 @@ import 'package:revival/features/order/presentation/views/widgets/add_items_dial
 
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/order/presentation/views/widgets/new_order_bottom_appbar.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 
 class NewInvoiceScreen extends StatefulWidget {
   const NewInvoiceScreen({super.key});
@@ -102,13 +103,9 @@ class _NewInvoiceScreenState extends State<NewInvoiceScreen> {
           }
         } else {
           if (picked.isBefore(_selectedDate)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Valid until date cannot be before the order date.',
-                ),
-                behavior: SnackBarBehavior.floating,
-              ),
+            ToastUtils.showErrorToast(
+              context,
+              'Valid until date cannot be before the order date.',
             );
           } else {
             _selectedValidUntilDate = picked;
@@ -121,12 +118,7 @@ class _NewInvoiceScreenState extends State<NewInvoiceScreen> {
 
   void _addItem() {
     if (_selectedCustomer == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a customer first.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ToastUtils.showWarningToast(context, 'Please select a customer first.');
       return;
     }
 
@@ -135,11 +127,9 @@ class _NewInvoiceScreenState extends State<NewInvoiceScreen> {
 
   void _saveDraft() {
     print("Save Draft tapped");
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Save Draft functionality not implemented.'),
-        behavior: SnackBarBehavior.floating,
-      ),
+    ToastUtils.showInfoToast(
+      context,
+      'Save Draft functionality not implemented.',
     );
   }
 
@@ -260,11 +250,9 @@ class _NewInvoiceScreenState extends State<NewInvoiceScreen> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Add Text Line not implemented.'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
+                          ToastUtils.showInfoToast(
+                            context,
+                            'Add Text Line not implemented.',
                           );
                         },
 

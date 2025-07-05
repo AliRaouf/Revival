@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:revival/core/services/service_locator.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/order/data/models/copy_to_invoice/copy_to_invoice.dart';
 import 'package:revival/features/order/presentation/cubit/copy_order_invoice/copy_order_invoice_cubit.dart';
@@ -88,16 +89,16 @@ class SingleOrderScreen extends StatelessWidget {
                       listener: (context, state) {
                         if (state is CopyOrderInvoiceSuccess) {
                           final query = getIt<OrderQuery>().getQuery;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Invoice copied successfully!'),
-                            ),
+                          ToastUtils.showSuccessToast(
+                            context,
+                            'Invoice copied successfully!',
                           );
                           context.read<OrderCubit>().getOpenOrders(query);
                           context.pop();
                         } else if (state is CopyOrderInvoiceError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.errorMessage)),
+                          ToastUtils.showErrorToast(
+                            context,
+                            state.errorMessage,
                           );
                         }
                       },

@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
+import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 
 class StockItem {
   final String itemCode;
@@ -186,9 +188,12 @@ class _WarehouseStockPageState extends State<WarehouseStockPage> {
   }
 
   Future<void> _refreshData() async {
-    if (_isLoading) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Simulate API call
+    await Future.delayed(const Duration(milliseconds: 800));
 
     setState(() {
       _allStockItems.shuffle();
@@ -201,13 +206,7 @@ class _WarehouseStockPageState extends State<WarehouseStockPage> {
     });
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Stock data refreshed!'),
-        duration: const Duration(seconds: 1),
-        backgroundColor: accentColor,
-      ),
-    );
+    ToastUtils.showSuccessToast(context, 'Stock data refreshed!');
   }
 
   Color _getAvailableStockColor(double available) {

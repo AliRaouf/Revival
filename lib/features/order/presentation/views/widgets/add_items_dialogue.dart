@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:revival/core/theme/theme.dart';
@@ -64,10 +64,6 @@ class _AddItemDialogContentState extends State<_AddItemDialogContent> {
   }
 
   void _addItem() {
-    print(
-      'Item Added: Code=${_itemCodeController.text}, Qty=${_qtyController.text}, ...',
-    );
-
     Navigator.pop(context);
   }
 

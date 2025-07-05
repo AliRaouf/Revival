@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/business_partners/data/models/business_partner/datum.dart';
 import 'package:revival/features/business_partners/presentation/cubit/business_partner_cubit.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_appbar.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/partner_list.dart';
-import 'package:revival/shared/utils.dart';
 
 class AllBusinessPartnerWowListPage extends StatefulWidget {
   const AllBusinessPartnerWowListPage({super.key});
@@ -25,13 +24,8 @@ class _AllBusinessPartnerWowListPageState
   String? expandedPartnerCode;
   final String _selectedPartnerType = 'All';
   @override
-  void initState() {
-    super.initState();
-  }
 
-  @override
   Widget build(BuildContext context) {
-    final Utilities utilities = Utilities(context);
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,
       appBar: BusinessPartnerAppbar(),

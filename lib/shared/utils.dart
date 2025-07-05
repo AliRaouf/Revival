@@ -155,15 +155,14 @@ class Utilities {
     },
   ];
   final List<Color> menuItemColors = [
-    const Color(0xFFE0F2F1),
-    const Color(0xFFE1F5FE),
-    const Color(0xFFE8F5E9),
-    const Color(0xFFF3E5F5),
-    const Color(0xFFFFF3E0),
-    const Color(0xFFE8EAF6),
+    const Color(0xFFF7CAC9), // Muted coral
+    const Color(0xFFB0B7D1), // Dusty indigo
+    const Color(0xFFB2DFDB), // Soft mint
+    const Color(0xFFFFF9C4), // Pale yellow
+    const Color(0xFFD1C4E9), // Muted lavender
+    const Color(0xFFB3E5FC), // Soft sky blue
   ];
-  final List<BusinessPartner> allBusinessPartners = [
-  ];
+  final List<BusinessPartner> allBusinessPartners = [];
   Color getBalanceColor(BuildContext context, double balance) {
     if (balance < 0) return Colors.red.shade700; // Use a standard red
     if (balance == 0) {

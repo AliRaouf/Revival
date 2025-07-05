@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 
 import 'package:revival/features/ar_invoice/domain/entity/invoice.dart';
 import 'package:revival/features/order/presentation/views/widgets/summary_row.dart';
@@ -98,13 +99,9 @@ class InvoiceUtils {
                     ),
                     onPressed: () {
                       print('WhatsApp UI Button Tapped');
-                      ScaffoldMessenger.of(dialogContext).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'WhatsApp integration not implemented.',
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                        ),
+                      ToastUtils.showInfoToast(
+                        dialogContext,
+                        'WhatsApp integration not implemented.',
                       );
                     },
                   ),

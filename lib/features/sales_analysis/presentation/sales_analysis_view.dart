@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 import 'package:revival/features/ar_invoice/presentation/views/single_invoice.dart';
 import 'package:revival/features/sales_analysis/presentation/widgets/sales_analysis_table.dart';
 import 'package:revival/shared/utils.dart';
@@ -21,12 +22,7 @@ class _SalesAnalysisViewState extends State<SalesAnalysisView> {
     final endDateController = TextEditingController();
     final customerController = TextEditingController();
     Future<void> _onRefresh() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Refresh button tapped!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ToastUtils.showInfoToast(context, 'Refresh button tapped!');
     }
 
     return Scaffold(

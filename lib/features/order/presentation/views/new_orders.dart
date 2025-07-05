@@ -5,6 +5,8 @@ import 'package:revival/features/order/presentation/views/widgets/add_items_dial
 
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/order/presentation/views/widgets/new_order_bottom_appbar.dart';
+import 'package:revival/core/utils/toast_utils.dart';
+import 'package:revival/shared/utils.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({super.key});
@@ -102,13 +104,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           }
         } else {
           if (picked.isBefore(_selectedDate)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Valid until date cannot be before the order date.',
-                ),
-                behavior: SnackBarBehavior.floating,
-              ),
+            ToastUtils.showErrorToast(
+              context,
+              'Valid until date cannot be before the order date.',
             );
           } else {
             _selectedValidUntilDate = picked;
@@ -121,12 +119,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   void _addItem() {
     if (_selectedCustomer == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a customer first.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ToastUtils.showWarningToast(context, 'Please select a customer first.');
       return;
     }
 
@@ -135,11 +128,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   void _saveDraft() {
     print("Save Draft tapped");
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Save Draft functionality not implemented.'),
-        behavior: SnackBarBehavior.floating,
-      ),
+    ToastUtils.showInfoToast(
+      context,
+      'Save Draft functionality not implemented.',
     );
   }
 
@@ -258,19 +249,21 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
+                      OutlinedButton.icon(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Add Text Line not implemented.'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
+                          ToastUtils.showInfoToast(
+                            context,
+                            'Add Text Line not implemented.',
                           );
                         },
-
-                        child: Text("Add Text Line"),
+                        icon: const Icon(Icons.text_fields, size: 18),
+                        label: const Text("Add Text Line"),
                       ),
-                      TextButton(onPressed: _addItem, child: Text("Add Items")),
+                      TextButton.icon(
+                        onPressed: _addItem,
+                        icon: const Icon(Icons.add, size: 18),
+                        label: const Text("Add Items"),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 80),

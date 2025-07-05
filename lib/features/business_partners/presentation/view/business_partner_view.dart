@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/core/utils/toast_utils.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_textfield.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/dropdown.dart';
 import 'package:revival/features/business_partners/presentation/view/widgets/save_partner_button.dart';
@@ -308,22 +309,13 @@ class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
       // final groupsCode = _groupsCodeController.text;
       // final city = _cityController.text;
       // final county = _countyController.text;
-      SnackBar(
-        // Localize snackbar message
-        content: Text('Form Valid! Data logged to console.'),
-        backgroundColor:
-            Colors.green, // Consider using theme's success color if available
+      ToastUtils.showSuccessToast(
+        context,
+        'Form Valid! Data logged to console.',
       );
     } else {
       // Form is invalid, show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          // Localize snackbar message
-          content: Text('Please fix the errors in the form.'),
-          backgroundColor:
-              Theme.of(context).colorScheme.error, // Use theme's error color
-        ),
-      );
+      ToastUtils.showErrorToast(context, 'Please fix the errors in the form.');
     }
   }
 }

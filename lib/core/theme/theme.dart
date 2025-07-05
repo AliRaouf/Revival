@@ -17,7 +17,7 @@ const double kDefaultBorderRadius = 8.0;
 const double kCardBorderRadius = 12.0;
 const double kDialogBorderRadius = 16.0;
 
-const TextTheme kTextTheme = TextTheme(
+TextTheme kTextTheme = TextTheme(
   headlineLarge: TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
@@ -29,8 +29,8 @@ const TextTheme kTextTheme = TextTheme(
     color: darkTextColor,
   ),
   headlineSmall: TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.bold,
+    fontSize: 22,
+    fontWeight: FontWeight.w700,
     color: darkTextColor,
   ),
 
@@ -62,8 +62,8 @@ const TextTheme kTextTheme = TextTheme(
   ),
   bodySmall: TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.normal,
-    color: mediumTextColor,
+    fontWeight: FontWeight.w600,
+    color: lightTextColor,
   ),
 
   labelLarge: TextStyle(
@@ -101,7 +101,7 @@ final ThemeData appTheme = ThemeData(
 
   textTheme: kTextTheme,
 
-  scaffoldBackgroundColor: primaryColor,
+  scaffoldBackgroundColor: scaffoldBackgroundColor,
 
   appBarTheme: AppBarTheme(
     backgroundColor: primaryColor,
@@ -116,43 +116,48 @@ final ThemeData appTheme = ThemeData(
 
   cardTheme: CardTheme(
     color: cardBackgroundColor,
-    elevation: 2.0,
-    shadowColor: shadowColor,
-    margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 4.0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(kCardBorderRadius),
-    ),
+    elevation: 1.0,
+    shadowColor: shadowColor.withOpacity(0.10),
+    margin: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
   ),
 
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: const BorderSide(color: lightBorderColor, width: 1.0),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: const BorderSide(color: lightBorderColor, width: 1.0),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: const BorderSide(color: primaryColor, width: 2.0),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: const BorderSide(color: errorColor, width: 1.0),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      borderRadius: BorderRadius.circular(12.0),
       borderSide: const BorderSide(color: errorColor, width: 2.0),
     ),
-    labelStyle: kTextTheme.bodySmall?.copyWith(color: mediumTextColor),
+    labelStyle: kTextTheme.bodySmall?.copyWith(
+      color: mediumTextColor,
+      fontWeight: FontWeight.w400,
+    ),
     hintStyle: kTextTheme.bodyMedium?.copyWith(
       color: mediumTextColor.withOpacity(0.7),
+      fontWeight: FontWeight.w400,
     ),
-    floatingLabelStyle: kTextTheme.bodySmall?.copyWith(color: primaryColor),
+    floatingLabelStyle: kTextTheme.bodySmall?.copyWith(
+      color: primaryColor,
+      fontWeight: FontWeight.w500,
+    ),
     isDense: true,
     floatingLabelBehavior: FloatingLabelBehavior.auto,
   ),
@@ -162,11 +167,12 @@ final ThemeData appTheme = ThemeData(
       backgroundColor: primaryColor,
       foregroundColor: Colors.white,
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      textStyle: kTextTheme.labelLarge?.copyWith(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      textStyle: kTextTheme.labelLarge?.copyWith(color: Colors.white),
       minimumSize: const Size.fromHeight(52),
     ),
   ),
