@@ -12,7 +12,6 @@ import 'package:revival/features/business_partners/presentation/cubit/business_p
 import 'package:revival/features/login/domain/entities/auth_token.dart';
 import 'package:revival/features/login/presentation/views/widgets/fingerprint_button.dart';
 import 'package:revival/features/order/presentation/cubit/open_order/order_cubit.dart';
-import 'package:revival/shared/animated_error_message.dart';
 import 'package:revival/shared/utils.dart';
 import 'package:revival/shared/logo_image.dart';
 import 'package:revival/features/login/domain/entities/user_creds.dart';
