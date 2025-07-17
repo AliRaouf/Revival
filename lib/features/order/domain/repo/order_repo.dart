@@ -9,7 +9,7 @@ abstract class OrderRepo {
     Map<String, dynamic>? query,
   );
   Future<Either<Failures, SingleOrder>> getOrderDetails(String docEntry);
-  Future<Either<Failures, Map<String, dynamic>>> copyOrderToInvoice(
+  Future<Either<Map<String, dynamic>, Map<String, dynamic>>> copyOrderToInvoice(
     String docEntry,
     CopyToInvoice copyToInvoiceData,
   );

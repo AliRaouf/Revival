@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/order/data/models/single_order/single_order.dart';
@@ -14,24 +15,24 @@ class ContactInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InfoCard(
-      title: 'Contact Information',
+      title: 'Contact Information'.tr(),
       titleIcon: Icons.contact_phone,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoRow(
-            label: 'Sales Person',
+            label: 'Sales Person'.tr(),
             value: orderData.data?.salesEmployeeName ?? 'Not specified',
             isValueBold: true,
           ),
           const SizedBox(height: 20),
           InfoRow(
-            label: 'Phone Number',
+            label: 'Phone Number'.tr(),
             value: orderData.data?.salesEmployeeMobile ?? 'Not specified',
           ),
           const SizedBox(height: 20),
           Text(
-            'CONTACT ACTIONS',
+            'Contact Actions'.tr().toUpperCase(),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: mediumTextColor,
               fontWeight: FontWeight.w600,
@@ -43,10 +44,10 @@ class ContactInfoCard extends StatelessWidget {
             children: [
               ContactIconButton(
                 icon: Icons.phone_outlined,
-                tooltip: 'Call Contact',
+                tooltip: 'Call Contact'.tr(),
                 onTap:
                     () => launchUrlString(
-                      "tel://${orderData.data?.phone1 ?? ''}",
+                      "tel://0${orderData.data?.phone1 ?? ''}",
                     ),
               ),
               const SizedBox(width: 16),
@@ -55,7 +56,7 @@ class ContactInfoCard extends StatelessWidget {
                 tooltip: 'Message Contact',
                 onTap:
                     () => launchUrlString(
-                      "sms://${orderData.data?.phone1 ?? ''}",
+                      "sms://0${orderData.data?.phone1 ?? ''}",
                     ),
               ),
             ],

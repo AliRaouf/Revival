@@ -7,7 +7,7 @@ class CopyOrderInvoice {
   final OrderRepo orderRepository;
   CopyOrderInvoice(this.orderRepository);
 
-  Future<Either<Failures, Map<String, dynamic>>> call(
+  Future<Either<Map<String, dynamic>, Map<String, dynamic>>> call(
     String docEntry,
     CopyToInvoice copyToInvoiceData,
   ) async {

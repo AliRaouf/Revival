@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:revival/core/services/service_locator.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/login/domain/entities/auth_token.dart';
@@ -52,12 +51,16 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
         // Otherwise, filter the source list based on the query.
         _filteredOrders =
             _sourceOrders.where((order) {
-              // Reimplementing search by docNum clearly.
-              // We use toString() to ensure the search works even if docNum is an integer.
+              // Search by order number (docNum)
               final docNumString = order.docNum?.toString() ?? '';
+              // Search by company code (cardCode)
               final cardCode = order.cardCode?.toLowerCase() ?? '';
+              // Search by company name (cardName)
+              final cardName = order.cardName?.toLowerCase() ?? '';
 
-              return docNumString.contains(query) || cardCode.contains(query);
+              return docNumString.contains(query) ||
+                  cardCode.contains(query) ||
+                  cardName.contains(query);
             }).toList();
       }
     });
@@ -125,16 +128,6 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
             );
           }
 
-          // Handle the case where search yields no results.
-          if (_filteredOrders.isEmpty) {
-            return _buildEmptyState(
-              context: context,
-              icon: Icons.search_off_outlined,
-              title: 'No Orders Found',
-              message: 'Try adjusting your search query.',
-            );
-          }
-
           return Column(
             children: [
               openOrdersSearch(
@@ -142,30 +135,41 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
                 _searchController,
                 _searchController.text,
               ),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () {
-                    return context.read<OrderCubit>().getOpenOrders(query);
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(
-                      left: 12,
-                      right: 12,
-                      bottom: 80,
-                      top: 8,
-                    ),
-                    itemCount:
-                        _filteredOrders
-                            .length, // Use the length of the filtered list
-                    itemBuilder: (context, index) {
-                      final order =
-                          _filteredOrders[index]; // Get the item from the filtered list
-                      // Assuming OrderInvoiceSummaryCard has a tap handler to trigger SingleOrderCubit
-                      return OrderInvoiceSummaryCard(order: order);
+              // Handle the case where search yields no results.
+              if (_filteredOrders.isEmpty)
+                Expanded(
+                  child: _buildEmptyState(
+                    context: context,
+                    icon: Icons.search_off_outlined,
+                    title: 'No Orders Found',
+                    message: 'Try adjusting your search query.',
+                  ),
+                )
+              else
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () {
+                      return context.read<OrderCubit>().getOpenOrders(query);
                     },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(
+                        left: 12,
+                        right: 12,
+                        bottom: 80,
+                        top: 8,
+                      ),
+                      itemCount:
+                          _filteredOrders
+                              .length, // Use the length of the filtered list
+                      itemBuilder: (context, index) {
+                        final order =
+                            _filteredOrders[index]; // Get the item from the filtered list
+                        // Assuming OrderInvoiceSummaryCard has a tap handler to trigger SingleOrderCubit
+                        return OrderInvoiceSummaryCard(order: order);
+                      },
+                    ),
                   ),
                 ),
-              ),
             ],
           );
         }
@@ -237,22 +241,22 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
             // Action button for some empty states
             if (title == 'No Orders Yet') ...[
               const SizedBox(height: 32),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.push('/order/new_order');
-                },
-                icon: const Icon(Icons.add, size: 20),
-                label: const Text('Create Your First Order'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
+              // ElevatedButton.icon(
+              //   onPressed: () {
+              //     context.push('/order/new_order');
+              //   },
+              //   icon: const Icon(Icons.add, size: 20),
+              //   label: const Text('Create Your First Order'),
+              //   style: ElevatedButton.styleFrom(
+              //     padding: const EdgeInsets.symmetric(
+              //       horizontal: 24,
+              //       vertical: 12,
+              //     ),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //   ),
+              // ),
             ],
           ],
         ),

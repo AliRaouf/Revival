@@ -52,8 +52,8 @@ abstract class AppRouter {
         builder: (context, state) => AllBusinessPartnerWowListPage(),
         routes: [
           GoRoute(
-            path: 'new_business_partner',
-            builder: (context, state) => const NewBusinessPartnerPage(),
+            path: 'single_business_partner',
+            builder: (context, state) => const SingleBusinessPartnerPage(),
           ),
         ],
       ),

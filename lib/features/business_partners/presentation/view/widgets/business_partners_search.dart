@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-Widget openOrdersSearch(
+Widget businessPartnersSearch(
   BuildContext context,
   TextEditingController searchController,
   String searchQuery,
@@ -16,7 +16,7 @@ Widget openOrdersSearch(
     child: TextField(
           controller: searchController,
           decoration: InputDecoration(
-            hintText: 'Search by Name or Order Code'.tr(),
+            hintText: 'Search by Name or Code'.tr(),
             prefixIcon: Icon(Icons.search, color: iconColor),
             suffixIcon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),

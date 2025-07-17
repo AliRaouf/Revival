@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -13,7 +12,7 @@ class CopyOrderInvoiceCubit extends Cubit<CopyOrderInvoiceState> {
   CopyOrderInvoiceCubit({required CopyOrderInvoice copyOrderInvoiceUseCase})
     : _copyOrderInvoiceUseCase = copyOrderInvoiceUseCase,
       super(CopyOrderInvoiceInitial());
-  Future<Either<Failures, Map<String, dynamic>>> copyOrderToInvoice(
+  Future<Either<Map<String, dynamic>, Map<String, dynamic>>> copyOrderToInvoice(
     String docEntry,
     CopyToInvoice copyToInvoice,
   ) async {
@@ -25,8 +24,7 @@ class CopyOrderInvoiceCubit extends Cubit<CopyOrderInvoiceState> {
       );
 
       result.fold(
-        (failure) =>
-            emit(CopyOrderInvoiceError(errorMessage: failure.errMessage)),
+        (failureMap) => emit(CopyOrderInvoiceError(errorMap: failureMap)),
         (invoice) {
           emit(CopyOrderInvoiceSuccess(response: invoice));
         },
@@ -34,8 +32,8 @@ class CopyOrderInvoiceCubit extends Cubit<CopyOrderInvoiceState> {
 
       return result;
     } catch (e) {
-      emit(CopyOrderInvoiceError(errorMessage: e.toString()));
-      return Left(ServerFailure(e.toString()));
+      emit(CopyOrderInvoiceError(errorMap: {'error': e.toString()}));
+      return left({'error': e.toString()});
     }
   }
 }

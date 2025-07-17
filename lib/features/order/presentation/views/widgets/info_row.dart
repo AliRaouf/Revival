@@ -5,7 +5,7 @@ import 'package:revival/core/theme/theme.dart';
 /// It uses text styles from the app's TextTheme.
 class InfoRow extends StatelessWidget {
   final String label;
-  final String value;
+  final String? value;
   final bool isValueBold;
 
   const InfoRow({
@@ -29,7 +29,7 @@ class InfoRow extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         Text(
-          value.isEmpty ? '-' : value,
+          value == null ? '-' : value ?? "",
           // Uses titleMedium for prominent values and bodyMedium for regular ones
           style: (isValueBold ? textTheme.titleMedium : textTheme.bodyMedium)
               ?.copyWith(height: 1.3),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:revival/features/business_partners/data/models/business_partner/datum.dart';
@@ -146,7 +147,7 @@ class BusinessPartnerCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Balance',
+                            'Balance'.tr(),
                             style: utilities.textTheme.bodySmall?.copyWith(
                               color: utilities.textTheme.bodySmall?.color
                                   ?.withOpacity(0.6),

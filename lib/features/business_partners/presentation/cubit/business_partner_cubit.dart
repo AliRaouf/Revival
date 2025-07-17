@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:revival/core/failures/failures.dart';
 import 'package:revival/features/business_partners/data/models/business_partner/business_partner.dart';
+import 'package:revival/features/business_partners/data/models/single_business_partner/single_business_partner.dart';
 import 'package:revival/features/business_partners/domain/use_cases/business_partner_usecase.dart';
 
 part 'business_partner_state.dart';
@@ -29,6 +30,26 @@ class BusinessPartnerCubit extends Cubit<BusinessPartnerState> {
       );
     } catch (e) {
       emit(BusinessPartnerError(e.toString()));
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failures, SingleBusinessPartner>> getSinglePartner(String id) async {
+    emit(SinglePartnerLoading());
+    try {
+      final result = await _businessPartnerUsecase.getSinglePartner(id);
+      return result.fold(
+        (failure) {
+          emit(SinglePartnerError(failure.errMessage));
+          return Left(failure);
+        },
+        (businessPartner) {
+          emit(SinglePartnerSuccess(businessPartner));
+          return Right(businessPartner);
+        },
+      );
+    } catch (e) {
+      emit(SinglePartnerError(e.toString()));
       return Left(ServerFailure(e.toString()));
     }
   }

@@ -20,7 +20,6 @@ class ApiService {
   final Dio dio;
   ApiService(this.dio);
 
-  /// Generic GET request method
   Future<dynamic> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
@@ -52,6 +51,11 @@ class ApiService {
         final response = await dio.post(endpoint, data: data);
         return response.data;
       } on DioException catch (e) {
+        // Special case: for copyToInvoice endpoint, throw the full backend JSON
+        if (endpoint.contains('/api/invoices/from-order/') &&
+            e.response?.data != null) {
+          throw e.response!.data;
+        }
         throw ServerFailure.fromDioError(e);
       } catch (e) {
         throw ApiException('An unexpected error occurred: $e');

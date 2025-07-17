@@ -131,8 +131,8 @@ class _WarehouseStockPageState extends State<WarehouseStockPage> {
   List<String> _availableItemGroups = [];
   static const String _allGroupsValue = 'All Groups';
 
-  final NumberFormat _qtyFormatter = NumberFormat('#,##0', 'en_US');
-  final NumberFormat _percentFormatter = NumberFormat('0.##%%', 'en_US');
+  final NumberFormat _qtyFormatter = NumberFormat('#,0', 'en_US');
+  final NumberFormat _percentFormatter = NumberFormat('0.%%', 'en_US');
 
   @override
   void initState() {

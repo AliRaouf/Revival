@@ -82,7 +82,7 @@ class OrderInvoiceSummaryCard extends StatelessWidget {
                     children: [
                       // Order number
                       Text(
-                        'Order #${order?.docNum.toString() ?? ""}',
+                        order?.cardName.toString() ?? "",
                         style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: primaryColor,
@@ -93,6 +93,28 @@ class OrderInvoiceSummaryCard extends StatelessWidget {
                       const SizedBox(height: 4),
 
                       // Customer code and date
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.inventory_2_outlined,
+                            size: 14,
+                            color: mediumTextColor,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              order?.docNum.toString() ?? "",
+                              style: textTheme.bodySmall?.copyWith(
+                                color: mediumTextColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
                           Icon(

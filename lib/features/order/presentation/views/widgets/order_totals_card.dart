@@ -1,52 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
+import 'package:revival/features/order/data/models/single_order/data.dart';
 import 'package:revival/features/order/data/models/single_order/order_line.dart';
 import 'package:revival/features/order/presentation/utils/order_utils.dart';
 import 'package:revival/features/order/presentation/views/widgets/info_card.dart';
 import 'package:revival/features/order/presentation/views/widgets/total_row.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// Displays the totals section (Discount, VAT, Total) with enhanced styling.
 class OrderTotalsCard extends StatelessWidget {
-  final List<OrderLine> orderLines;
-  const OrderTotalsCard({super.key, required this.orderLines});
+  final Data data;
+  const OrderTotalsCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     // Calculate totals
-    double subtotal = 0;
-    double totalDiscount = 0;
-    double totalVAT = 0;
-
-    for (final line in orderLines) {
-      final price = line.price ?? 0.0;
-      final quantity = line.quantity ?? 0.0;
-      final discount = line.discPrcnt ?? 0.0;
-
-      final lineSubtotal = price * quantity;
-      final lineDiscount = (lineSubtotal * discount) / 100;
-
-      subtotal += lineSubtotal;
-      totalDiscount += lineDiscount;
-    }
-
-    // Assume 15% VAT (you can make this configurable)
-    totalVAT = (subtotal - totalDiscount) * 0.15;
-    final total = subtotal - totalDiscount + totalVAT;
-
-    final discountPercentage =
-        subtotal > 0 ? (totalDiscount / subtotal) * 100 : 0;
-
     return InfoCard(
-      title: 'Order Summary',
+      title: 'Order Summary'.tr(),
       titleIcon: Icons.calculate_outlined,
       child: Column(
         children: [
           // Subtotal
           TotalRow(
-            label: 'Subtotal',
-            value: '${subtotal.toStringAsFixed(2)} EGP',
+            label: 'Original Price'.tr(),
+            value: '{subtotal} EGP'.tr(
+              namedArgs: {
+                'subtotal': (data.docTotal! - data.vatSum! + data.discSum!)
+                    .toStringAsFixed(2),
+              },
+            ),
             labelStyle: textTheme.bodyMedium?.copyWith(
               color: mediumTextColor,
               fontWeight: FontWeight.w500,
@@ -59,11 +43,15 @@ class OrderTotalsCard extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Discount
-          if (totalDiscount > 0) ...[
+          if (data.discSum != null && data.discSum! > 0) ...[
             TotalRow(
-              label: 'Discount',
-              value:
-                  '${discountPercentage.toStringAsFixed(1)}% (${totalDiscount.toStringAsFixed(2)} EGP)',
+              label: 'Discount'.tr(),
+              value: '{discountPercentage}% ({totalDiscount} EGP)'.tr(
+                namedArgs: {
+                  'discountPercentage': data.discPrcnt!.toStringAsFixed(1),
+                  'totalDiscount': data.discSum!.toStringAsFixed(2),
+                },
+              ),
               labelStyle: textTheme.bodyMedium?.copyWith(
                 color: mediumTextColor,
                 fontWeight: FontWeight.w500,
@@ -78,8 +66,10 @@ class OrderTotalsCard extends StatelessWidget {
 
           // VAT
           TotalRow(
-            label: 'VAT (15%)',
-            value: '${totalVAT.toStringAsFixed(2)} EGP',
+            label: 'VAT'.tr(),
+            value: '{totalVAT} EGP'.tr(
+              namedArgs: {'totalVAT': data.vatSum!.toStringAsFixed(2)},
+            ),
             labelStyle: textTheme.bodyMedium?.copyWith(
               color: mediumTextColor,
               fontWeight: FontWeight.w500,
@@ -107,8 +97,10 @@ class OrderTotalsCard extends StatelessWidget {
 
           // Total
           TotalRow(
-            label: 'Total Amount',
-            value: '${total.toStringAsFixed(2)} EGP',
+            label: 'Total Amount'.tr(),
+            value: '{total} EGP'.tr(
+              namedArgs: {'total': data.docTotal?.toStringAsFixed(2) ?? ""},
+            ),
             labelStyle: textTheme.titleMedium?.copyWith(
               color: darkTextColor,
               fontWeight: FontWeight.w600,

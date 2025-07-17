@@ -15,6 +15,7 @@ class Value extends Equatable {
   final double? vatPercent;
   final double? vatSum;
   final String? canceled;
+  final String? cardName;
 
   const Value({
     this.docEntry,
@@ -31,6 +32,7 @@ class Value extends Equatable {
     this.vatPercent,
     this.vatSum,
     this.canceled,
+    this.cardName,
   });
 
   factory Value.fromJson(Map<String, dynamic> json) => Value(
@@ -48,6 +50,7 @@ class Value extends Equatable {
     vatPercent: json['VatPercent'] as double?,
     vatSum: (json['VatSum'] as num?)?.toDouble(),
     canceled: json['CANCELED'] as String?,
+    cardName: json['CardName'] as String?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -65,6 +68,7 @@ class Value extends Equatable {
     'VatPercent': vatPercent,
     'VatSum': vatSum,
     'CANCELED': canceled,
+    'CardName': cardName,
   };
 
   @override
@@ -84,6 +88,7 @@ class Value extends Equatable {
       vatPercent,
       vatSum,
       canceled,
+      cardName,
     ];
   }
 }

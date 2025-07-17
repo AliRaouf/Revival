@@ -93,7 +93,7 @@ class SingleInvoiceScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             Text(
-              'Items',
+              'Items'.tr(),
               style: TextStyle(
                 color: mediumTextColor,
                 fontSize: 13,
@@ -132,14 +132,27 @@ class SingleInvoiceScreen extends StatelessWidget {
                 children: [
                   totalRow(
                     label: 'Discount',
-                    value:
-                        '${(orderData['discountPercent'] as double).toStringAsFixed(2)}% (${(orderData['discountValue'] as double).toStringAsFixed(2)} ${orderData['currency']})',
+                    value: '{discountPercent}% ({discountValue} {currency})'.tr(
+                      namedArgs: {
+                        'discountPercent': (orderData['discountPercent']
+                                as double)
+                            .toStringAsFixed(2),
+                        'discountValue': (orderData['discountValue'] as double)
+                            .toStringAsFixed(2),
+                        'currency': orderData['currency'],
+                      },
+                    ),
                   ),
                   const SizedBox(height: 12),
                   totalRow(
                     label: 'VAT',
-                    value:
-                        '${(orderData['vatValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
+                    value: '{vatValue} {currency}'.tr(
+                      namedArgs: {
+                        'vatValue': (orderData['vatValue'] as double)
+                            .toStringAsFixed(2),
+                        'currency': orderData['currency'],
+                      },
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -151,8 +164,13 @@ class SingleInvoiceScreen extends StatelessWidget {
                   ),
                   totalRow(
                     label: 'Total',
-                    value:
-                        '${(orderData['totalValue'] as double).toStringAsFixed(2)} ${orderData['currency']}',
+                    value: '{totalValue} {currency}'.tr(
+                      namedArgs: {
+                        'totalValue': (orderData['totalValue'] as double)
+                            .toStringAsFixed(2),
+                        'currency': orderData['currency'],
+                      },
+                    ),
                     isValueBold: true,
                     valueFontSize: 20,
                     valueColor: primaryColor,
@@ -447,7 +465,16 @@ class SingleInvoiceScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  'Price: ${price.toStringAsFixed(2)} ${discount > 0 ? " / Disc: ${discount.toStringAsFixed(2)} " : ""} $currency',
+                  'Price: {price} {discountText} {currency}'.tr(
+                    namedArgs: {
+                      'price': price.toStringAsFixed(2),
+                      'discountText':
+                          discount > 0
+                              ? ' / Disc: ${discount.toStringAsFixed(2)} '
+                              : '',
+                      'currency': currency,
+                    },
+                  ),
                   style: const TextStyle(color: mediumTextColor, fontSize: 12),
                 ),
               ],
@@ -459,7 +486,13 @@ class SingleInvoiceScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)}',
+                'x {quantity}'.tr(
+                  namedArgs: {
+                    'quantity': quantity.toStringAsFixed(
+                      quantity.truncateToDouble() == quantity ? 0 : 2,
+                    ),
+                  },
+                ),
                 style: const TextStyle(
                   color: mediumTextColor,
                   fontSize: 13,
@@ -468,7 +501,12 @@ class SingleInvoiceScreen extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                '${itemTotal.toStringAsFixed(2)} $currency',
+                '{itemTotal} {currency}'.tr(
+                  namedArgs: {
+                    'itemTotal': itemTotal.toStringAsFixed(2),
+                    'currency': currency,
+                  },
+                ),
                 style: const TextStyle(
                   color: darkTextColor,
                   fontSize: 15,

@@ -7,9 +7,7 @@ import 'package:revival/shared/utils.dart';
 // ignore: must_be_immutable
 class BusinessPartnerAppbar extends StatefulWidget
     implements PreferredSizeWidget {
-  const BusinessPartnerAppbar({
-    super.key,
-  });
+  const BusinessPartnerAppbar({super.key});
 
   @override
   State<BusinessPartnerAppbar> createState() => _BusinessPartnerAppbarState();
@@ -23,7 +21,7 @@ class _BusinessPartnerAppbarState extends State<BusinessPartnerAppbar> {
   Widget build(BuildContext context) {
     Utilities utilities = Utilities(context);
     return AppBar(
-      title: Text("Business Partners")
+      title: Text("Business Partners".tr())
           .animate()
           .fadeIn(duration: 400.ms)
           .slideY(begin: -0.2, duration: 300.ms, curve: Curves.easeOut),

@@ -18,7 +18,10 @@ final class CopyOrderInvoiceSuccess extends CopyOrderInvoiceState {
 }
 
 final class CopyOrderInvoiceError extends CopyOrderInvoiceState {
-  final String errorMessage;
+  final Map<String, dynamic> errorMap;
 
-  const CopyOrderInvoiceError({required this.errorMessage});
+  const CopyOrderInvoiceError({required this.errorMap});
+
+  @override
+  List<Object> get props => [errorMap];
 }

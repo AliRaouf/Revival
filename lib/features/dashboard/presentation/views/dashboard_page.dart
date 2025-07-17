@@ -60,7 +60,12 @@ class _DashBoardState extends State<DashBoard>
               builder: (context, state) {
                 if (state is LoginSuccess) {
                   return Text(
-                    'Welcome, ${state.user.data?.username}!'.tr(),
+                    'Welcome, {name}!'.tr(
+                      namedArgs: {
+                        'name': state.user.data?.salesEmployeeName ?? '',
+                      },
+                    ),
+
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

@@ -12,19 +12,19 @@ class OrderInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InfoCard(
-      title: 'Order Information',
+      title: 'Order Information'.tr(),
       titleIcon: Icons.receipt_long,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoRow(
-            label: 'Customer',
-            value: orderData.data?.cardName as String,
+            label: 'Customer'.tr(),
+            value: orderData.data?.cardName?.toString() ?? "-",
             isValueBold: true,
           ),
           const SizedBox(height: 20),
           InfoRow(
-            label: 'Document Date',
+            label: 'Document Date'.tr(),
             value: (DateFormat.yMMMd().format(
               DateTime.parse(
                 orderData.data?.docDate ?? DateTime.now().toIso8601String(),
@@ -33,7 +33,7 @@ class OrderInfoCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           InfoRow(
-            label: 'Due Date',
+            label: 'Due Date'.tr(),
             value: DateFormat.yMMMd().format(
               DateTime.parse(
                 orderData.data?.docDueDate ?? DateTime.now().toIso8601String(),
@@ -42,11 +42,14 @@ class OrderInfoCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           InfoRow(
-            label: 'Reference Number',
-            value: orderData.data?.docNum.toString() ?? '-',
+            label: 'Reference Number'.tr(),
+            value: orderData.data?.docEntry?.toString() ?? '-',
           ),
           const SizedBox(height: 20),
-          InfoRow(label: 'Phone', value: orderData.data?.phone1 as String),
+          InfoRow(
+            label: 'Phone'.tr(),
+            value: "0${orderData.data?.phone1?.toString() ?? "-"}" ,
+          ),
         ],
       ),
     );

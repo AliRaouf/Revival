@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:revival/core/theme/theme.dart';
 import 'package:revival/features/order/data/models/single_order/order_line.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// Displays a single item in the order list with enhanced professional styling.
 class OrderItemTile extends StatelessWidget {
@@ -33,26 +34,7 @@ class OrderItemTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Item number with professional styling
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(
-                (item.lineNum! + 1).toString(),
-                style: textTheme.labelMedium?.copyWith(
-                  color: primaryColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-
+          // Removed the item number box; content now starts from the left
           // Item details
           Expanded(
             child: Column(
@@ -78,11 +60,17 @@ class OrderItemTile extends StatelessWidget {
                       color: mediumTextColor,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      'Code: ${item.itemCode ?? "-"}',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: mediumTextColor,
-                        fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Text(
+                        'Item Code: {itemCode}'.tr(
+                          namedArgs: {'itemCode': item.itemCode ?? '-'},
+                        ),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: mediumTextColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -98,11 +86,19 @@ class OrderItemTile extends StatelessWidget {
                       color: mediumTextColor,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      'Price: ${price.toStringAsFixed(2)} EGP',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: mediumTextColor,
-                        fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Text(
+                        'Unit Price: {unitPrice}'.tr(
+                          namedArgs: {
+                            'unitPrice': item.price?.toStringAsFixed(2) ?? '-',
+                          },
+                        ),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: mediumTextColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (discount > 0) ...[
@@ -123,6 +119,8 @@ class OrderItemTile extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             fontSize: 10,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -135,35 +133,45 @@ class OrderItemTile extends StatelessWidget {
           const SizedBox(width: 16),
 
           // Quantity and total
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              // Quantity with badge styling
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: secondaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)}',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: secondaryColor,
-                    fontWeight: FontWeight.w600,
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 80),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Quantity with badge styling
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: secondaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'x ${quantity.toStringAsFixed(quantity.truncateToDouble() == quantity ? 0 : 2)} ${item.uomCode}',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
+                const SizedBox(height: 8),
 
-              // Total amount
-              Text(
-                '${itemTotal.toStringAsFixed(2)} EGP',
-                style: textTheme.titleMedium?.copyWith(
-                  color: primaryColor,
-                  fontWeight: FontWeight.w700,
+                // Total amount
+                Text(
+                  '${itemTotal.toStringAsFixed(2)} EGP',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

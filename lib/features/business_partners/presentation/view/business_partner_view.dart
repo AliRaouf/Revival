@@ -1,321 +1,391 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:revival/core/theme/theme.dart';
-import 'package:revival/core/utils/toast_utils.dart';
-import 'package:revival/features/business_partners/presentation/view/widgets/business_partner_textfield.dart';
-import 'package:revival/features/business_partners/presentation/view/widgets/dropdown.dart';
-import 'package:revival/features/business_partners/presentation/view/widgets/save_partner_button.dart';
-import 'package:revival/shared/utils.dart'; // Import easy_localization
+import 'package:revival/features/business_partners/data/models/single_business_partner/data.dart';
+import 'package:revival/features/business_partners/presentation/cubit/business_partner_cubit.dart';
+import 'package:revival/shared/utils.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-class NewBusinessPartnerPage extends StatefulWidget {
-  const NewBusinessPartnerPage({super.key});
+class SingleBusinessPartnerPage extends StatefulWidget {
+  const SingleBusinessPartnerPage({super.key});
 
   @override
-  State<NewBusinessPartnerPage> createState() => _NewBusinessPartnerPageState();
+  State<SingleBusinessPartnerPage> createState() =>
+      _SingleBusinessPartnerPageState();
 }
 
-class _NewBusinessPartnerPageState extends State<NewBusinessPartnerPage> {
-  String? _selectedType;
-  String? _selectedCurrency;
-  String? _selectedPaymentTerms;
-  String? _selectedPriceList;
-  String? _selectedGroupNo;
-  String? _selectedAddressId;
-  final _codeController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _mobilePhoneController = TextEditingController();
-  final _groupNameController = TextEditingController();
-  final _groupTypeController = TextEditingController();
-  final _groupsCodeController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _countyController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  void dispose() {
-    _codeController.dispose();
-    _nameController.dispose();
-    _mobilePhoneController.dispose();
-    _groupNameController.dispose();
-    _groupTypeController.dispose();
-    _groupsCodeController.dispose();
-    _cityController.dispose();
-    _countyController.dispose();
-    super.dispose();
-  }
-
+class _SingleBusinessPartnerPageState extends State<SingleBusinessPartnerPage> {
   @override
   Widget build(BuildContext context) {
-    final utilities = Utilities(context);
+    Utilities utilities = Utilities(context);
 
     return Scaffold(
-      backgroundColor: utilities.theme.scaffoldBackgroundColor,
+      backgroundColor: scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text("Create New Partner"),
+        title: Text("Business Partner Details".tr())
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .slideY(begin: -0.2, duration: 300.ms, curve: Curves.easeOut),
         backgroundColor: utilities.colorScheme.primary,
         foregroundColor: utilities.colorScheme.onPrimary,
-        titleTextStyle: utilities.textTheme.titleLarge?.copyWith(
-          color: utilities.colorScheme.onPrimary,
-          fontWeight: FontWeight.w600,
-        ),
         elevation: 2.0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
       ),
-      body: Container(
-        color: scaffoldBackgroundColor,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSection(
-                  context: context, // Pass context
-                  title: "General Information", // Localize title
-                  icon: Icons.business_center,
+      body: BlocListener<BusinessPartnerCubit, BusinessPartnerState>(
+        listener: (context, state) {
+          // Handle any state changes if needed
+        },
+        child: BlocBuilder<BusinessPartnerCubit, BusinessPartnerState>(
+          builder: (context, state) {
+            if (state is SinglePartnerLoading) {
+              return Center(child: SpinKitWave(color: primaryColor, size: 40));
+            } else if (state is SinglePartnerError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "Code", // Localize label
-                      controller: _codeController,
-                      validator:
-                          (value) =>
-                              (value == null || value.isEmpty)
-                                  ? 'Code cannot be empty'
-                                  : null,
+                    Icon(Icons.error_outline, size: 64, color: errorColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error',
+                      style: kTextTheme.titleLarge?.copyWith(color: errorColor),
                     ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "Name", // Localize label
-                      controller: _nameController,
-                      validator:
-                          (value) =>
-                              (value == null || value.isEmpty)
-                                  ? 'Name cannot be empty'
-                                  // Localize validator message
-                                  : null,
-                    ),
-                    BusinessPartnerDropdown(
-                      context: context, // Pass context
-                      label: "Type", // Localize label
-                      hint: "Select Type", // Localize hint
-                      value: _selectedType,
-                      items: utilities.typeOptions,
-                      onChanged:
-                          (newValue) =>
-                              setState(() => _selectedType = newValue),
-                      validator:
-                          (value) =>
-                              value == null ? 'Please select a type' : null,
-                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                        utilities.typeOptions,
-                      ), // Localize validator message
-                    ),
-                    BusinessPartnerDropdown(
-                      context: context, // Pass context
-                      label: "Currency", // Localize label
-                      hint: "Select Currency", // Localize hint
-                      value: _selectedCurrency,
-                      items: utilities.currencyOptions,
-                      onChanged:
-                          (newValue) =>
-                              setState(() => _selectedCurrency = newValue),
-                      validator:
-                          (value) =>
-                              value == null ? 'Please select a currency' : null,
-                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                        utilities.currencyOptions,
-                      ), // Localize validator message
-                    ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "Mobile Phone", // Localize label
-                      controller: _mobilePhoneController,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    BusinessPartnerDropdown(
-                      context: context, //
-                      label: "Payment Terms",
-                      hint: "Select Terms",
-                      value: _selectedPaymentTerms,
-                      items: utilities.paymentTermsOptions,
-                      onChanged:
-                          (newValue) =>
-                              setState(() => _selectedPaymentTerms = newValue),
-                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                        utilities.paymentTermsOptions,
+                    const SizedBox(height: 8),
+                    Text(
+                      state.message,
+                      style: kTextTheme.bodyMedium?.copyWith(
+                        color: mediumTextColor,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                    BusinessPartnerDropdown(
-                      context: context, // Pass context
-                      label: "Price List", // Localize label
-                      hint: "Select Price List", // Localize hint
-                      value: _selectedPriceList,
-                      items: utilities.priceListOptions,
-                      onChanged:
-                          (newValue) =>
-                              setState(() => _selectedPriceList = newValue),
-                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                        utilities.priceListOptions,
-                      ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Retry will be handled by the parent widget
+                        context.pop();
+                      },
+                      child: const Text('Go Back'),
                     ),
                   ],
                 ),
+              );
+            } else if (state is SinglePartnerSuccess) {
+              final partnerData = state.businessPartner.data;
+              if (partnerData == null) {
+                return const Center(child: Text('No partner data available'));
+              }
+              return _buildPartnerDetails(partnerData, utilities);
+            }
 
-                _buildSection(
-                  context: context, // Pass context
-                  title: "Group Information", // Localize title
-                  icon: Icons.group_work,
-                  children: [
-                    BusinessPartnerDropdown(
-                      context: context, // Pass context
-                      label: "Group No.", // Localize label
-                      hint: "Select Group Number", // Localize hint
-                      value: _selectedGroupNo,
-                      items: utilities.groupNoOptions,
-                      onChanged:
-                          (newValue) =>
-                              setState(() => _selectedGroupNo = newValue),
-                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                        utilities.groupNoOptions,
-                      ),
-                    ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "Group Name", // Localize label
-                      controller: _groupNameController,
-                    ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "Group Type", // Localize label
-                      controller: _groupTypeController,
-                    ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "GroupsCode", // Localize label
-                      controller: _groupsCodeController,
-                    ),
-                  ],
-                ),
-
-                _buildSection(
-                  context: context, // Pass context
-                  title: "Address Information", // Localize title
-                  icon: Icons.location_on,
-                  children: [
-                    BusinessPartnerDropdown(
-                      context: context, // Pass context
-                      label: "Address ID", // Localize label
-                      hint: "Select Address ID", // Localize hint
-                      value: _selectedAddressId,
-                      items: utilities.addressIdOptions,
-                      onChanged:
-                          (newValue) =>
-                              setState(() => _selectedAddressId = newValue),
-                      getLocalizedDropdownItems: _getLocalizedDropdownItems(
-                        utilities.addressIdOptions,
-                      ),
-                    ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "City", // Localize label
-                      controller: _cityController,
-                    ),
-                    buildTextField(
-                      context: context, // Pass context
-                      label: "County", // Localize label
-                      controller: _countyController,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-                SavePartnerButton(saveForm: _saveForm),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
+            return const Center(child: Text('No partner selected'));
+          },
         ),
       ),
     );
   }
 
-  Widget _buildSection({
-    required BuildContext context, // Added context
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
-    final theme = Theme.of(context); // Access theme
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
+  Widget _buildPartnerDetails(Data partnerData, Utilities utilities) {
+    final formatCurrency = NumberFormat.currency(
+      locale: 'en_EG', // Or context.locale.toString()
+      symbol: '', // Leave empty if your translation handles the symbol
+      decimalDigits: 2,
+    );
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header Card with Partner Name and Code
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: primaryColor.withOpacity(0.1),
+                        child: Icon(
+                          Icons.business,
+                          size: 32,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              partnerData.cardName ?? 'N/A',
+                              style: kTextTheme.headlineSmall?.copyWith(
+                                color: darkTextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Code: {cardCode}'.tr(
+                                namedArgs: {
+                                  'cardCode': partnerData.cardCode ?? 'N/A',
+                                },
+                              ),
+                              style: kTextTheme.bodyMedium?.copyWith(
+                                color: mediumTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildStatusChip(partnerData.cardType ?? 'N/A'),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Contact Information Card
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.contact_phone, color: primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Contact Information'.tr(),
+                        style: kTextTheme.titleLarge?.copyWith(
+                          color: darkTextColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(
+                    'Phone'.tr(),
+                    "0${partnerData.phone1 ?? ''}",
+                    Icons.phone,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildInfoRow(
+                    'Address'.tr(),
+                    partnerData.address ?? 'N/A',
+                    Icons.location_on,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Financial Information Card
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.account_balance_wallet, color: primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Financial Information'.tr(),
+                        style: kTextTheme.titleLarge?.copyWith(
+                          color: darkTextColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(
+                    'Currency'.tr(),
+                    partnerData.currency ?? 'N/A',
+                    Icons.attach_money,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildInfoRow(
+                    'Current Balance'.tr(),
+                    '{currentBalance} {currency}'.tr(
+                      namedArgs: {
+                        'currentBalance': formatCurrency.format(
+                          partnerData.currentBalance ?? 0,
+                        ),
+                        'currency': partnerData.currency ?? '',
+                      },
+                    ),
+                    Icons.account_balance,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildInfoRow(
+                    'Payment Terms'.tr(),
+                    partnerData.payTermsGrpCode?.toString() ?? 'N/A',
+                    Icons.payment,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Business Information Card
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.business_center, color: primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Business Information'.tr(),
+                        style: kTextTheme.titleLarge?.copyWith(
+                          color: darkTextColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(
+                    'Group'.tr(),
+                    partnerData.groupName ?? 'N/A',
+                    Icons.group,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildInfoRow(
+                    'Price List'.tr(),
+                    partnerData.priceListName ?? 'N/A',
+                    Icons.price_check,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Action Buttons
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Use theme's primary color for icon
-              Icon(icon, color: colorScheme.primary, size: 22),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.primary, // Use theme's primary color
-                  letterSpacing: 0.5,
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed:
+                      () =>
+                          launchUrlString("tel://0${partnerData.phone1 ?? ''}"),
+                  icon: const Icon(Icons.phone),
+                  label: Text('Call'.tr()),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed:
+                      () =>
+                          launchUrlString("sms://0${partnerData.phone1 ?? ''}"),
+                  icon: const Icon(Icons.message),
+                  label: Text('Message'.tr()),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
                 ),
               ),
             ],
           ),
-          // Use theme's divider color
-          Divider(
-            height: 20,
-            thickness: 0.8,
-            color: theme.dividerColor.withOpacity(
-              0.7,
-            ), // Use theme's divider color
-          ),
-          ...children,
         ],
       ),
     );
-  } // Helper to localize dropdown items
-
-  List<DropdownMenuItem<String>> _getLocalizedDropdownItems(
-    List<String> items,
-  ) {
-    return items.map<DropdownMenuItem<String>>((String itemValue) {
-      return DropdownMenuItem<String>(
-        value: itemValue,
-        // Localize the item text
-        child: Text(itemValue, overflow: TextOverflow.ellipsis),
-      );
-    }).toList();
   }
 
-  void _saveForm() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Form is valid, proceed with saving data
-      // final code = _codeController.text;
-      // final name = _nameController.text;
-      // final mobile = _mobilePhoneController.text;
-      // final groupName = _groupNameController.text;
-      // final groupType = _groupTypeController.text;
-      // final groupsCode = _groupsCodeController.text;
-      // final city = _cityController.text;
-      // final county = _countyController.text;
-      ToastUtils.showSuccessToast(
-        context,
-        'Form Valid! Data logged to console.',
-      );
-    } else {
-      // Form is invalid, show error message
-      ToastUtils.showErrorToast(context, 'Please fix the errors in the form.');
+  Widget _buildStatusChip(String status) {
+    Color chipColor;
+    Color textColor;
+
+    switch (status.toLowerCase()) {
+      case 'customer':
+        chipColor = successColor.withOpacity(0.1);
+        textColor = successColor;
+        break;
+      case 'vendor':
+        chipColor = secondaryColor.withOpacity(0.1);
+        textColor = secondaryColor;
+        break;
+      default:
+        chipColor = mediumTextColor.withOpacity(0.1);
+        textColor = mediumTextColor;
     }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: chipColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: textColor.withOpacity(0.3)),
+      ),
+      child: Text(
+        status,
+        style: kTextTheme.labelMedium?.copyWith(
+          color: textColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value, IconData icon) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: mediumTextColor),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: kTextTheme.bodySmall?.copyWith(
+                  color: mediumTextColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: kTextTheme.bodyMedium?.copyWith(
+                  color: darkTextColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
