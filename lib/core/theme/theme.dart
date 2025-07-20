@@ -114,7 +114,7 @@ final ThemeData appTheme = ThemeData(
     titleTextStyle: kTextTheme.titleLarge?.copyWith(color: Colors.white),
   ),
 
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: cardBackgroundColor,
     elevation: 1.0,
     shadowColor: shadowColor.withOpacity(0.10),
@@ -211,7 +211,7 @@ final ThemeData appTheme = ThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
   ),
 
-  dialogTheme: DialogTheme(
+  dialogTheme: DialogThemeData(
     backgroundColor: cardBackgroundColor,
     elevation: 4.0,
     shape: RoundedRectangleBorder(
