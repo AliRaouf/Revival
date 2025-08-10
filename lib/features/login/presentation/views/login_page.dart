@@ -36,6 +36,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   late AnimationController _logoAnimationController;
   late Animation<double> _logoAnimation;
   final _formKey = GlobalKey<FormState>();
+  final companyFocus = FocusNode();
+  final usernameFocus = FocusNode();
+  final passwordFocus = FocusNode();
 
   @override
   void initState() {
@@ -156,6 +159,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                   const SizedBox(height: 18),
                                   LabeledField(
+                                    textInputAction: TextInputAction.next,
+                                    focusNode: companyFocus,
+                                    onFieldSubmitted:
+                                        (_) => FocusScope.of(
+                                          context,
+                                        ).requestFocus(usernameFocus),
                                     label: 'DBName'.tr(),
                                     controller: _databaseNameController,
                                     keyboardType: TextInputType.url,
@@ -167,6 +176,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                   const SizedBox(height: 12),
                                   LabeledField(
+                                    textInputAction: TextInputAction.next,
+                                    focusNode: usernameFocus,
+                                    onFieldSubmitted:
+                                        (_) => FocusScope.of(
+                                          context,
+                                        ).requestFocus(passwordFocus),
                                     label: 'Username'.tr(),
                                     controller: _usernameController,
                                     keyboardType: TextInputType.text,
@@ -178,6 +193,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                   const SizedBox(height: 12),
                                   LabeledField(
+                                    textInputAction: TextInputAction.done,
+                                    focusNode: passwordFocus,
+                                    onFieldSubmitted: (_) => _login(),
                                     label: 'Password'.tr(),
                                     obscureText: _obscureText,
                                     controller: _passwordController,
@@ -265,6 +283,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     _usernameController.dispose();
     _passwordController.dispose();
     _logoAnimationController.dispose();
+    companyFocus.dispose();
+    usernameFocus.dispose();
+    passwordFocus.dispose();
     super.dispose();
   }
 }

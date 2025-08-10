@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
@@ -176,14 +176,11 @@ class OrderRepoImp implements OrderRepo {
         return left(e);
       }
       if (e is ServerFailure) {
-        print({'type': 'ServerFailure', 'message': e.errMessage});
         return left({'type': 'ServerFailure', 'message': e.errMessage});
       }
       if (e is ApiException) {
-        print({'type': 'ApiException', 'message': e.message});
         return left({'type': 'ApiException', 'message': e.message});
       }
-      print({'type': 'UnknownFailure', 'message': e.toString()});
       return left({'type': 'UnknownFailure', 'message': e.toString()});
     }
   }

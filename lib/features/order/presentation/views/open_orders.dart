@@ -22,13 +22,11 @@ class OpenOrdersScreen extends StatefulWidget {
 class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // This list holds the original, unmodified data from the API.
   List<Value> _sourceOrders = [];
 
-  // This list holds the data to be displayed, which will be filtered.
   List<Value> _filteredOrders = [];
   final query = getIt<OrderQuery>().getQuery;
-  // No need for a separate _searchQuery state variable, we can get it from the controller.
+
 
   @override
   void initState() {
@@ -91,13 +89,9 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
     // Using BlocConsumer to combine listener and builder for cleaner code.
     return BlocConsumer<OrderCubit, OrderCubitState>(
       listener: (context, state) {
-        // The listener is perfect for side-effects that should only happen once per state change.
         if (state is OrderSuccess) {
-          // 1. Initialize our source and filtered lists when data is successfully loaded.
           _sourceOrders = state.allOrders.data?.value ?? [];
           _filteredOrders = List.from(_sourceOrders);
-          // 2. If a search query already exists, re-apply it.
-          // This handles cases where the screen might be rebuilt after a search was entered.
           _onSearchChanged();
         }
       },
@@ -163,8 +157,7 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
                               .length, // Use the length of the filtered list
                       itemBuilder: (context, index) {
                         final order =
-                            _filteredOrders[index]; // Get the item from the filtered list
-                        // Assuming OrderInvoiceSummaryCard has a tap handler to trigger SingleOrderCubit
+                            _filteredOrders[index];
                         return OrderInvoiceSummaryCard(order: order);
                       },
                     ),
@@ -174,14 +167,10 @@ class _OpenOrdersScreenState extends State<OpenOrdersScreen> {
           );
         }
 
-        // Default fallback state
         return const SizedBox.shrink();
       },
     );
   }
-
-  // No changes needed for _buildEmptyState, _buildFloatingActionButton, or dispose.
-  // ... (keep your existing implementations for these methods)
 
   Widget _buildEmptyState({
     required BuildContext context,

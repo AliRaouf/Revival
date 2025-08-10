@@ -9,6 +9,9 @@ class LabeledField extends StatefulWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final bool useUnderlineBorder;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
 
   const LabeledField({
     super.key,
@@ -19,6 +22,9 @@ class LabeledField extends StatefulWidget {
     this.keyboardType,
     this.validator,
     this.useUnderlineBorder = true,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.focusNode
   });
 
   @override
@@ -26,29 +32,9 @@ class LabeledField extends StatefulWidget {
 }
 
 class _LabeledFieldState extends State<LabeledField> {
-  final FocusNode _focusNode = FocusNode();
-  bool _hasFocus = false;
 
   @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(_onFocusChange);
-  }
 
-  @override
-  void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void _onFocusChange() {
-    setState(() {
-      _hasFocus = _focusNode.hasFocus;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
@@ -57,9 +43,7 @@ class _LabeledFieldState extends State<LabeledField> {
     final labelStyle = textTheme.bodySmall?.copyWith(
       fontWeight: FontWeight.w600,
       color:
-          _hasFocus
-              ? colorScheme.primary
-              : colorScheme.onBackground.withOpacity(0.7),
+              colorScheme.primary
     );
 
     final InputDecoration inputDecoration =
@@ -73,21 +57,20 @@ class _LabeledFieldState extends State<LabeledField> {
         Text(widget.label, style: labelStyle),
         const SizedBox(height: 6),
         TextFormField(
-          focusNode: _focusNode,
+          focusNode: widget.focusNode,
           controller: widget.controller,
           obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
           validator: widget.validator,
-
+          textInputAction: widget.textInputAction,
+          onFieldSubmitted: widget.onFieldSubmitted,
           decoration: inputDecoration.copyWith(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(kDefaultBorderRadius),
               borderSide: BorderSide(
-                color:
-                    _hasFocus
-                        ? colorScheme.primary
-                        : colorScheme.onBackground.withOpacity(0.7),
+                color: colorScheme.primary,
+              
                 width: 2,
               ),
             ),
